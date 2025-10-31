@@ -1,0 +1,41 @@
+services:
+  api:
+    build: .
+    volumes:
+      # Mapeia a pasta 'src' do seu projeto no host para a pasta 'src'
+      # dentro do WORKDIR do container. O '.' representa a raiz do seu projeto.
+      - ./:/usr/src/app
+      
+      # MUITO IMPORTANTE: Garante que a pasta node_modules dentro do container
+      # não seja sobrescrita ou mapeada de volta para o seu host.
+      # Isso evita problemas com a arquitetura de arquivos.
+      - node_modules:/usr/src/app/node_modules
+      
+    # Se você estiver usando nodemon, a linha 'command' deve ser algo como:
+    command: npm run dev # Ou o comando que executa o nodemon/watcher
+    container_name: codi_api
+    ports:
+      - "3000:3000"  # Porta do host : Porta do container
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - JWT_SECRET=${JWT_SECRET}
+      - NODE_ENV=development
+      - CHOKIDAR_USEPOLLING=true
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15
+    container_name: api-db-1
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: codi_db
+    ports:
+      - "5432:5432"  # Para acessar o Postgres do host (opcional)
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+volumes:
+  db_data:
+  node_modules:

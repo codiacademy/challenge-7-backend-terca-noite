@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Challenge - Projeto Codi Cash (Back-end)
 
 Período do Challenge: 27/10/2025 a 05/12/2025  
@@ -308,3 +309,6 @@ Comandos:
 - [ ] README com setup (docker, migrations, seed)
 - [ ] GitHub Actions rodando testes no PR
 - [ ] Deploy básico/containers funcionando
+=======
+Back
+>>>>>>> 1cc35dc (chore:Config docker files and test docker environment with hot reload)
