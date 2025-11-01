@@ -1,0 +1,48 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model expenses {
+  id          String          @id @db.Char(36)
+  type        expenses_type
+  description String          @db.VarChar(255)
+  amount      Decimal         @db.Decimal(10, 2)
+  due_date    DateTime        @db.Date
+  status      expenses_status
+  recurring   Boolean         @default(false)
+  created_by  String          @db.Char(36)
+  created_at  DateTime        @default(now())
+  updated_at  DateTime
+  users       users           @relation(fields: [created_by], references: [id])
+
+  @@index([created_by], map: "expenses_created_by_fkey")
+}
+
+model users {
+  id                         String     @id @db.Char(36)
+  name                       String     @db.VarChar(255)
+  email                      String     @unique @db.VarChar(255)
+  passwordHash               String     @db.VarChar(255)
+  two_factor_enabled         Boolean    @default(false)
+  notification_email_enabled Boolean    @default(false)
+  notification_sms_enabled   Boolean    @default(false)
+  created_at                 DateTime   @default(now())
+  updated_at                 DateTime
+  expenses                   expenses[]
+}
+
+enum expenses_type {
+  fixa
+  variavel
+}
+
+enum expenses_status {
+  pago
+  pendente
+}
