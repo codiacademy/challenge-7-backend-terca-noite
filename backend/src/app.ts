@@ -17,6 +17,6 @@ app.register(jwt,{secret:env.JWT_SECRET});
 app.register(authRoutes, { prefix: '/auth' });
 app.register(usersRoutes, { prefix: '/users' });
 app.get('/', async (request, reply) => {
-    return 'API Codi Cash rodando! Acesse /docs para a documentação.';
+    return 'Codi Cash API rodando! Acesse /docs para a documentação.';
   });
   
