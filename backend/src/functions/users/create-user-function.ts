@@ -1,16 +1,18 @@
-import {prisma} from "../../lib/prisma.ts";
-import type { CreateUserInput } from "../../types/users/user-types.ts";
-import { AppError } from "../../utils/app-error.ts"
+import { prisma } from "../../lib/prisma.ts";
+import type { CreateUserType } from "../../types/users/user-types.ts";
+import { AppError } from "../../utils/app-error.ts";
+import bcrypt from "bcrypt";
 
-export async function createUserFunction({name,email,passwordHash}: CreateUserInput) {
-    try{
+export async function createUserFunction({ name, email, password }: CreateUserType) {
+    try {
         const existingUser = await prisma.user.findUnique({
-            where:{email},
+            where: { email },
         });
-        if (existingUser){
+        if (existingUser) {
             throw new AppError("Este e-mail já está cadastrado", 409);
         }
-        const user = await prisma.user.create({
+        const passwordHash = await bcrypt.hash(password, 10);
+        const createdUser = await prisma.user.create({
             data: {
                 name,
                 email,
@@ -25,10 +27,9 @@ export async function createUserFunction({name,email,passwordHash}: CreateUserIn
                 updated_at: true,
             }
         })
-        return user;
+        return createdUser;
     } catch (error) {
-        if (error instanceof AppError)
-        {
+        if (error instanceof AppError) {
             throw error
         }
         console.error("Erro operacional ao criar usuário ", error)

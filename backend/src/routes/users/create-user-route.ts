@@ -6,16 +6,16 @@ import {AppError} from '../../utils/app-error.ts';
 const bodySchema = z.object({
     name: z.string().min(3, "O nome deve ter pelo menos 3 caracteres"),
     email: z.email("O email deve ser válido"),
-    passwordHash : z.string().min(8, "A senha deve ter pelo menos 8 caracteres"),
+    password : z.string().min(8, "A senha deve ter pelo menos 8 caracteres"),
 })
 
-export async function CreateUserRoute(app: FastifyInstance) {
+export async function createUserRoute(app: FastifyInstance) {
     app.patch('/create_user',
         async (request,reply) => {
             try{
-                const {name,email,passwordHash} = bodySchema.parse(request.body)
+                const {name,email,password} = bodySchema.parse(request.body)
 
-                const result = await createUserFunction({name, email, passwordHash})
+                const result = await createUserFunction({name, email, password})
                 
                 return reply.status(201).send({
                     message: "Usuário criado com sucesso",
@@ -32,7 +32,7 @@ export async function CreateUserRoute(app: FastifyInstance) {
                 }
                 if( error instanceof z.ZodError){
                     return reply.status(400).send({
-                        message: "Dados de entrada inválidos",
+                        message: "Dados de entrada em formato inválido",
                         errors: error.issues, // Retorna erros por campo
                     });
                 }
