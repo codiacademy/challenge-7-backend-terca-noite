@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
+    "moduleResolution": "NodeNext", // ou "node" ou "nodenext"
+    "target": "ES2022",
     "module": "NodeNext",
     "rootDir": "./src",
     "outDir": "./dist",
@@ -17,6 +18,7 @@
     "verbatimModuleSyntax": true,
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
+    "allowImportingTsExtensions": true,
   },
   "include": ["src", "prisma"]
 }

@@ -26,7 +26,7 @@ challenge-7-backend-terca-noite/
 - **Runtime:** Node.js 20
 - **Framework:** Fastify
 - **Linguagem:** TypeScript
-- **Banco de Dados:** PostgreSQL 15
+- **Banco de Dados:** MySQL 8.0
 - **ORM:** Prisma
 - **Autenticação:** JWT
 - **Documentação:** Swagger/OpenAPI
@@ -42,7 +42,7 @@ challenge-7-backend-terca-noite/
 ## 📋 Pré-requisitos
 
 - [Node.js](https://nodejs.org/) 20 ou superior
-- [PostgreSQL](https://www.postgresql.org/) 15+ (ou Docker para o banco)
+- [MySQL](https://www.mysql.com/downloads/) 8.0+ (ou Docker para o banco)
 - npm ou yarn
 
 ## 🔧 Instalação e Execução
@@ -57,15 +57,15 @@ git clone <repository-url>
 cd challenge-7-backend-terca-noite
 ```
 
-2. Configure o PostgreSQL:
-   - Instale PostgreSQL localmente OU
+2. Configure o MySQL:
+   - Instale MySQL localmente OU
    - Use Docker apenas para o banco: `docker-compose up db` (se Docker estiver disponível)
 
 3. Configure as variáveis de ambiente no backend:
 ```bash
 cd backend
 copy ../.env.example .env
-# Edite o .env e ajuste DATABASE_URL para: postgresql://postgres:postgres@localhost:5432/codi_db
+# Edite o .env e ajuste DATABASE_URL para: mysql://codi_user:codi_password@localhost:3306/codi_db
 ```
 
 4. Instale dependências do backend:
@@ -107,7 +107,7 @@ cd challenge-7-backend-terca-noite
 2. Crie um arquivo `.env` na raiz do projeto:
 ```env
 JWT_SECRET=your-secret-key-here
-DATABASE_URL=postgresql://postgres:postgres@db:5432/codi_db
+DATABASE_URL=mysql://codi_user:codi_password@db:3306/codi_db
 ```
 
 3. Suba os containers:
@@ -129,7 +129,7 @@ docker-compose exec backend npm run prisma:generate
 - **Frontend:** http://localhost:5173
 - **Backend API:** http://localhost:3000
 - **Swagger Docs:** http://localhost:3000/docs
-- **PostgreSQL:** localhost:5432
+- **MySQL:** localhost:3306
 
 ### Desenvolvimento Local (Sem Docker)
 
@@ -147,7 +147,7 @@ npm install
 
 3. Crie um arquivo `.env`:
 ```env
-DATABASE_URL=postgresql://postgres:postgres@localhost:5432/codi_db
+DATABASE_URL=mysql://codi_user:codi_password@localhost:3306/codi_db
 JWT_SECRET=your-secret-key-here
 NODE_ENV=development
 ```

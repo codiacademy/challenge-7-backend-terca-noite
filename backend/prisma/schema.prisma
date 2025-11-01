@@ -5,12 +5,13 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
 }
 
+
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
@@ -31,10 +32,10 @@ enum ExpenseStatus {
 }
 
 model User {
-  id                         String    @id @default(uuid())
+  id                         String    @id @default(uuid()) @db.Char(36)
   name                       String    @db.VarChar(255)
-  email                      String    @unique
-  passwordHash               String    @db.VarChar(20)
+  email                      String    @unique @db.VarChar(255)
+  passwordHash               String    @db.VarChar(255)
   two_factor_enabled         Boolean   @default(false)
   notification_email_enabled Boolean   @default(false)
   notification_sms_enabled   Boolean   @default(false)
@@ -42,20 +43,23 @@ model User {
   updated_at                 DateTime  @updatedAt
 
   created_expenses Expense[] @relation("CreatedExpenses")
+
+  @@map("users")
 }
 
 model Expense {
-  id          String        @id @default(uuid())
-  unit_id     String
+  id          String        @id @default(uuid()) @db.Char(36)
   type        ExpenseType
   description String        @db.VarChar(255)
   amount      Decimal       @db.Decimal(10, 2)
   due_date    DateTime      @db.Date
   status      ExpenseStatus
   recurring   Boolean       @default(false)
-  created_by  String
+  created_by  String        @db.Char(36)
   created_at  DateTime      @default(now())
   updated_at  DateTime      @updatedAt
 
   createdBy   User          @relation("CreatedExpenses", fields: [created_by], references: [id])
+
+  @@map("expenses")
 }
