@@ -3,16 +3,15 @@ import type{ FastifyInstance } from 'fastify';
 import {AppError} from '../../utils/app-error.ts';
 import {deleteUserFunction} from '../../functions/users/delete-user-function.ts'
 
-const paramsSchema = z.object({
-    id: z.string()
-})
+const userIdSchema = z.uuid();
+
 
 export async function deleteUserRoute(app:FastifyInstance){
-    app.delete('/delete_user/:id', async(request,reply) => {
-        const { id } = paramsSchema.parse(request.params);
-
+    app.delete('/delete_user',{ preHandler: [app.authenticate] }, async(request,reply) => {
         try{
-            const result = await deleteUserFunction({id});
+            console.log(request.user)
+            const userId = userIdSchema.parse((request.user as any).id);
+            const result = await deleteUserFunction(userId);
 
             return reply.status(201).send({
                 message: "Usuário deletado com sucesso",

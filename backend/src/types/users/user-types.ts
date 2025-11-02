@@ -9,6 +9,9 @@ export type LoginUserType = {
     password: string;
 }
 
-export type IdUserType = {
-    id: string;
+export type ProfileChangeType = {
+    userId: string;
+    name?: string | undefined;
+    email?: string | undefined;
+    
 }

@@ -20,5 +20,5 @@
     "moduleDetection": "force",
     "allowImportingTsExtensions": true,
   },
-  "include": ["src", "prisma"]
+  "include": ["src", "prisma","src/**/*.ts", "src/@types/**/*.d.ts"],
 }
