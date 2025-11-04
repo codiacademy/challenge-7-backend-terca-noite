@@ -152,7 +152,7 @@ export const LoginForm = () => {
 
             <p>
               Ainda não possui uma conta?{" "}
-              <span className="text-green-500 cursor-pointer underline">
+              <span className="text-green-500 cursor-pointer underline" onClick={() => navigate("/signup")}>
                 Clique aqui
               </span>
             </p>

@@ -35,8 +35,12 @@ export const SignUpForm = () => {
         password: string;
         confirmPassword: string;
     }) => {
-        // aqui você chamaria sua API de criação de usuário
-        // por exemplo: await api.post("/users", { name: values.fullName, email: values.email, password: values.password });
+
+        try {
+        const response = await fetch("http//localhost:3000/users",{})
+        } catch(error){
+
+        }
         toast.success("Conta criada com sucesso!", { theme: "dark" });
         navigate("/signin");
     };

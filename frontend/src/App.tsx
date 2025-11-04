@@ -5,10 +5,10 @@ import { ExpensesPage } from "./pages/ExpensesPage";
 import { SalesPage } from "./pages/SalesPage";
 import { SettingsPage } from "./pages/SettingsPage";
 import { Login } from "./pages/LoginPage";
-
+import { SignUp } from "./pages/SignUpPage";
 export function App() {
   const location = useLocation();
-  const showSidebar = location.pathname === "/signin";
+  const showSidebar = location.pathname === "/signin" || location.pathname === "/signup";
 
 
   return (
@@ -27,6 +27,7 @@ export function App() {
         <Route path="/expenses" element={<ExpensesPage />} />
         <Route path="/settings" element={<SettingsPage />} />
         <Route path="/signin" element={<Login />} />
+        <Route path="/signup" element={<SignUp />} />
       </Routes>
     </div>
   );
