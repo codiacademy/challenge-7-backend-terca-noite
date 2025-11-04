@@ -1,11 +1,14 @@
-import 'dotenv/config';
-import { z } from "zod"
-
+import "dotenv/config";
+import { z } from "zod";
 
 const envSchema = z.object({
-    PORT: z.coerce.number().default(3000),
-    DATABASE_URL: z.string(),
-    JWT_SECRET: z.string(),
+  PORT: z.coerce.number().default(3000),
+  DATABASE_URL: z.string(),
+  JWT_SECRET: z.string(),
+  JWT_EXPIRES_IN: z.string(),
+  JWT_REFRESH_SECRET: z.string(),
+  JWT_REFRESH_EXPIRES_IN: z.string(),
+  COOKIE_SECRET: z.string(),
 });
 
 export const env = envSchema.parse(process.env);

@@ -1,43 +1,47 @@
-import type {FastifyInstance} from 'fastify';
-import {AppError} from '../../utils/app-error.ts';
-import {authLoginFunction} from '../../functions/auth/auth-login-function.ts';
-import {z} from 'zod';
+import type { FastifyInstance } from "fastify";
+import { AppError } from "../../utils/app-error.ts";
+import { authLoginFunction } from "../../functions/auth/auth-login-function.ts";
+import { z } from "zod";
 
 const bodySchema = z.object({
-    email: z.email(),
-    password: z.string()
+  email: z.email(),
+  password: z.string(),
+});
+export async function authLoginRoute(app: FastifyInstance) {
+  app.post("/login", async (request, reply) => {
+    try {
+      const { email, password } = bodySchema.parse(request.body);
 
-})
-export async function authLoginRoute(app:FastifyInstance){
-    app.post('/login', async(request,reply) => {
-        try{
-            const {email, password} = bodySchema.parse(request.body)
+      const result = await authLoginFunction(app, { email, password });
 
-            const result = await authLoginFunction({email,password});
+      reply.setCookie("refreshToken", result.refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        maxAge: 30 * 25 * 60 * 60,
+      });
+      return reply.status(200).send({
+        message: "Login bem-sucedido",
+        accessToken: result.accessToken,
+      });
+    } catch (error) {
+      app.log.error(error, "Erro ao tentar criar usuário no DB");
+      if (error instanceof AppError) {
+        return reply.status(error.statusCode).send({
+          message: error.message,
+          code: error.statusCode,
+        });
+      }
+      if (error instanceof z.ZodError) {
+        return reply.status(400).send({
+          message: "Dados de entrada em formato inválido",
+          errors: error.issues, // Retorna erros por campo
+        });
+      }
 
-            return reply.status(200).send({
-                message: "Login bem-sucedido",
-                token: result.token,
-            });
-        } catch (error){
-            app.log.error(error, "Erro ao tentar criar usuário no DB");
-                if (error instanceof AppError) {
-                    return reply.status(error.statusCode).send({
-                        message: error.message,
-                        code: error.statusCode
-                    })
-                }
-                if( error instanceof z.ZodError){
-                    return reply.status(400).send({
-                        message: "Dados de entrada em formato inválido",
-                        errors: error.issues, // Retorna erros por campo
-                    });
-                }
-
-                return reply.status(500).send({
-                    message: "Erro interno do servidor. Tente novamente mais tarde.",
-                });
-        }
-        
-    })
+      return reply.status(500).send({
+        message: "Erro interno do servidor. Tente novamente mais tarde.",
+      });
+    }
+  });
 }
