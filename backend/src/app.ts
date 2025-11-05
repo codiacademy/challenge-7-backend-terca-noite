@@ -3,7 +3,7 @@ import fp from "fastify-plugin";
 import cors from "@fastify/cors";
 import fastifyJwt from "@fastify/jwt";
 import cookie from "@fastify/cookie";
-
+import authDecorators from "./plugins/verify-refresh-token-plugin.ts";
 import { env } from "./config/env.ts";
 import { swaggerConfi } from "./config/swagger.ts";
 import { createUserRoute } from "./routes/users/create-user-route.ts";
@@ -13,6 +13,9 @@ import { readUserProfileRoute } from "./routes/users/read-user-profile-route.ts"
 import { updateUserProfileRoute } from "./routes/users/update-user-profile-route.ts";
 import { authLogoutRoute } from "./routes/auth/auth-logout-route.ts";
 import { authRefreshRoute } from "./routes/auth/auth-refresh-route.ts";
+import { isRefreshTokenValid } from "./utils/tokens-service.ts";
+import { AppError } from "./utils/app-error.ts";
+
 export const app = Fastify({ logger: true });
 
 await swaggerConfi(app);
@@ -23,7 +26,7 @@ app.register(cookie, {
   secret: env.COOKIE_SECRET, // opcional, caso queira cookies assinados
   // outras opções
 });
-
+app.register(authDecorators);
 app.register(createUserRoute, { prefix: "/users" });
 app.register(deleteUserRoute, { prefix: "/users" });
 app.register(readUserProfileRoute, { prefix: "/users" });

@@ -18,7 +18,8 @@
     "verbatimModuleSyntax": true,
     "noUncheckedSideEffectImports": true,
     "moduleDetection": "force",
-    "allowImportingTsExtensions": true,
+    "noEmit": true,
+    "allowImportingTsExtensions": true
   },
-  "include": ["src", "prisma","src/**/*.ts", "src/@types/**/*.d.ts"],
+  "include": ["src", "prisma", "src/**/*.ts", "src/@types/**/*.d.ts"]
 }

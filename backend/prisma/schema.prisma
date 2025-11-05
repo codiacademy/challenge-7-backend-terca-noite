@@ -35,7 +35,7 @@ model User {
   id                         String    @id @default(uuid()) @db.Char(36)
   name                       String    @db.VarChar(255)
   email                      String    @unique @db.VarChar(255)
-  passwordHash               String    @db.VarChar(255)
+  password_hash               String    @db.VarChar(255)
   two_factor_enabled         Boolean   @default(false)
   notification_email_enabled Boolean   @default(false)
   notification_sms_enabled   Boolean   @default(false)
@@ -43,7 +43,7 @@ model User {
   updated_at                 DateTime  @updatedAt
 
   created_expenses Expense[] @relation("CreatedExpenses")
-
+  created_refresh_tokens RefreshToken[] @relation("CreatedRefreshToken")
   @@map("users")
 }
 
@@ -62,4 +62,17 @@ model Expense {
   createdBy   User          @relation("CreatedExpenses", fields: [created_by], references: [id])
 
   @@map("expenses")
+}
+
+model RefreshToken {
+  id            String       @id @default(uuid()) @db.Char(36)  
+  tokenHash     String       @db.VarChar(255)
+  userId        String       @db.Char(36)
+  expiresAt     String       @db.VarChar(255)
+  created_at    DateTime     @default(now())
+  last_used_at  DateTime     @default(now())
+  is_revoked    Boolean      @default(false)
+
+  UserId  User   @relation("CreatedRefreshToken", fields: [userId], references: [id]) 
+  @@map("refreshTokens")   
 }

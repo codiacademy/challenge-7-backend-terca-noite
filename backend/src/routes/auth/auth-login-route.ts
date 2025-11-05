@@ -18,7 +18,8 @@ export async function authLoginRoute(app: FastifyInstance) {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "strict",
-        maxAge: 30 * 25 * 60 * 60,
+        maxAge: 24 * 60 * 60,
+        path: "/",
       });
       return reply.status(200).send({
         message: "Login bem-sucedido",
