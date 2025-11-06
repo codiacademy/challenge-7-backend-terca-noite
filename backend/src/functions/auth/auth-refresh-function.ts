@@ -5,26 +5,24 @@ import {
   revokeRefreshToken,
   generateTokens,
 } from "../../utils/tokens-service.ts";
-
-export async function authRefreshFunction({
-  app,
-  userId,
-  decodedToken,
-  refreshToken,
-}: CheckRefreshTokenType) {
+import type { FastifyInstance } from "fastify";
+export async function authRefreshFunction(
+  app: FastifyInstance,
+  { userId, decodedToken, refreshToken }: CheckRefreshTokenType,
+) {
   try {
     const valid = await isRefreshTokenValid(userId, refreshToken);
     if (!valid) {
       throw new AppError("Refresh token revogado ou inválido", 403);
     }
-
+    console.log("o id do usuario na authrefreshfunction é " + userId);
     const tokens = await generateTokens(app, {
-      userId: decodedToken.userId,
+      userId,
       email: decodedToken.email,
       name: decodedToken.name,
     });
 
-    await revokeRefreshToken(decodedToken.userId, refreshToken);
+    await revokeRefreshToken(userId, refreshToken);
     return tokens;
   } catch (error) {
     if (error instanceof AppError) {

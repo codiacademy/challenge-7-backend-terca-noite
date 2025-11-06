@@ -130,6 +130,7 @@ export async function generateTokens(
     { expiresIn: env.JWT_REFRESH_EXPIRES_IN },
   );
 
+  console.log(payload);
   const savedRefreshToken = await saveRefreshToken({
     userId: payload.userId,
     refreshToken,

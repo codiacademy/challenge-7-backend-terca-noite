@@ -4,28 +4,29 @@ import { AppError } from "../../utils/app-error.ts";
 import z, { any } from "zod";
 import type { FastifyJWT } from "@fastify/jwt";
 import { authRefreshFunction } from "../../functions/auth/auth-refresh-function.ts";
-import type { RefreshPayload } from "../../types/auth/refresh-token-types.ts";
+import type { Payload } from "../../types/auth/refresh-token-types.ts";
 
 export async function authRefreshRoute(app: FastifyInstance) {
   app.post(
     "/refresh",
-    { preHandler: (request, reply, done) => (app as any).verifyRefreshToken(request, reply, done) },
+    {
+      preHandler: app.verifyRefreshToken,
+    },
     async (request, reply) => {
       try {
         const refreshToken = await request.cookies?.refreshToken;
         if (!refreshToken) {
           throw new AppError("Refresh token ausente", 401);
         }
-        const decoded = await app.jwt.verify<RefreshPayload>(refreshToken);
+        const decoded = await app.jwt.verify<Payload>(refreshToken);
         console.log("🔍 Decoded Refresh Token:", JSON.stringify(decoded, null, 2));
         if (decoded.type !== "refresh") {
           throw new AppError("Este token não é de refresh", 401);
         }
 
-        const { userId } = decoded;
-        const tokens = await authRefreshFunction({
-          app,
-          userId: decoded.userId,
+        const { id } = decoded;
+        const tokens = await authRefreshFunction(app, {
+          userId: decoded.id,
           decodedToken: decoded,
           refreshToken,
         });
@@ -42,7 +43,7 @@ export async function authRefreshRoute(app: FastifyInstance) {
             accessToken: tokens.accessToken,
           });
       } catch (error) {
-        app.log.error(error, "Erro ao tentar deslogar usuário");
+        app.log.error(error, "Erro ao tentar dar refresh no usuário");
         if (error instanceof AppError) {
           return reply.status(error.statusCode).send({
             message: error.message,
