@@ -13,35 +13,33 @@ import { authLogoutRoute } from "./routes/auth/auth-logout-route.ts";
 import { authRefreshRoute } from "./routes/auth/auth-refresh-route.ts";
 import { isRefreshTokenValid } from "./utils/tokens-service.ts";
 import fp from "./plugins/fastify-plugin.ts";
-
 export const app = Fastify({ logger: true });
 
 await swaggerConfi(app);
 
-app.register(cors, { origin: "*" });
+app.register(cors, {
+  origin: ["http://localhost:5173", "http://192.168.2.102:5173"],
+  credentials: true,
+});
 app.register(fastifyJwt, { secret: env.JWT_SECRET });
 app.register(cookie, {
   secret: env.COOKIE_SECRET, // opcional, caso queira cookies assinados
   // outras opções
 });
-app.register(createUserRoute, { prefix: "/users" });
-app.register(deleteUserRoute, { prefix: "/users" });
-app.register(readUserProfileRoute, { prefix: "/users" });
-app.register(updateUserProfileRoute, { prefix: "/users" });
-app.register(authLogoutRoute);
-app.register(authRefreshRoute);
-app.register(authLoginRoute);
-
-app.get("/", async (request, reply) => {
-  return "Codi Cash API rodando! Acesse /docs para a documentação.";
-});
-
+import type { Payload } from "./types/auth/refresh-token-types.ts";
 fp(app);
 app.decorate("authenticate", async (request: any, reply: any) => {
   try {
-    console.log("authenticate veio!");
-    const decoded = await request.jwt.verify(request.token);
-    console.log(decoded);
+    const authHeader = request.headers.authorization;
+
+    if (!authHeader) {
+      return reply.status(401).send({ message: "Token ausente" });
+    }
+
+    const token = authHeader.split(" ")[1];
+    console.log("token =" + token);
+    const decoded = await app.jwt.verify<Payload>(token);
+
     // então:
     request.user = {
       id: decoded.id,
@@ -51,4 +49,15 @@ app.decorate("authenticate", async (request: any, reply: any) => {
   } catch (err) {
     return reply.status(401).send({ message: "Token inválido ou ausente" });
   }
+});
+app.register(createUserRoute, { prefix: "/users" });
+app.register(deleteUserRoute, { prefix: "/users" });
+app.register(readUserProfileRoute, { prefix: "/users" });
+app.register(updateUserProfileRoute, { prefix: "/users" });
+app.register(authLogoutRoute);
+app.register(authRefreshRoute);
+app.register(authLoginRoute);
+
+app.get("/", { preHandler: [app.authenticate] }, async (request, reply) => {
+  return "Codi Cash API rodando! Acesse /docs para a documentação.";
 });

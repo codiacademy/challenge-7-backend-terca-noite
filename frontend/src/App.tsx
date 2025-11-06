@@ -6,10 +6,11 @@ import { SalesPage } from "./pages/SalesPage";
 import { SettingsPage } from "./pages/SettingsPage";
 import { Login } from "./pages/LoginPage";
 import { SignUp } from "./pages/SignUpPage";
+import { ProtectedRoute } from "./components/common/ProtectedRoute";
+import { PublicRoute } from "./components/common/PublicRoute";
 export function App() {
   const location = useLocation();
   const showSidebar = location.pathname === "/signin" || location.pathname === "/signup";
-
 
   return (
     <div className="flex h-screen bg-gray-900 text-gray-100 overflow-hidden">
@@ -22,11 +23,46 @@ export function App() {
       {!showSidebar && <Sidebar />}
 
       <Routes>
-        <Route path="/" element={<OverviewPage />} />
-        <Route path="/sales" element={<SalesPage />} /> 
-        <Route path="/expenses" element={<ExpensesPage />} />
-        <Route path="/settings" element={<SettingsPage />} />
-        <Route path="/signin" element={<Login />} />
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <OverviewPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/sales"
+          element={
+            <ProtectedRoute>
+              <SalesPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/expenses"
+          element={
+            <ProtectedRoute>
+              <ExpensesPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/settings"
+          element={
+            <ProtectedRoute>
+              <SettingsPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/signin"
+          element={
+            <PublicRoute>
+              <Login />
+            </PublicRoute>
+          }
+        />
         <Route path="/signup" element={<SignUp />} />
       </Routes>
     </div>

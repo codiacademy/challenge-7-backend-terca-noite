@@ -1,7 +1,8 @@
 import { app } from "./app.ts";
 import { env } from "./config/env.ts";
+import { cleanExpiredTokens } from "./jobs/clean-expired-tokens.ts";
+import cron from "node-cron";
 const InitServer = async () => {
-  console.log("🔥 O servidor está iniciando...");
   try {
     await app.listen({ port: env.PORT, host: "0.0.0.0" });
     console.log(`Server inicializado e rodando com sucesso na porta ${env.PORT}`);
@@ -11,3 +12,7 @@ const InitServer = async () => {
 };
 
 InitServer();
+cron.schedule("* * * * *", async () => {
+  console.log("🧹 Limpando tokens expirados...");
+  await cleanExpiredTokens();
+});

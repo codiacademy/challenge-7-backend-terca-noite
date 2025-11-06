@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { ForwardRefExoticComponent, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useIsMobile } from "../../hooks/useIsMobile";
 
 interface SidebarItem {
@@ -58,7 +58,35 @@ const BOTTOM_ITEMS: SidebarItem[] = [
 export const Sidebar = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const isMobile = useIsMobile();
+  const navigate = useNavigate();
 
+  const sendRequestToLogout = async () => {
+    try {
+      const res = await fetch("http://localhost:3000/logout", {
+        method: "POST",
+        credentials: "include",
+      });
+
+      if (res.ok) {
+        localStorage.removeItem("accessToken");
+        console.log("Logout feito com sucesso!");
+        navigate("/signin"); // redireciona só depois do sucesso
+        return true;
+      } else {
+        console.error("Falha ao fazer logout:", res.status);
+        return false;
+      }
+    } catch (error) {
+      console.error("Erro ao fazer logout:", error);
+    }
+  };
+
+  const handleLogout = async () => {
+    const success = await sendRequestToLogout();
+    if (!success) {
+      console.error("Logout não foi bem sucedido!");
+    }
+  };
   const sidebarWidth = isMobile
     ? isSidebarOpen
       ? "w-screen"
@@ -85,10 +113,7 @@ export const Sidebar = () => {
           {MAIN_ITEMS.map((item) => (
             <Link key={item.href} to={item.href}>
               <motion.div className="flex items-center p-4 text-sm font-medium rounded-lg hover:bg-gray-700 transition-colors mb-2">
-                <item.icon
-                  size={20}
-                  style={{ color: item.color, minWidth: "20px" }}
-                />
+                <item.icon size={20} style={{ color: item.color, minWidth: "20px" }} />
                 <AnimatePresence>
                   {isSidebarOpen && (
                     <motion.span
@@ -109,12 +134,13 @@ export const Sidebar = () => {
 
         <div className="mt-auto">
           {BOTTOM_ITEMS.map((item) => (
-            <Link key={item.href} to={item.href}>
+            <Link
+              key={item.href}
+              to={item.name == "Sair" ? "/" : item.href}
+              onClick={item.name == "Sair" ? handleLogout : undefined}
+            >
               <motion.div className="flex items-center p-4 text-sm font-medium rounded-lg hover:bg-gray-700 transition-colors mb-2">
-                <item.icon
-                  size={20}
-                  style={{ color: item.color, minWidth: "20px" }}
-                />
+                <item.icon size={20} style={{ color: item.color, minWidth: "20px" }} />
                 <AnimatePresence>
                   {isSidebarOpen && (
                     <motion.span

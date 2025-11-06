@@ -5,9 +5,12 @@ import { env } from "../config/env.ts";
 import { prisma } from "../lib/prisma.ts";
 import { AppError } from "./app-error.ts";
 import bcrypt from "bcrypt";
+import { randomUUID } from "crypto";
+import ms from "ms";
+import type { Payload } from "@prisma/client/runtime/library";
 
 export async function getValidToken(userId: string, refreshToken: string) {
-  const userTokens = await prisma.refreshToken.findMany({
+  const userTokens = await prisma.refreshtokens.findMany({
     where: { userId, is_revoked: false },
   });
 
@@ -17,42 +20,35 @@ export async function getValidToken(userId: string, refreshToken: string) {
 
   for (const token of userTokens) {
     const isMatch = await bcrypt.compare(refreshToken, token.tokenHash);
-    if (isMatch) {
-      // Revoga o token encontrado
-      return token;
-    }
-
-    throw new AppError("Token não encontrado ou já revogado", 404);
-    return {
-      id: "",
-      tokenHash: "",
-      userId: "",
-      expiresAt: "",
-      created_at: "",
-      last_used_at: "",
-      is_revoked: "",
-    };
+    if (isMatch) return token;
   }
+
+  throw new AppError("Token não encontrado ou já revogado", 404);
 }
 
 export async function isRefreshTokenValid(userId: string, refreshToken: string) {
-  const userTokens = await prisma.refreshToken.findMany({
+  const userTokens = await prisma.refreshtokens.findMany({
     where: { userId, is_revoked: false },
+    select: { userId: true, tokenHash: true, expiresAt: true },
   });
-
   if (!userTokens.length) {
     throw new AppError("Nenhum token encontrado para este usuário", 404);
   }
 
   for (const token of userTokens) {
     const isMatch = await bcrypt.compare(refreshToken, token.tokenHash);
-    if (isMatch) {
-      // Revoga o token encontrado
+    if (!isMatch) {
+      return false;
+    } else {
+      console.log("Match!");
+      const now = Date.now();
+      //  Verifica expiração (token.expiresAt é string → converte para Date)
+      const expiresAt = new Date(token.expiresAt).getTime();
+      if (expiresAt < now) {
+        revokeRefreshToken(userId, refreshToken);
+      }
       return true;
-      return { message: "Token encontrado com sucesso" };
     }
-
-    throw new AppError("Token não encontrado ou já revogado", 404);
   }
 }
 export async function revokeRefreshToken(userId: string, refreshToken: string) {
@@ -63,7 +59,7 @@ export async function revokeRefreshToken(userId: string, refreshToken: string) {
       throw new AppError("Token não encontrado", 404);
     }
 
-    return await prisma.refreshToken.update({
+    return await prisma.refreshtokens.update({
       where: { id: retrievedToken.id },
       data: { is_revoked: true, last_used_at: new Date() },
     });
@@ -87,9 +83,9 @@ export async function saveRefreshToken({ userId, refreshToken, expiresAt }: Save
     }
 
     const refreshTokenHash = await bcrypt.hash(refreshToken, 10);
-
-    const createdRefreshToken = prisma.refreshToken.create({
+    const createdRefreshToken = await prisma.refreshtokens.create({
       data: {
+        id: randomUUID(),
         tokenHash: refreshTokenHash,
         userId,
         expiresAt,
@@ -129,12 +125,12 @@ export async function generateTokens(
     },
     { expiresIn: env.JWT_REFRESH_EXPIRES_IN },
   );
-
-  console.log(payload);
+  const expiresIn = env.JWT_REFRESH_EXPIRES_IN;
+  const expiresAt = new Date(Date.now() + ms(expiresIn as ms.StringValue));
   const savedRefreshToken = await saveRefreshToken({
     userId: payload.userId,
     refreshToken,
-    expiresAt: env.JWT_REFRESH_EXPIRES_IN,
+    expiresAt: expiresAt.toString(),
   });
 
   return { accessToken, refreshToken };

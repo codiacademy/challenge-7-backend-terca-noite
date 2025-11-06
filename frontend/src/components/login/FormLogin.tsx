@@ -9,9 +9,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const validationSchema = Yup.object().shape({
-  email: Yup.string()
-    .email("E-mail inválido")
-    .required("O email é obrigatório"),
+  email: Yup.string().email("E-mail inválido").required("O email é obrigatório"),
   password: Yup.string()
     .min(6, "A senha deve ter pelo menos 6 caracteres")
     .required("A senha é obrigatória"),
@@ -25,18 +23,31 @@ export const LoginForm = () => {
     setShowPassword(!showPassword);
   };
 
-  const handleSubmitLogin = async (values: {
-    email: string;
-    password: string;
-  }) => {
-    if (
-      userData.email === values.email &&
-      userData.password === values.password
-    ) {
-      toast.success("Login concluído com sucesso!", { theme: "dark" });
+  const handleSubmitLogin = async (values: { email: string; password: string }) => {
+    try {
+      const response = await fetch("http://localhost:3000/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify(values),
+      });
+
+      const data = await response.json();
+      console.log(data);
+      if (!response.ok) {
+        toast.error(data.message || "E-mail ou Senha inválidos");
+        return;
+      }
+
+      localStorage.setItem("accessToken", data.accessToken);
+
+      toast.success("Login concluído com sucesso!");
       navigate("/");
-    } else {
-      toast.error("E-mail ou senha inválidos", { theme: "dark" });
+    } catch (error) {
+      console.error("Erro ao fazer login", error);
+      toast.error("Erro no servidor.Tente novamente mais tarde!");
     }
   };
 
@@ -59,9 +70,7 @@ export const LoginForm = () => {
                     name="email"
                     placeholder=""
                     className={`peer w-full py-3 px-10 border rounded-md bg-transparent focus:outline-none ${
-                      errors.email && touched.email
-                        ? "border-red-500"
-                        : "border-gray-100"
+                      errors.email && touched.email ? "border-red-500" : "border-gray-100"
                     }`}
                   />
 
@@ -72,11 +81,7 @@ export const LoginForm = () => {
                   <label
                     htmlFor="password"
                     className={`absolute left-4 -top-2 text-sm font-medium transition-all duration-200 ease-in-out
-                      ${
-                        errors.password && touched.password
-                          ? "text-red-500"
-                          : "text-gray-100"
-                      }
+                      ${errors.password && touched.password ? "text-red-500" : "text-gray-100"}
                          bg-gray-950 px-1
                     `}
                   >
@@ -84,9 +89,7 @@ export const LoginForm = () => {
                   </label>
                 </div>
                 {errors.email && touched.email && (
-                  <div className="text-red-500 text-sm mt-1">
-                    {errors.email}
-                  </div>
+                  <div className="text-red-500 text-sm mt-1">{errors.email}</div>
                 )}
               </div>
 
@@ -97,9 +100,7 @@ export const LoginForm = () => {
                     name="password"
                     placeholder=" "
                     className={`peer w-full py-3 px-10 border rounded-md bg-transparent focus:outline-none ${
-                      errors.password && touched.password
-                        ? "border-red-500"
-                        : "border-gray-100"
+                      errors.password && touched.password ? "border-red-500" : "border-gray-100"
                     }`}
                   />
 
@@ -110,11 +111,7 @@ export const LoginForm = () => {
                   <label
                     htmlFor="password"
                     className={`absolute left-4 -top-2 text-sm font-medium transition-all duration-200 ease-in-out
-                    ${
-                      errors.password && touched.password
-                        ? "text-red-500"
-                        : "text-gray-100"
-                    }
+                    ${errors.password && touched.password ? "text-red-500" : "text-gray-100"}
                      bg-gray-950 px-1
                     `}
                   >
@@ -128,9 +125,7 @@ export const LoginForm = () => {
                   </div>
                 </div>
                 {errors.password && touched.password && (
-                  <div className="text-red-500 text-sm mt-1">
-                    {errors.password}
-                  </div>
+                  <div className="text-red-500 text-sm mt-1">{errors.password}</div>
                 )}
               </div>
             </div>
@@ -138,9 +133,7 @@ export const LoginForm = () => {
             <div className="flex justify-between items-center">
               <CheckboxLoginRegister titleChecked="Memorizar senha" />
 
-              <p className="text-sm cursor-pointer hover:text-gray-400">
-                Esqueceu a senha?
-              </p>
+              <p className="text-sm cursor-pointer hover:text-gray-400">Esqueceu a senha?</p>
             </div>
 
             <button
@@ -152,7 +145,10 @@ export const LoginForm = () => {
 
             <p>
               Ainda não possui uma conta?{" "}
-              <span className="text-green-500 cursor-pointer underline" onClick={() => navigate("/signup")}>
+              <span
+                className="text-green-500 cursor-pointer underline"
+                onClick={() => navigate("/signup")}
+              >
                 Clique aqui
               </span>
             </p>
