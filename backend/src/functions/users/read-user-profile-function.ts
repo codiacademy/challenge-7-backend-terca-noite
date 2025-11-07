@@ -9,6 +9,7 @@ export async function readUserProfileFunction(userId: string) {
         id: true,
         name: true,
         email: true,
+        telephone: true,
         two_factor_enabled: true,
         notification_email_enabled: true,
         notification_sms_enabled: true,
@@ -24,9 +25,6 @@ export async function readUserProfileFunction(userId: string) {
       throw error;
     }
     console.error("Erro operacional ao deletar usuário ", error);
-    throw new AppError(
-      "Ocorreu um erro interno ao processar sua solicitação",
-      500,
-    );
+    throw new AppError("Ocorreu um erro interno ao processar sua solicitação", 500);
   }
 }

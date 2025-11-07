@@ -12,6 +12,7 @@ model User {
   id                         String          @id @default(uuid()) @db.Char(36)
   name                       String          @db.VarChar(255)
   email                      String          @unique @db.VarChar(255)
+  telephone                  String?         
   two_factor_enabled         Boolean         @default(false)
   notification_email_enabled Boolean         @default(false)
   notification_sms_enabled   Boolean         @default(false)
@@ -42,7 +43,7 @@ model Expense {
 }
 
 model refreshtokens {
-  id           String   @id @db.Char(36)
+  id           String   @id @default(uuid()) @db.Char(36)
   tokenHash    String   @db.VarChar(255)
   userId       String   @db.Char(36)
   expiresAt    String   @db.VarChar(255)

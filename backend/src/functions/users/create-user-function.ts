@@ -3,7 +3,7 @@ import type { CreateUserType } from "../../types/users/user-types.ts";
 import { AppError } from "../../utils/app-error.ts";
 import bcrypt from "bcrypt";
 
-export async function createUserFunction({ name, email, password }: CreateUserType) {
+export async function createUserFunction({ fullName, email, telephone, password }: CreateUserType) {
   try {
     const existingUser = await prisma.user.findUnique({
       where: { email },
@@ -14,8 +14,9 @@ export async function createUserFunction({ name, email, password }: CreateUserTy
     const passwordHash = await bcrypt.hash(password, 10);
     const createdUser = await prisma.user.create({
       data: {
-        name,
+        name: fullName,
         email,
+        telephone: telephone ?? null,
         password_hash: passwordHash,
       },
       // Adiciona a seleção para garantir que o hash da senha NUNCA saia

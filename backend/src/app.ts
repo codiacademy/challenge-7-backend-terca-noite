@@ -19,6 +19,8 @@ await swaggerConfi(app);
 
 app.register(cors, {
   origin: ["http://localhost:5173", "http://192.168.2.102:5173"],
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"], // <--- adicione PATCH aqui
+  allowedHeaders: ["Content-Type", "Authorization"], // ajuste conforme o necessário
   credentials: true,
 });
 app.register(fastifyJwt, { secret: env.JWT_SECRET });
