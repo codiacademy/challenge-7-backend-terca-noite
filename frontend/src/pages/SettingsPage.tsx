@@ -4,10 +4,11 @@ import { DangerZone } from "../components/settings/DangerZone";
 import { Notifications } from "../components/settings/Notifications";
 import { Profile } from "../components/settings/Profile";
 import { Security } from "../components/settings/Security";
-import { ProfileChangeType } from "../../../backend/src/types/users/user-types";
+import { ProfileConfigsType } from "../types/types";
+
 
 export function SettingsPage() {
-  const [profileData, setProfileData] = useState<ProfileChangeType | null>(null);
+  const [profileData, setProfileData] = useState<ProfileConfigsType | null>(null);
   const [loadingProfile, setLoadingProfile] = useState<boolean>(true);
   useEffect(() => {
     const controller = new AbortController();
@@ -51,8 +52,8 @@ export function SettingsPage() {
 
       <main className="max-w-4xl mx-auto py-6 px-4 lg:px-8">
         <Profile {...((profileData ?? {}) as any)} isLoading={loadingProfile} />
-        <Notifications />
-        <Security />
+        <Notifications {...((profileData ?? {}) as any)} isLoading={loadingProfile} />
+        <Security {...((profileData ?? {}) as any)} isLoading={loadingProfile} />
         <DangerZone />
       </main>
     </div>

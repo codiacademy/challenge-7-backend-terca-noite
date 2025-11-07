@@ -1,7 +1,11 @@
 import { User } from "lucide-react";
 import { SettingSection } from "./SettingSection";
 import { ProfileChangeType } from "../../../../backend/src/types/users/user-types.ts";
-export const Profile = ({ user, isLoading }: { user: ProfileChangeType; isLoading: boolean }) => {
+import { ProfileConfigsType } from "../../types/types";
+
+
+
+export const Profile = ({ user, isLoading }: { user: ProfileConfigsType; isLoading: boolean }) => {
   if (isLoading || !user) {
     return (
       <SettingSection icon={User} title="Perfil">

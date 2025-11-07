@@ -8,6 +8,16 @@ export interface Expense {
   status: "Pago" | "Pendente";
 }
 
+export type ProfileConfigsType = {
+  userId: string;
+  name: string ;
+  email: string ;
+  telephone: string ;
+  two_factor_enabled: boolean ;
+  notification_email_enabled: boolean ;
+  notification_sms_enabled: boolean ;
+};
+
 export type CourseName =
   | "curso fullstack"
   | "curso frontend"

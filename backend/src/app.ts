@@ -13,6 +13,8 @@ import { authLogoutRoute } from "./routes/auth/auth-logout-route.ts";
 import { authRefreshRoute } from "./routes/auth/auth-refresh-route.ts";
 import { isRefreshTokenValid } from "./utils/tokens-service.ts";
 import fp from "./plugins/fastify-plugin.ts";
+import { updateUserEmailNotificationRoute } from "./routes/users/update-user-email-notification-route.ts";
+import { updateUserSmsNotificationRoute } from "./routes/users/update-user-sms-notification.ts";
 export const app = Fastify({ logger: true });
 
 await swaggerConfi(app);
@@ -59,6 +61,8 @@ app.register(updateUserProfileRoute, { prefix: "/users" });
 app.register(authLogoutRoute);
 app.register(authRefreshRoute);
 app.register(authLoginRoute);
+app.register(updateUserEmailNotificationRoute, { prefix: "/users" });
+app.register(updateUserSmsNotificationRoute, { prefix: "/users" });
 
 app.get("/", { preHandler: [app.authenticate] }, async (request, reply) => {
   return "Codi Cash API rodando! Acesse /docs para a documentação.";

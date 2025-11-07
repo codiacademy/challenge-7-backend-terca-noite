@@ -2,11 +2,12 @@ import { useState } from "react";
 import { SettingSection } from "./SettingSection";
 import { Bell } from "lucide-react";
 import { ToggleSwitch } from "./ToggleSwitch";
+import { ProfileConfigsType } from "../../types/types";
 
-export const Notifications = () => {
+export const Notifications = ({ user, isLoading }: { user: ProfileConfigsType; isLoading: boolean }) => {
   const [notifications, setNotifications] = useState({
-    email: false,
-    sms: false,
+    email: user.notification_email_enabled || false,
+    sms: user.notification_sms_enabled || false,
   });
 
   return (
