@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "moduleResolution": "NodeNext", // ou "node" ou "nodenext"
+    "target": "ES2022",
+    "module": "NodeNext",
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "strict": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "declaration": true,
+    "declarationMap": true,
+    "exactOptionalPropertyTypes": true,
+    "noUncheckedIndexedAccess": true,
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
+    "noUncheckedSideEffectImports": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+    "allowImportingTsExtensions": true
+  },
+  "include": ["src", "prisma", "src/**/*.ts", "src/@types/**/*.d.ts", "scripts"]
+}

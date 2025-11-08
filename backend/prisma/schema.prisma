@@ -1,0 +1,66 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                         String          @id @default(uuid()) @db.Char(36)
+  name                       String          @db.VarChar(255)
+  email                      String          @unique @db.VarChar(255)
+  telephone                  String?         
+  two_factor_enabled         Boolean         @default(false)
+  notification_email_enabled Boolean         @default(false)
+  notification_sms_enabled   Boolean         @default(false)
+  created_at                 DateTime        @default(now())
+  updated_at                 DateTime        @updatedAt
+  password_hash              String          @db.VarChar(255)
+  created_expenses           Expense[]       @relation("CreatedExpenses")
+  refreshtokens              refreshtokens[]
+
+  @@map("users")
+}
+
+model Expense {
+  id          String        @id @default(uuid()) @db.Char(36)
+  type        ExpenseType
+  description String        @db.VarChar(255)
+  amount      Decimal       @db.Decimal(10, 2)
+  due_date    DateTime      @db.Date
+  status      ExpenseStatus
+  recurring   Boolean       @default(false)
+  created_by  String        @db.Char(36)
+  created_at  DateTime      @default(now())
+  updated_at  DateTime      @updatedAt
+  createdBy   User          @relation("CreatedExpenses", fields: [created_by], references: [id])
+
+  @@index([created_by], map: "expenses_created_by_fkey")
+  @@map("expenses")
+}
+
+model refreshtokens {
+  id           String   @id @default(uuid()) @db.Char(36)
+  tokenHash    String   @db.VarChar(255)
+  userId       String   @db.Char(36)
+  expiresAt    String   @db.VarChar(255)
+  created_at   DateTime @default(now())
+  last_used_at DateTime @default(now())
+  is_revoked   Boolean  @default(false)
+  users        User     @relation(fields: [userId], references: [id], map: "refreshTokens_userId_fkey")
+
+  @@index([userId], map: "refreshTokens_userId_fkey")
+}
+
+enum ExpenseType {
+  fixa
+  variavel
+}
+
+enum ExpenseStatus {
+  pago
+  pendente
+}
