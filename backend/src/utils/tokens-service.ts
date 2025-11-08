@@ -135,3 +135,22 @@ export async function generateTokens(
 
   return { accessToken, refreshToken };
 }
+
+export async function generateTwoFactorTempToken(
+  app: FastifyInstance,
+  userId: string,
+  email: string,
+  name: string,
+) {
+  return app.jwt.sign(
+    {
+      id: userId,
+      email,
+      name: name,
+      type: "2fa_pending",
+    },
+    {
+      expiresIn: "5m", // expira em 5 minutos
+    },
+  );
+}

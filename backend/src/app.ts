@@ -15,6 +15,8 @@ import { isRefreshTokenValid } from "./utils/tokens-service.ts";
 import fp from "./plugins/fastify-plugin.ts";
 import { updateUserEmailNotificationRoute } from "./routes/users/update-user-email-notification-route.ts";
 import { updateUserSmsNotificationRoute } from "./routes/users/update-user-sms-notification.ts";
+import { twoFactorVerifyRoute } from "./routes/auth/two-factor-verify-route.ts";
+
 export const app = Fastify({ logger: true });
 
 await swaggerConfi(app);
@@ -31,6 +33,7 @@ app.register(cookie, {
   // outras opções
 });
 import type { Payload } from "./types/auth/refresh-token-types.ts";
+import { twoFactorSendRoute } from "./routes/auth/two-factor-send-route.ts";
 fp(app);
 app.decorate("authenticate", async (request: any, reply: any) => {
   try {
@@ -63,7 +66,8 @@ app.register(authRefreshRoute);
 app.register(authLoginRoute);
 app.register(updateUserEmailNotificationRoute, { prefix: "/users" });
 app.register(updateUserSmsNotificationRoute, { prefix: "/users" });
-
+app.register(twoFactorSendRoute, { prefix: "/2fa" });
+app.register(twoFactorVerifyRoute, { prefix: "/2fa" });
 app.get("/", { preHandler: [app.authenticate] }, async (request, reply) => {
   return "Codi Cash API rodando! Acesse /docs para a documentação.";
 });

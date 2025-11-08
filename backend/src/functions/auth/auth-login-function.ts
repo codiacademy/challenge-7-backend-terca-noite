@@ -26,6 +26,7 @@ export async function authLoginFunction(
         email: true,
         password_hash: true,
         name: true,
+        two_factor_enabled: true,
       },
     });
 

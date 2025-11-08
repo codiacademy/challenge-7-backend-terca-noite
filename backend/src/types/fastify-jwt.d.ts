@@ -6,7 +6,7 @@ declare module "@fastify/jwt" {
       id: string;
       email: string;
       name: string;
-      type: "access" | "refresh";
+      type: "access" | "refresh" | "2fa_pending";
       iat?: number;
       exp?: number;
     };
