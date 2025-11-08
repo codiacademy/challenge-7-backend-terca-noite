@@ -12,7 +12,7 @@ model User {
   id                         String          @id @default(uuid()) @db.Char(36)
   name                       String          @db.VarChar(255)
   email                      String          @unique @db.VarChar(255)
-  telephone                  String?         
+  telephone                  String?
   two_factor_enabled         Boolean         @default(false)
   notification_email_enabled Boolean         @default(false)
   notification_sms_enabled   Boolean         @default(false)
@@ -20,19 +20,42 @@ model User {
   updated_at                 DateTime        @updatedAt
   password_hash              String          @db.VarChar(255)
   created_expenses           Expense[]       @relation("CreatedExpenses")
+  created_sales              Sale[]          @relation("CreatedSales")
   refreshtokens              refreshtokens[]
 
   @@map("users")
 }
 
+model Sale {
+  id           String     @id @default(uuid()) @db.Char(36)
+  client_name  String     @db.VarChar(255)
+  cpf          String     @db.VarChar(14)
+  client_phone String     @db.VarChar(20)
+  client_email String     @db.VarChar(255)
+  course       String     @db.VarChar(255)
+  course_type CourseType
+  course_value Decimal    @db.Decimal(10, 2)
+  discount_value     Decimal    @db.Decimal(10, 2)
+  taxes_value      Decimal    @db.Decimal(10, 2)
+  commission_value Decimal    @db.Decimal(10, 2)
+  card_fee_value  Decimal    @db.Decimal(10, 2)
+  total_value  Decimal    @db.Decimal(10, 2)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  created_by  String     @db.Char(36)
+  createdBy  User     @relation("CreatedSales", fields: [created_by], references: [id])
+
+  @@index([created_by], map: "sales_created_by_fkey")
+  @@map("sales")
+}
+
 model Expense {
   id          String        @id @default(uuid()) @db.Char(36)
-  type        ExpenseType
-  description String        @db.VarChar(255)
-  amount      Decimal       @db.Decimal(10, 2)
   due_date    DateTime      @db.Date
+  description String        @db.VarChar(255)
+  category       ExpenseCategory
+  value      Decimal       @db.Decimal(10, 2)
   status      ExpenseStatus
-  recurring   Boolean       @default(false)
   created_by  String        @db.Char(36)
   created_at  DateTime      @default(now())
   updated_at  DateTime      @updatedAt
@@ -55,7 +78,7 @@ model refreshtokens {
   @@index([userId], map: "refreshTokens_userId_fkey")
 }
 
-enum ExpenseType {
+enum ExpenseCategory {
   fixa
   variavel
 }
@@ -63,4 +86,9 @@ enum ExpenseType {
 enum ExpenseStatus {
   pago
   pendente
+}
+
+enum CourseType {
+  presencial
+  online
 }
