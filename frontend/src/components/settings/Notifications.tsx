@@ -28,11 +28,9 @@ export const Notifications = ({
         return;
       }
 
-      const response = await axios.put(
+      const response = await axios.patch(
         "http://localhost:3000/users/update_sms_notification",
-        {
-          notification_sms_enabled: notifications.sms,
-        },
+        {},
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -44,7 +42,7 @@ export const Notifications = ({
         setNotifications({ ...notifications, sms: !notifications.sms });
         console.log("Configurações de notificação por SMS atualizadas com sucesso:", response.data);
       }
-      console.log("Erro, olhe a resposta do servidor:", response.data);
+      console.log("Olhe a resposta do servidor:", response.data);
     } catch (error) {
       console.error("Erro ao atualizar configurações de notificação por SMS:", error);
     }
@@ -58,11 +56,9 @@ export const Notifications = ({
         return;
       }
 
-      const response = await axios.put(
+      const response = await axios.patch(
         "http://localhost:3000/users/update_email_notification",
-        {
-          notification_email_enabled: notifications.email,
-        },
+        {},
         {
           headers: {
             Authorization: `Bearer ${token}`,

@@ -38,7 +38,7 @@ export async function authLoginRoute(app: FastifyInstance) {
         accessToken: result.accessToken,
       });
     } catch (error) {
-      app.log.error(error, "Erro ao tentar criar usuário no DB");
+      app.log.error(error, "Erro ao tentar logar usuário");
       if (error instanceof AppError) {
         return reply.status(error.statusCode).send({
           message: error.message,

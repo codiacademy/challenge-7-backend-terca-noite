@@ -1,23 +1,24 @@
-import { z } from "zod";
 import type { FastifyInstance } from "fastify";
 import { AppError } from "../../utils/app-error.ts";
-import { updateUserSmsNotificationFunction } from "../../functions/users/update-user-sms-notification-function.ts";
+import { updateUserTwoFactorAuthFunction } from "../../functions/users/update-user-two-factor-auth-function.ts";
+import { z } from "zod";
 
-const idSchema = z.uuid();
-export async function updateUserSmsNotificationRoute(app: FastifyInstance) {
+const userIdSchema = z.string().uuid();
+
+export async function updateUserTwoFactorAuthRoute(app: FastifyInstance) {
   app.patch(
-    "/update_sms_notification",
+    "/update_two_factor_auth",
     { preHandler: [app.authenticate] },
     async (request: any, reply) => {
       try {
-        const userId = idSchema.parse((request.user as any).id);
-        const updatedUser = await updateUserSmsNotificationFunction({ userId });
+        const userId = userIdSchema.parse((request.user as any).id);
+        const updatedUser = await updateUserTwoFactorAuthFunction(userId);
         return reply.status(200).send({
-          message: "Notificações por SMS atualizadas com sucesso",
+          message: "Verificação por duas etapas atualizada com sucesso",
           user: updatedUser,
         });
       } catch (error) {
-        app.log.error(error, "Erro ao tentar atualizar a notificação por sms do usuário");
+        app.log.error(error, "Erro ao tentar atualizar a verificação por duas etapas do usuário");
         if (error instanceof AppError) {
           return reply.status(error.statusCode).send({
             message: error.message,

@@ -16,7 +16,11 @@ import fp from "./plugins/fastify-plugin.ts";
 import { updateUserEmailNotificationRoute } from "./routes/users/update-user-email-notification-route.ts";
 import { updateUserSmsNotificationRoute } from "./routes/users/update-user-sms-notification.ts";
 import { twoFactorVerifyRoute } from "./routes/auth/two-factor-verify-route.ts";
-
+import type { Payload } from "./types/auth/refresh-token-types.ts";
+import { updateUserTwoFactorAuthRoute } from "./routes/users/update-user-two-factor-auth-route.ts";
+import { resendTwoFactor } from "./routes/auth/resend-two-factor-route.ts";
+import { verifyPasswordRoute } from "./routes/auth/verify-password-route.ts";
+import { updateUserPasswordRoute } from "./routes/users/update-user-password-route.ts";
 export const app = Fastify({ logger: true });
 
 await swaggerConfi(app);
@@ -32,19 +36,17 @@ app.register(cookie, {
   secret: env.COOKIE_SECRET, // opcional, caso queira cookies assinados
   // outras opções
 });
-import type { Payload } from "./types/auth/refresh-token-types.ts";
-import { twoFactorSendRoute } from "./routes/auth/two-factor-send-route.ts";
+
 fp(app);
 app.decorate("authenticate", async (request: any, reply: any) => {
   try {
     const authHeader = request.headers.authorization;
-
+    console.log("Auth Header:", authHeader);
     if (!authHeader) {
       return reply.status(401).send({ message: "Token ausente" });
     }
 
     const token = authHeader.split(" ")[1];
-    console.log("token =" + token);
     const decoded = await app.jwt.verify<Payload>(token);
 
     // então:
@@ -54,6 +56,7 @@ app.decorate("authenticate", async (request: any, reply: any) => {
       name: decoded.name,
     };
   } catch (err) {
+    console.log("Erro", err);
     return reply.status(401).send({ message: "Token inválido ou ausente" });
   }
 });
@@ -66,8 +69,11 @@ app.register(authRefreshRoute);
 app.register(authLoginRoute);
 app.register(updateUserEmailNotificationRoute, { prefix: "/users" });
 app.register(updateUserSmsNotificationRoute, { prefix: "/users" });
-app.register(twoFactorSendRoute, { prefix: "/2fa" });
+app.register(updateUserPasswordRoute, { prefix: "/users" });
+app.register(updateUserTwoFactorAuthRoute, { prefix: "/2fa" });
 app.register(twoFactorVerifyRoute, { prefix: "/2fa" });
+app.register(resendTwoFactor, { prefix: "/2fa" });
+app.register(verifyPasswordRoute, { prefix: "/auth" });
 app.get("/", { preHandler: [app.authenticate] }, async (request, reply) => {
   return "Codi Cash API rodando! Acesse /docs para a documentação.";
 });

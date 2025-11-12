@@ -11,10 +11,14 @@ const validationSchema = Yup.object().shape({
     .min(2, "O nome completo deve ter pelo menos 2 caracteres")
     .required("O nome completo é obrigatório"),
   email: Yup.string().email("E‑mail inválido").required("O e‑mail é obrigatório"),
-  telephone: Yup.string()
-    .matches(/^[0-9]+$/, "O telefone deve conter apenas números")
-    .min(10, "O telefone deve ter no mínimo 10 dígitos")
-    .max(11, "O telefone deve ter no máximo 11 dígitos"),
+  telephone: Yup.string().test(
+    "digits-only-length",
+    "O telefone deve conter 10 ou 11 dígitos",
+    (value) => {
+      const digits = (value || "").replace(/\D/g, "");
+      return digits.length === 10 || digits.length === 11;
+    },
+  ),
   password: Yup.string()
     .min(6, "A senha deve ter pelo menos 6 caracteres")
     .required("A senha é obrigatória"),
@@ -39,6 +43,9 @@ export const SignUpForm = () => {
     return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)} ${digits.slice(7)}`;
   };
 
+  // remove parênteses/espacos/traços deixando só dígitos
+  const unformatPhone = (value: string) => (value || "").replace(/\D/g, "");
+
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
@@ -50,12 +57,15 @@ export const SignUpForm = () => {
     password: string;
   }) => {
     try {
+      // envia telefone sem formatação (apenas dígitos)
+      const payload = { ...values, telephone: unformatPhone(values.telephone) };
+
       const response = await fetch("http://localhost:3000/users/create_user", {
-        method: "PATCH",
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(values),
+        body: JSON.stringify(payload),
       });
       console.log(response);
       if (response.ok) {

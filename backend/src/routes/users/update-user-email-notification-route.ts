@@ -5,7 +5,7 @@ import { updateUserEmailNotificationFunction } from "../../functions/users/updat
 
 const idSchema = z.uuid();
 export async function updateUserEmailNotificationRoute(app: FastifyInstance) {
-  app.put(
+  app.patch(
     "/update_email_notification",
     { preHandler: [app.authenticate] },
     async (request: any, reply) => {
@@ -17,13 +17,24 @@ export async function updateUserEmailNotificationRoute(app: FastifyInstance) {
           user: updatedUser,
         });
       } catch (error) {
-        app.log.error(error, "Erro ao tentar atualizar notificações por email do usuário no DB");
+        app.log.error(error, "Erro ao tentar atualizar a notificação por email do usuário");
         if (error instanceof AppError) {
-          reply.status(error.statusCode).send({ message: error.message });
-        } else {
-          reply.status(500).send({ message: "Erro interno do servidor" });
+          return reply.status(error.statusCode).send({
+            message: error.message,
+            code: error.statusCode,
+          });
         }
+        if (error instanceof z.ZodError) {
+          return reply.status(400).send({
+            message: "ID em formato inválido",
+            errors: error.issues, // Retorna erros por campo
+          });
+        }
+
+        return reply.status(500).send({
+          message: "Erro interno do servidor. Tente novamente mais tarde.",
+        });
       }
-    }
+    },
   );
 }

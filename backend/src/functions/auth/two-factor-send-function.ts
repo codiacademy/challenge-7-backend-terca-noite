@@ -6,7 +6,7 @@ export async function twoFactorSendFunction(userId: string) {
   const existingUser = await prisma.user.findUnique({ where: { id: userId } });
   if (!existingUser) throw new AppError("Usuário não encontrado", 403);
 
-  const code = generateOtpCode();
+  const code = await generateOtpCode();
   const codeHash = await hashOtp(code);
 
   const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 minutos

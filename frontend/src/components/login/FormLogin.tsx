@@ -1,7 +1,7 @@
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 import { Eye, EyeClosed, User, Lock } from "lucide-react";
-import { userData } from "@/data/UserData";
+import api from "../../api/axios-client.ts";
 import { useState } from "react";
 import { CheckboxLoginRegister } from "../common/CheckboxLoginRegister";
 import { useNavigate } from "react-router-dom";
@@ -25,26 +25,36 @@ export const LoginForm = () => {
 
   const handleSubmitLogin = async (values: { email: string; password: string }) => {
     try {
-      const response = await fetch("http://localhost:3000/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await api.post(
+        "http://localhost:3000/login",
+        {
+          email: values.email,
+          password: values.password,
         },
-        credentials: "include",
-        body: JSON.stringify(values),
-      });
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+      );
 
-      const data = await response.json();
-      console.log(data);
-      if (!response.ok) {
-        toast.error(data.message || "E-mail ou Senha inválidos");
+      console.log(response.data);
+      if (!response.data || response.status !== 200) {
+        toast.error(response.data.message || "E-mail ou Senha inválidos");
         return;
       }
 
-      localStorage.setItem("accessToken", data.accessToken);
-
-      toast.success("Login concluído com sucesso!");
-      navigate("/");
+      if (response.data.tempToken) {
+        localStorage.setItem("tempToken", response.data.tempToken);
+        toast.success("Autenticação de dois fatores necessária!", {
+          onClose: () => navigate("/twofactor"),
+        });
+      } else {
+        localStorage.setItem("accessToken", response.data.accessToken);
+        toast.success("Login concluído com sucesso!", {
+          onClose: () => navigate("/"),
+        });
+      }
     } catch (error) {
       console.error("Erro ao fazer login", error);
       toast.error("Erro no servidor.Tente novamente mais tarde!");

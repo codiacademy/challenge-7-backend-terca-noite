@@ -4,7 +4,7 @@ import { updateUserProfileFunction } from "../../functions/users/update-user-pro
 import { z } from "zod";
 
 const bodySchema = z.object({
-  name: z.string().optional(),
+  fullName: z.string().optional(),
   email: z.email().optional(),
   telephone: z
     .string()
@@ -15,18 +15,20 @@ const bodySchema = z.object({
 const userIdSchema = z.uuid();
 
 export async function updateUserProfileRoute(app: FastifyInstance) {
-  app.put("/update_profile", { preHandler: [app.authenticate] }, async (request: any, reply) => {
+  app.patch("/update_profile", { preHandler: [app.authenticate] }, async (request: any, reply) => {
     try {
-      const { name, email, telephone } = bodySchema.parse(request.body);
+      const rawBody = request.body;
+      const body = Object.fromEntries(Object.entries(rawBody).filter(([_, value]) => value !== ""));
+      const { fullName, email, telephone } = bodySchema.parse(body);
       const userId = userIdSchema.parse((request.user as any).id);
-      const result = await updateUserProfileFunction({ userId, name, email, telephone });
+      const result = await updateUserProfileFunction({ userId, fullName, email, telephone });
 
       return reply.status(200).send({
         message: "Perfil do usuário atualizado com sucesso",
         user: result,
       });
     } catch (error) {
-      app.log.error(error, "Erro ao tentar deletar usuário no DB");
+      app.log.error(error, "Erro ao tentar atualizar usuário no DB");
       if (error instanceof AppError) {
         return reply.status(error.statusCode).send({
           message: error.message,

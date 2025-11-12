@@ -13,7 +13,7 @@ export async function twoFactorVerifyRoute(app: FastifyInstance) {
   app.post("/verify", async (request, reply) => {
     try {
       const authHeader = request.headers.authorization;
-      if (!authHeader) throw new AppError("Token ausente", 401);
+      if (!authHeader) throw new AppError("Auth Header ausente", 401);
       const tempToken = authHeader.split(" ")[1];
 
       if (!tempToken) throw new AppError("Token ausente", 401);
@@ -33,8 +33,13 @@ export async function twoFactorVerifyRoute(app: FastifyInstance) {
       if (!record) throw new AppError("Código não encontrado", 400);
       if (record.expiresAt < new Date()) throw new AppError("Código expirado", 400);
 
-      const match = await bcrypt.compare(code, record.codeHash);
-      if (!match) throw new AppError("Código incorreto", 400);
+      const match = await compareOtp(code, record.codeHash);
+      if (!match) throw new AppError("Código inválido", 400);
+
+      await prisma.twoFactorRequest.update({
+        where: { id: record.id },
+        data: { consumed: true },
+      });
 
       // Gera access/refresh tokens completos
       const tokens = await authRefreshFunction(app, {
@@ -43,6 +48,7 @@ export async function twoFactorVerifyRoute(app: FastifyInstance) {
         refreshToken: tempToken, // você pode adaptar
       });
 
+      console.log("Tokens:", tokens);
       reply.setCookie("refreshToken", tokens.refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
@@ -54,14 +60,27 @@ export async function twoFactorVerifyRoute(app: FastifyInstance) {
         message: "Autenticação 2FA concluída com sucesso",
         accessToken: tokens.accessToken,
       });
-    } catch (error) {
+    } catch (error: any) {
       app.log.error(error, "Erro ao tentar verificar código 2FA");
+
+      if (error.code === "FAST_JWT_EXPIRED") {
+        return reply.status(401).send({
+          message: "Seu código está expirado",
+          code: 401,
+        });
+      }
+
       if (error instanceof AppError) {
         return reply.status(error.statusCode).send({
           message: error.message,
           code: error.statusCode,
         });
       }
+
+      return reply.status(500).send({
+        message: "Erro interno no servidor",
+        code: 500,
+      });
     }
   });
 }

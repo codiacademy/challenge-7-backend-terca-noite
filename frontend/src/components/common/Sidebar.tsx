@@ -11,6 +11,7 @@ import { ForwardRefExoticComponent, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
 import { useIsMobile } from "../../hooks/useIsMobile";
+import api from "../../api/axios-client.ts";
 
 interface SidebarItem {
   name: string;
@@ -62,15 +63,21 @@ export const Sidebar = () => {
 
   const sendRequestToLogout = async () => {
     try {
-      const res = await fetch("http://localhost:3000/logout", {
-        method: "POST",
-        credentials: "include",
-      });
+      const res = await api.post(
+        "http://localhost:3000/logout",
+        {},
+        {
+          method: "POST",
+          withCredentials: true,
+        },
+      );
 
-      if (res.ok) {
+      if (res.data) {
         localStorage.removeItem("accessToken");
         console.log("Logout feito com sucesso!");
-        navigate("/signin"); // redireciona só depois do sucesso
+        await setTimeout(() => {
+          navigate("/signin");
+        }, 500); // espera meio segundo pra garantir que o token foi removido
         return true;
       } else {
         console.error("Falha ao fazer logout:", res.status);

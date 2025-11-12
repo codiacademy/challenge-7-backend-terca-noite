@@ -4,13 +4,21 @@ import { Sidebar } from "./components/common/Sidebar";
 import { ExpensesPage } from "./pages/ExpensesPage";
 import { SalesPage } from "./pages/SalesPage";
 import { SettingsPage } from "./pages/SettingsPage";
+import { TwoFactorPage } from "./pages/TwoFactorPage.tsx";
 import { Login } from "./pages/LoginPage";
 import { SignUp } from "./pages/SignUpPage";
 import { ProtectedRoute } from "./components/common/ProtectedRoute";
 import { PublicRoute } from "./components/common/PublicRoute";
+import { TwoFactorProtectedRoute } from "./components/common/TwoFactorProtectedRoute.tsx";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css"; // Import CSS
+
 export function App() {
   const location = useLocation();
-  const showSidebar = location.pathname === "/signin" || location.pathname === "/signup";
+  const showSidebar =
+    location.pathname === "/signin" ||
+    location.pathname === "/signup" ||
+    location.pathname === "/twofactor";
 
   return (
     <div className="flex h-screen bg-gray-900 text-gray-100 overflow-hidden">
@@ -21,7 +29,18 @@ export function App() {
       </div>
 
       {!showSidebar && <Sidebar />}
-
+      <ToastContainer
+        position="top-right"
+        autoClose={500}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
       <Routes>
         <Route
           path="/"
@@ -64,6 +83,14 @@ export function App() {
           }
         />
         <Route path="/signup" element={<SignUp />} />
+        <Route
+          path="/twofactor"
+          element={
+            <TwoFactorProtectedRoute>
+              <TwoFactorPage />
+            </TwoFactorProtectedRoute>
+          }
+        />
       </Routes>
     </div>
   );

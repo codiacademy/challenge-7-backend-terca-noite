@@ -5,7 +5,7 @@ import { Notifications } from "../components/settings/Notifications";
 import { Profile } from "../components/settings/Profile";
 import { Security } from "../components/settings/Security";
 import { ProfileConfigsType } from "../types/types";
-
+import api from "../api/axios-client.ts";
 
 export function SettingsPage() {
   const [profileData, setProfileData] = useState<ProfileConfigsType | null>(null);
@@ -25,14 +25,13 @@ export function SettingsPage() {
         if (token) headers["Authorization"] = `Bearer ${token}`;
 
         // Ajuste a URL abaixo conforme seu backend (ex: http://localhost:5000/users/read_profile)
-        const res = await fetch("http://localhost:3000/users/read_profile", {
-          method: "GET",
+        const res = await api.get("http://localhost:3000/users/read_profile", {
           headers,
-          credentials: "include",
-          signal: controller.signal,
+          withCredentials: true,
         });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = await res.json();
+
+        if (!res.data) throw new Error(`HTTP ${res.status}`);
+        const data = await res.data;
         console.log("Dados do perfil:", data);
         setProfileData(data);
       } catch (err: any) {
