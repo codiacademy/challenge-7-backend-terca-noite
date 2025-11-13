@@ -4,10 +4,10 @@ import { hash } from "bcrypt";
 
 export async function updateUserPasswordFunction({
   userId,
-  newPassword,
+  password,
 }: {
   userId: string;
-  newPassword: string;
+  password: string;
 }) {
   try {
     const existingUser = prisma.user.findUnique({
@@ -17,7 +17,7 @@ export async function updateUserPasswordFunction({
       throw new AppError("Usuário não encontrado", 404);
     }
 
-    const updatedHashPassword = await hash(newPassword, 10);
+    const updatedHashPassword = await hash(password, 10);
     const updatedUser = await prisma.user.update({
       where: { id: userId },
       data: { password_hash: updatedHashPassword },

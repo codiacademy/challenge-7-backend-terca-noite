@@ -21,7 +21,7 @@ export async function verifyPasswordRoute(app: FastifyInstance) {
         isPasswordCorrect: isCorrect,
       });
     } catch (error) {
-      app.log.error(error, "Erro ao tentar deletar usuário no DB");
+      app.log.error(error, "Erro ao tentar verificar senha no DB");
       if (error instanceof AppError) {
         return reply.status(error.statusCode).send({
           message: error.message,

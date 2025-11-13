@@ -47,7 +47,7 @@ export const Profile = ({ user, isLoading }: { user: ProfileConfigsType; isLoadi
     setIsEnabledProfileInput(false);
   }
 
-  const handleSubmitSignup = async (values: {
+  const handleSubmitUpdateProfile = async (values: {
     fullName: string;
     email: string;
     telephone: string;
@@ -118,7 +118,7 @@ export const Profile = ({ user, isLoading }: { user: ProfileConfigsType; isLoadi
               telephone: "",
             }}
             validationSchema={validationSchema}
-            onSubmit={handleSubmitSignup}
+            onSubmit={handleSubmitUpdateProfile}
           >
             {({ errors, touched }) => (
               <Form className="flex flex-col justify-center items-center min-w-full max-w-[50vw] space-y-4 rounded-lg px-[15px] py-5">
