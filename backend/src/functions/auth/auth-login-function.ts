@@ -8,12 +8,6 @@ import { generateTokens } from "../../utils/tokens-service.ts";
 import { access } from "fs";
 import { REPL_MODE_SLOPPY } from "repl";
 
-import {
-  isRefreshTokenValid,
-  revokeRefreshToken,
-  saveRefreshToken,
-} from "../../utils/tokens-service.ts";
-
 export async function authLoginFunction(
   fastify: FastifyInstance,
   { email, password }: LoginUserType,
@@ -35,25 +29,31 @@ export async function authLoginFunction(
     }
 
     const isPasswordMatch = await bcrypt.compare(password, existingUser.password_hash);
+
     if (!isPasswordMatch) {
       throw new AppError("A senha está incorreta!", 401);
     }
-    const tokens = generateTokens(fastify, {
+
+    const tokens = await generateTokens(fastify, {
       userId: existingUser.id,
       email: existingUser.email,
       name: existingUser.name ?? "",
     });
+
     const { password_hash, ...user } = existingUser;
+
     return {
-      user: user,
-      refreshToken: (await tokens).refreshToken,
-      accessToken: (await tokens).accessToken,
+      user,
+      refreshToken: tokens.refreshToken,
+      accessToken: tokens.accessToken,
     };
   } catch (error) {
     if (error instanceof AppError) {
       throw error;
     }
-    console.error("Erro operacional ao deletar usuário ", error);
-    throw new AppError("Ocorreu um erro interno ao processor sua solicitação", 500);
+
+    console.error("Erro interno ao fazer login:", error);
+
+    throw new AppError("Ocorreu um erro interno ao processar sua solicitação", 500);
   }
 }

@@ -39,10 +39,6 @@ export const LoginForm = () => {
       );
 
       console.log(response.data);
-      if (!response.data || response.status !== 200) {
-        toast.error(response.data.message || "E-mail ou Senha inválidos");
-        return;
-      }
 
       if (response.data.tempToken) {
         localStorage.setItem("tempToken", response.data.tempToken);
@@ -55,9 +51,16 @@ export const LoginForm = () => {
           onClose: () => navigate("/"),
         });
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Erro ao fazer login", error);
-      toast.error("Erro no servidor.Tente novamente mais tarde!");
+
+      if (error.response) {
+        // Erros vindos do backend
+        toast.error(error.response.data.message || "Erro no servidor!");
+      } else {
+        // Erros de rede, CORS, servidor fora do ar, etc
+        toast.error("Falha na conexão com o servidor!");
+      }
     }
   };
 
@@ -71,7 +74,7 @@ export const LoginForm = () => {
         {({ errors, touched }) => (
           <Form className="min-w-full max-w-md space-y-4 rounded-lg bg-gray-950 px-15 py-5">
             <div>
-              <h2 className="text-green-600 mb-10 text-2xl font-bold">Login</h2>
+              <h2 className="text-green-600 mb-10 text-2xl font-bold text-center">Login</h2>
 
               <div className="relative">
                 <div className="relative">
@@ -143,7 +146,12 @@ export const LoginForm = () => {
             <div className="flex justify-between items-center">
               <CheckboxLoginRegister titleChecked="Memorizar senha" />
 
-              <p className="text-sm cursor-pointer hover:text-gray-400">Esqueceu a senha?</p>
+              <button
+                onClick={() => navigate("/forgotpassword")}
+                className="text-sm cursor-pointer hover:text-gray-400"
+              >
+                Esqueceu a senha?
+              </button>
             </div>
 
             <button

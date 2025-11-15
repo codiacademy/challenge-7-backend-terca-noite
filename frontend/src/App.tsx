@@ -12,13 +12,17 @@ import { PublicRoute } from "./components/common/PublicRoute";
 import { TwoFactorProtectedRoute } from "./components/common/TwoFactorProtectedRoute.tsx";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css"; // Import CSS
+import { ForgotPassword } from "./pages/ForgotPasswordPage";
+import { ResetPassword } from "./pages/ResetPasswordPage.tsx";
 
 export function App() {
   const location = useLocation();
   const showSidebar =
     location.pathname === "/signin" ||
     location.pathname === "/signup" ||
-    location.pathname === "/twofactor";
+    location.pathname === "/twofactor" ||
+    location.pathname === "/forgotpassword" ||
+    location.pathname === "/resetpassword";
 
   return (
     <div className="flex h-screen bg-gray-900 text-gray-100 overflow-hidden">
@@ -40,6 +44,7 @@ export function App() {
         draggable
         pauseOnHover
         theme="dark"
+        style={{ zIndex: 9999, position: "fixed" }}
       />
       <Routes>
         <Route
@@ -88,6 +93,22 @@ export function App() {
           element={
             <TwoFactorProtectedRoute>
               <TwoFactorPage />
+            </TwoFactorProtectedRoute>
+          }
+        />
+        <Route
+          path="/forgotpassword"
+          element={
+            <PublicRoute>
+              <ForgotPassword />
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/resetpassword"
+          element={
+            <TwoFactorProtectedRoute>
+              <ResetPassword />
             </TwoFactorProtectedRoute>
           }
         />

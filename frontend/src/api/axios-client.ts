@@ -36,6 +36,10 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
 
+    if (originalRequest.url.includes("/login")) {
+      return Promise.reject(error);
+    }
+
     // Evita loop infinito ao tentar dar refresh no próprio /refresh
     if (originalRequest.url.includes("/refresh")) {
       return Promise.reject(error);

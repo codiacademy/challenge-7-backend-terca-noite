@@ -6,6 +6,7 @@ import { z } from "zod";
 import { authRefreshFunction } from "../../functions/auth/auth-refresh-function.ts";
 import bcrypt from "bcrypt";
 import type { Payload } from "../../types/auth/refresh-token-types.ts";
+import { verify2faCodeFunction } from "../../functions/auth/verify-2fa-code-function.ts";
 
 const userIdSchema = z.uuid();
 
@@ -25,41 +26,34 @@ export async function twoFactorVerifyRoute(app: FastifyInstance) {
       }
 
       const { code } = request.body as { code: string };
-      const record = await prisma.twoFactorRequest.findFirst({
-        where: { userId: decoded.id },
-        orderBy: { createdAt: "desc" },
-      });
 
-      if (!record) throw new AppError("Código não encontrado", 400);
-      if (record.expiresAt < new Date()) throw new AppError("Código expirado", 400);
+      const isRightCode = await verify2faCodeFunction({ userId: decoded.id, code });
 
-      const match = await compareOtp(code, record.codeHash);
-      if (!match) throw new AppError("Código inválido", 400);
+      if (isRightCode) {
+        const tokens = await authRefreshFunction(app, {
+          userId: decoded.id,
+          decodedToken: decoded,
+          refreshToken: tempToken, // você pode adaptar
+        });
 
-      await prisma.twoFactorRequest.update({
-        where: { id: record.id },
-        data: { consumed: true },
-      });
+        reply.setCookie("refreshToken", tokens.refreshToken, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === "production",
+          sameSite: "lax",
+          path: "/",
+        });
+
+        return reply.status(200).send({
+          message: "Autenticação 2FA concluída com sucesso",
+          accessToken: tokens.accessToken,
+        });
+      } else {
+        return reply.status(401).send({
+          message: "Código incorreto!",
+        });
+      }
 
       // Gera access/refresh tokens completos
-      const tokens = await authRefreshFunction(app, {
-        userId: decoded.id,
-        decodedToken: decoded,
-        refreshToken: tempToken, // você pode adaptar
-      });
-
-      console.log("Tokens:", tokens);
-      reply.setCookie("refreshToken", tokens.refreshToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "lax",
-        path: "/",
-      });
-
-      return reply.status(200).send({
-        message: "Autenticação 2FA concluída com sucesso",
-        accessToken: tokens.accessToken,
-      });
     } catch (error: any) {
       app.log.error(error, "Erro ao tentar verificar código 2FA");
 

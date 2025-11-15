@@ -50,12 +50,19 @@ export const Security = ({ user, isLoading }: { user: ProfileConfigsType; isLoad
         console.log("Senha verificada");
         if (response.data.isPasswordCorrect) {
           toast.success("Senha confirmada com sucesso");
-          setStep(2);
+          setTimeout(() => setStep(2), 1000);
         } else {
+          console.log("Senha incorreta");
           toast.error("Senha incorreta, digite novamente!");
         }
       }
-    } catch (error) {
+    } catch (error: any) {
+      if (error.response?.status === 401) {
+        toast.error("Senha incorreta, digite novamente!");
+        return;
+      }
+
+      toast.error("Erro ao verificar a senha");
       console.log(error);
     }
   };
@@ -75,7 +82,7 @@ export const Security = ({ user, isLoading }: { user: ProfileConfigsType; isLoad
       if (response.data && response.status == 200) {
         console.log("Senha Enviada");
         toast.success("Senha atualizada com sucesso");
-        setStep(0);
+        setTimeout(() => setStep(0), 1000);
       }
     } catch (error) {
       console.log(error);

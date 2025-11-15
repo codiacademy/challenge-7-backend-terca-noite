@@ -21,6 +21,8 @@ import { updateUserTwoFactorAuthRoute } from "./routes/users/update-user-two-fac
 import { resendTwoFactor } from "./routes/auth/resend-two-factor-route.ts";
 import { verifyPasswordRoute } from "./routes/auth/verify-password-route.ts";
 import { updateUserPasswordRoute } from "./routes/users/update-user-password-route.ts";
+import { verifyEmailRoute } from "./routes/auth/verify-email-route.ts";
+import { resetPasswordRoute } from "./routes/auth/reset-password-route.ts";
 export const app = Fastify({ logger: true });
 
 await swaggerConfi(app);
@@ -74,6 +76,8 @@ app.register(updateUserTwoFactorAuthRoute, { prefix: "/2fa" });
 app.register(twoFactorVerifyRoute, { prefix: "/2fa" });
 app.register(resendTwoFactor, { prefix: "/2fa" });
 app.register(verifyPasswordRoute, { prefix: "/auth" });
+app.register(verifyEmailRoute, { prefix: "/auth" });
+app.register(resetPasswordRoute, { prefix: "/users" });
 app.get("/", { preHandler: [app.authenticate] }, async (request, reply) => {
   return "Codi Cash API rodando! Acesse /docs para a documentação.";
 });

@@ -1,6 +1,6 @@
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
-import { Lock } from "lucide-react";
+import { Shield } from "lucide-react";
 import api from "../../api/axios-client.ts";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
@@ -120,7 +120,7 @@ export const TwoFactorForm = () => {
                       }`}
                     />
                     <div className="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
-                      <Lock />
+                      <Shield />
                     </div>
                     <label
                       htmlFor="fullName"
