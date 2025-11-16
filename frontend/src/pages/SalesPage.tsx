@@ -10,19 +10,82 @@ import { SalesTypesBar } from "../components/sales/SalesTypesBar";
 import { useState } from "react";
 import { TimeRange, Sales } from "@/types/types";
 import { filterSalesByTime } from "@/utils/salesAggregations";
-import { salesData } from "@/data/SalesData";
+//import { salesData } from "@/data/SalesData";
 import Modal from "@/components/common/SalesModal";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useEffect } from "react";
+import api from "../api/axios-client.ts";
 
 export function SalesPage() {
   const [timeRange, setTimeRange] = useState<TimeRange>("all");
   const [isOpen, setIsOpen] = useState(false);
-  const [sales, setSales] = useState<Sales[]>(salesData); // Estado para gerenciar vendas
+  const [sales, setSales] = useState<Sales[]>([]); // Estado para gerenciar vendas
   const [selectedSale, setSelectedSale] = useState<Sales | null>(null); // Venda selecionada para edição
+  const [loadingProfile, setLoadingProfile] = useState<boolean>(true);
 
+  async function loadAllSales() {
+    try {
+      setLoadingProfile(true);
+      const token = localStorage.getItem("accessToken") || null;
+
+      const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+      };
+      if (token) headers["Authorization"] = `Bearer ${token}`;
+
+      const response = await api.get("http://localhost:3000/sales/read_all_sales", {
+        headers,
+        withCredentials: true,
+      });
+
+      if (!response.data) throw new Error(`HTTP ${response.status}`);
+
+      setSales(response.data.salesData);
+      console.log("Vendas Carregadas com Sucesso!");
+    } catch (error: any) {
+      if (error.name !== "AbortError") console.error("Erro ao carregar perfil:", error);
+    } finally {
+      setLoadingProfile(false);
+    }
+  }
+
+  async function updateSelectedSale(updatedSale: Sales) {
+    try {
+      const token = localStorage.getItem("accessToken") || null;
+
+      const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+      };
+      if (token) headers["Authorization"] = `Bearer ${token}`;
+
+      const response = await api.put("http://localhost:3000/sales/update_sale", updatedSale, {
+        headers,
+        withCredentials: true,
+      });
+
+      if (!response.data) throw new Error(`HTTP ${response.status}`);
+      setSelectedSale(null);
+      await loadAllSales();
+    } catch (error: any) {
+      toast.error("Erro ao atualizar venda", { theme: "dark" });
+      console.error(error);
+    }
+  }
+
+  async function createNewSale(newSale: Sales) {
+    await loadAllSales();
+    toast.success("Venda criada!", { theme: "dark" });
+  }
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    loadAllSales();
+    return () => controller.abort();
+  }, []);
   // Função para salvar (criar ou atualizar) uma venda
-  const handleSaveSale = (newSale: Sales) => {
+  /*const handleSaveSale = (newSale: Sales) => {
     if (newSale.id === selectedSale?.id) {
       // Atualizar venda existente
       setSales(sales.map((sale) => (sale.id === newSale.id ? newSale : sale)));
@@ -31,7 +94,7 @@ export function SalesPage() {
       setSales([...sales, newSale]);
     }
     toast.success("Venda salva com sucesso!", { theme: "dark" });
-  };
+  };*/
 
   // Função para excluir uma venda
   const handleDeleteSale = (id: number) => {
@@ -45,8 +108,7 @@ export function SalesPage() {
     totalCourses: filteredSales.length,
     avarageSales:
       filteredSales.length > 0
-        ? filteredSales.reduce((sum, sale) => sum + sale.finalPrice, 0) /
-          filteredSales.length
+        ? filteredSales.reduce((sum, sale) => sum + sale.finalPrice, 0) / filteredSales.length
         : 0,
     grossValue: filteredSales.reduce((sum, sale) => sum + sale.course.price, 0),
     netValue: filteredSales.reduce((sum, sale) => sum + sale.finalPrice, 0),
@@ -54,11 +116,7 @@ export function SalesPage() {
 
   return (
     <div className="flex-1 overflow-auto relative z-10">
-      <Header
-        title="Vendas"
-        showTimeRange={true}
-        onTimeRangeChange={setTimeRange}
-      >
+      <Header title="Vendas" showTimeRange={true} onTimeRangeChange={setTimeRange}>
         <ButtonAdd
           titleButton="Adicionar Venda"
           onClick={() => {
@@ -135,7 +193,13 @@ export function SalesPage() {
           setIsOpen(false);
           setSelectedSale(null); // Limpa a venda selecionada ao fechar
         }}
-        onSave={handleSaveSale} // Passa a função de salvamento
+        onSave={async (sale) => {
+          if (selectedSale) {
+            await updateSelectedSale(sale);
+          } else {
+            await createNewSale(sale);
+          }
+        }} // Passa a função de salvamento
         sale={selectedSale} // Passa a venda selecionada para edição
       />
 

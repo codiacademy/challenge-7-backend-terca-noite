@@ -13,7 +13,20 @@ export type CourseData = {
   price: number;
 };
 
-export type SaleData = {
+export type CreateSaleData = {
+  userId: string;
+  customer: CustomerData;
+  course: CourseData;
+
+  discount: number;
+  taxes: number;
+  commissions: number;
+  cardFees: number;
+  finalPrice: number;
+};
+
+export type ChangeSaleData = {
+  id: string;
   userId: string;
   customer: CustomerData;
   course: CourseData;

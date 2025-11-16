@@ -1,7 +1,7 @@
 import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { Sales, CourseName } from "@/types/types";
+import { Sales } from "@/types/types";
 import { useEffect } from "react";
 import { setMask, removeMask } from "react-input-mask-br";
 import { isValidCPF } from "@/utils/isValidCPF";
@@ -82,22 +82,6 @@ export default function Modal({ title, open, onClose, onSave, sale }: ModalProps
     enableReinitialize: true, // Permite reinicializar os valores quando a prop `sale` muda
     onSubmit: async (values) => {
       try {
-        const newSale: Sales = {
-          id: sale?.id || Date.now(), // Usa o ID existente ou gera um novo
-          date: new Date().toISOString().split("T")[0], // Data atual no formato YYYY-MM-DD
-          customer: values.customer,
-          course: {
-            name: values.course.name as CourseName,
-            price: values.course.price,
-            type: values.course.type as "online" | "presencial",
-          },
-          discount: values.discount,
-          taxes: values.taxes,
-          commissions: values.commissions,
-          cardFees: values.cardFees,
-          finalPrice: values.finalPrice,
-        };
-        onSave(newSale);
         const token = localStorage.getItem("accessToken") || null;
 
         const headers: Record<string, string> = {
@@ -105,14 +89,30 @@ export default function Modal({ title, open, onClose, onSave, sale }: ModalProps
         };
         if (token) headers["Authorization"] = `Bearer ${token}`;
 
-        const response = await api.post("http://localhost:3000/sales/create_sale", values, {
-          headers,
-        });
+        let response;
+
+        if (sale) {
+          // --- EDITAR VENDA ---
+          response = await api.put(
+            "http://localhost:3000/sales/update_sale",
+            {
+              id: sale.id,
+              ...values,
+            },
+            { headers },
+          );
+        } else {
+          // --- CRIAR VENDA ---
+          response = await api.post("http://localhost:3000/sales/create_sale", values, { headers });
+        }
+
+        onSave(response.data.sale);
+
         formik.resetForm();
         onClose();
-
-        console.log(response);
-      } catch (error) {}
+      } catch (error) {
+        console.error(error);
+      }
     },
   });
 

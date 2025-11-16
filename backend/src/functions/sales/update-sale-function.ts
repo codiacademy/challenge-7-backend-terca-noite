@@ -1,8 +1,9 @@
-import type { CreateSaleData } from "../../types/sales/sale-types.ts";
+import type { ChangeSaleData } from "../../types/sales/sale-types.ts";
 import { prisma } from "../../lib/prisma.ts";
 import { CourseType } from "@prisma/client";
 import { AppError } from "../../utils/app-error.ts";
-export async function createSaleFunction({
+export async function updateSaleFunction({
+  id,
   userId,
   customer,
   course,
@@ -11,9 +12,19 @@ export async function createSaleFunction({
   commissions,
   cardFees,
   finalPrice,
-}: CreateSaleData) {
+}: ChangeSaleData) {
   try {
-    const createdSale = await prisma.sale.create({
+    const existingSale = await prisma.sale.findUnique({
+      where: {
+        id,
+      },
+    });
+    if (!existingSale) throw new AppError("Venda não consta no banco de dados.", 401);
+
+    const updatedSale = await prisma.sale.update({
+      where: {
+        id,
+      },
       data: {
         client_name: customer.name,
         cpf: customer.cpf,
@@ -31,10 +42,10 @@ export async function createSaleFunction({
       },
     });
 
-    return createdSale;
+    return updatedSale;
   } catch (error: any) {
     if (error instanceof AppError) throw error;
-    console.error("Erro operacional ao criar usuário ", error);
+    console.error("Erro operacional ao atualizar venda ", error);
     throw new AppError("Ocorreu um erro interno ao processar sua solicitação", 500);
   }
 }

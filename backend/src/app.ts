@@ -24,6 +24,8 @@ import { updateUserPasswordRoute } from "./routes/users/update-user-password-rou
 import { verifyEmailRoute } from "./routes/auth/verify-email-route.ts";
 import { resetPasswordRoute } from "./routes/auth/reset-password-route.ts";
 import { createSaleRoute } from "./routes/sales/create-sale-route.ts";
+import { updateSaleRoute } from "./routes/sales/update-sale-route.ts";
+import { readAllSalesRoute } from "./routes/sales/read-all-sales-route.ts";
 
 export const app = Fastify({ logger: true });
 
@@ -81,6 +83,8 @@ app.register(verifyPasswordRoute, { prefix: "/auth" });
 app.register(verifyEmailRoute, { prefix: "/auth" });
 app.register(resetPasswordRoute, { prefix: "/users" });
 app.register(createSaleRoute, { prefix: "/sales" });
+app.register(updateSaleRoute, { prefix: "/sales" });
+app.register(readAllSalesRoute, { prefix: "/sales" });
 app.get("/", { preHandler: [app.authenticate] }, async (request, reply) => {
   return "Codi Cash API rodando! Acesse /docs para a documentação.";
 });
