@@ -12,10 +12,11 @@ export async function authLogoutRoute(app: FastifyInstance) {
     try {
       const logoutUserId = userIdSchema.parse((request.user as any).id);
       const refreshToken = await request.cookies?.refreshToken;
+      console.log("Refresh Token no logout:", refreshToken);
       if (!refreshToken) {
         throw new AppError(" O refreshToken não foi encontrado", 401);
       }
-      console.log("RefreshToken: " + refreshToken);
+
       const userExits = await authLogoutFunction(app, refreshToken, logoutUserId);
       reply.clearCookie("refreshToken", {
         path: "/",

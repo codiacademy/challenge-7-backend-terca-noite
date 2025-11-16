@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { ReactNode } from "react";
+import api from "../../api/axios-client.ts";
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -17,25 +18,27 @@ export function ProtectedRoute({ children }: ProtectedRouteProps) {
       }
 
       try {
-        const response = await fetch("http://localhost:3000/users/read_profile", {
-          method: "GET",
+        const response = await api.get("http://localhost:3000/users/read_profile", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-          credentials: "include",
+          withCredentials: true,
         });
 
-        if (response.ok) {
+        if (response.data) {
           setIsValid(true);
         } else if (response.status === 401) {
           // tenta refresh automático
-          const refreshResponse = await fetch("http://localhost:3000/refresh", {
-            method: "POST",
-            credentials: "include", // refresh token está no cookie
-          });
+          const refreshResponse = await api.post(
+            "http://localhost:3000/refresh",
+            {},
+            {
+              withCredentials: true, // refresh token está no cookie
+            },
+          );
 
-          if (refreshResponse.ok) {
-            const data = await refreshResponse.json();
+          if (refreshResponse.data) {
+            const data = await refreshResponse.data;
             localStorage.setItem("accessToken", data.accessToken);
             setIsValid(true);
           } else {

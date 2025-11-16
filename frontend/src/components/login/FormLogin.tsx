@@ -1,7 +1,7 @@
 import { Formik, Form, Field } from "formik";
 import * as Yup from "yup";
 import { Eye, EyeClosed, User, Lock } from "lucide-react";
-import { userData } from "@/data/UserData";
+import api from "../../api/axios-client.ts";
 import { useState } from "react";
 import { CheckboxLoginRegister } from "../common/CheckboxLoginRegister";
 import { useNavigate } from "react-router-dom";
@@ -25,29 +25,42 @@ export const LoginForm = () => {
 
   const handleSubmitLogin = async (values: { email: string; password: string }) => {
     try {
-      const response = await fetch("http://localhost:3000/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await api.post(
+        "http://localhost:3000/login",
+        {
+          email: values.email,
+          password: values.password,
         },
-        credentials: "include",
-        body: JSON.stringify(values),
-      });
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+      );
 
-      const data = await response.json();
-      console.log(data);
-      if (!response.ok) {
-        toast.error(data.message || "E-mail ou Senha inválidos");
-        return;
+      console.log(response.data);
+
+      if (response.data.tempToken) {
+        localStorage.setItem("tempToken", response.data.tempToken);
+        toast.success("Autenticação de dois fatores necessária!", {
+          onClose: () => navigate("/twofactor"),
+        });
+      } else {
+        localStorage.setItem("accessToken", response.data.accessToken);
+        toast.success("Login concluído com sucesso!", {
+          onClose: () => navigate("/"),
+        });
       }
-
-      localStorage.setItem("accessToken", data.accessToken);
-
-      toast.success("Login concluído com sucesso!");
-      navigate("/");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Erro ao fazer login", error);
-      toast.error("Erro no servidor.Tente novamente mais tarde!");
+
+      if (error.response) {
+        // Erros vindos do backend
+        toast.error(error.response.data.message || "Erro no servidor!");
+      } else {
+        // Erros de rede, CORS, servidor fora do ar, etc
+        toast.error("Falha na conexão com o servidor!");
+      }
     }
   };
 
@@ -61,7 +74,7 @@ export const LoginForm = () => {
         {({ errors, touched }) => (
           <Form className="min-w-full max-w-md space-y-4 rounded-lg bg-gray-950 px-15 py-5">
             <div>
-              <h2 className="text-green-600 mb-10 text-2xl font-bold">Login</h2>
+              <h2 className="text-green-600 mb-10 text-2xl font-bold text-center">Login</h2>
 
               <div className="relative">
                 <div className="relative">
@@ -133,7 +146,12 @@ export const LoginForm = () => {
             <div className="flex justify-between items-center">
               <CheckboxLoginRegister titleChecked="Memorizar senha" />
 
-              <p className="text-sm cursor-pointer hover:text-gray-400">Esqueceu a senha?</p>
+              <button
+                onClick={() => navigate("/forgotpassword")}
+                className="text-sm cursor-pointer hover:text-gray-400"
+              >
+                Esqueceu a senha?
+              </button>
             </div>
 
             <button

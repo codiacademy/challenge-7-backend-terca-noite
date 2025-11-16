@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 import { ReactNode } from "react";
+import api from "../../api/axios-client.ts";
 
 interface PublicRouteProps {
   children: ReactNode;
@@ -18,15 +19,14 @@ export function PublicRoute({ children }: PublicRouteProps) {
       }
 
       try {
-        const res = await fetch("http://localhost:3000/users/read_profile", {
-          method: "GET",
+        const res = await api.get("http://localhost:3000/users/read_profile", {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-          credentials: "include",
+          withCredentials: true,
         });
 
-        setIsLogged(res.ok); // true se token válido, false se 401
+        setIsLogged(res.data); // true se token válido, false se 401
       } catch (error) {
         console.error("Erro ao verificar login:", error);
         setIsLogged(false);

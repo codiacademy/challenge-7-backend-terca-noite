@@ -5,7 +5,7 @@ import { updateUserSmsNotificationFunction } from "../../functions/users/update-
 
 const idSchema = z.uuid();
 export async function updateUserSmsNotificationRoute(app: FastifyInstance) {
-  app.put(
+  app.patch(
     "/update_sms_notification",
     { preHandler: [app.authenticate] },
     async (request: any, reply) => {
@@ -17,13 +17,24 @@ export async function updateUserSmsNotificationRoute(app: FastifyInstance) {
           user: updatedUser,
         });
       } catch (error) {
-        app.log.error(error, "Erro ao tentar atualizar notificações por SMS do usuário no DB");
+        app.log.error(error, "Erro ao tentar atualizar a notificação por sms do usuário");
         if (error instanceof AppError) {
-          reply.status(error.statusCode).send({ message: error.message });
-        } else {
-          reply.status(500).send({ message: "Erro interno do servidor" });
+          return reply.status(error.statusCode).send({
+            message: error.message,
+            code: error.statusCode,
+          });
         }
+        if (error instanceof z.ZodError) {
+          return reply.status(400).send({
+            message: "ID em formato inválido",
+            errors: error.issues, // Retorna erros por campo
+          });
+        }
+
+        return reply.status(500).send({
+          message: "Erro interno do servidor. Tente novamente mais tarde.",
+        });
       }
-    }
+    },
   );
 }

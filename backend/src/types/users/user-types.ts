@@ -12,7 +12,7 @@ export type LoginUserType = {
 
 export type ProfileChangeType = {
   userId: string;
-  name?: string | undefined;
+  fullName?: string | undefined;
   email?: string | undefined;
   telephone?: string | undefined;
 };

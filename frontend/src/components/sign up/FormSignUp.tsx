@@ -11,10 +11,14 @@ const validationSchema = Yup.object().shape({
     .min(2, "O nome completo deve ter pelo menos 2 caracteres")
     .required("O nome completo é obrigatório"),
   email: Yup.string().email("E‑mail inválido").required("O e‑mail é obrigatório"),
-  telephone: Yup.string()
-    .matches(/^[0-9]+$/, "O telefone deve conter apenas números")
-    .min(10, "O telefone deve ter no mínimo 10 dígitos")
-    .max(11, "O telefone deve ter no máximo 11 dígitos"),
+  telephone: Yup.string().test(
+    "digits-only-length",
+    "O telefone deve conter 10 ou 11 dígitos",
+    (value) => {
+      const digits = (value || "").replace(/\D/g, "");
+      return digits.length === 10 || digits.length === 11;
+    },
+  ),
   password: Yup.string()
     .min(6, "A senha deve ter pelo menos 6 caracteres")
     .required("A senha é obrigatória"),
@@ -38,7 +42,10 @@ export const SignUpForm = () => {
     // 11 dígitos
     return `(${digits.slice(0, 2)}) ${digits.slice(2, 7)} ${digits.slice(7)}`;
   };
-*/
+
+  // remove parênteses/espacos/traços deixando só dígitos
+  const unformatPhone = (value: string) => (value || "").replace(/\D/g, "");
+
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
@@ -50,12 +57,15 @@ export const SignUpForm = () => {
     password: string;
   }) => {
     try {
+      // envia telefone sem formatação (apenas dígitos)
+      const payload = { ...values, telephone: unformatPhone(values.telephone) };
+
       const response = await fetch("http://localhost:3000/users/create_user", {
-        method: "PATCH",
+        method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(values),
+        body: JSON.stringify(payload),
       });
       console.log(response);
       if (response.ok) {
@@ -86,10 +96,9 @@ export const SignUpForm = () => {
       >
         {({ errors, touched }) => (
           <Form className="flex flex-col justify-center items-center min-w-full max-w-[50vw] space-y-4 rounded-lg bg-gray-950 px-[15px] py-5">
-            <h2 className="text-green-600 mb-10 text-2xl font-bold">Criar Conta</h2>
+            <h2 className="text-green-600 mb-5 text-2xl font-bold">Criar Conta</h2>
 
-            {/* Nome completo */}
-            <div className="flex flex-col justify-center gap-[20px] items-start w-full">
+            <div className="flex flex-col justify-center items-start w-full">
               <div className="flex justify-center items-start gap-[20px] w-full">
                 {/* Wrapper do Nome */}
                 <div className="flex flex-col flex-1 items-start">
@@ -271,12 +280,12 @@ export const SignUpForm = () => {
 
             <button
               type="submit"
-              className="w-full cursor-pointer py-2 mt-3 bg-green-700 text-white rounded-md hover:bg-green-900 transition duration-200"
+              className="w-full cursor-pointer py-2  bg-green-700 text-white rounded-md hover:bg-green-900 transition duration-200"
             >
               Criar Conta
             </button>
 
-            <p className="mt-4">
+            <p className="mt-1">
               Já possui conta?{" "}
               <span
                 className="text-green-500 cursor-pointer underline"

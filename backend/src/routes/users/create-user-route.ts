@@ -14,7 +14,7 @@ const bodySchema = z.object({
 });
 
 export async function createUserRoute(app: FastifyInstance) {
-  app.patch("/create_user", async (request, reply) => {
+  app.post("/create_user", async (request, reply) => {
     try {
       const { fullName, email, telephone, password } = bodySchema.parse(request.body);
 

@@ -22,6 +22,7 @@ model User {
   created_expenses           Expense[]       @relation("CreatedExpenses")
   created_sales              Sale[]          @relation("CreatedSales")
   refreshtokens              refreshtokens[]
+  two_factor_requests        TwoFactorRequest[]
 
   @@map("users")
 }
@@ -91,4 +92,18 @@ enum ExpenseStatus {
 enum CourseType {
   presencial
   online
+}
+
+model TwoFactorRequest {
+  id        String   @id @default(uuid())
+  userId    String   @db.Char(36)
+  codeHash  String
+  expiresAt DateTime
+  consumed  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  ip        String?
+  users     User     @relation(fields: [userId], references: [id], map: "TwoFactorRequest_userId_fkey")
+
+  @@index([userId], map: "TwoFactorRequest_userId_fkey")
+  @@map("two_factor_requests")
 }

@@ -4,7 +4,7 @@ import { AppError } from "../../utils/app-error.ts";
 
 export async function updateUserProfileFunction({
   userId,
-  name,
+  fullName,
   email,
   telephone,
 }: ProfileChangeType) {
@@ -19,7 +19,7 @@ export async function updateUserProfileFunction({
     const updatedUser = await prisma.user.update({
       where: { id: userId },
       data: {
-        ...(name !== undefined && { name }),
+        ...(fullName !== undefined && { name: fullName }),
         ...(email !== undefined && { email }),
         ...(telephone !== undefined && { telephone }),
       },
@@ -34,7 +34,7 @@ export async function updateUserProfileFunction({
     if (error instanceof AppError) {
       throw error;
     }
-    console.error("Erro operacional ao deletar usuário ", error);
+    console.error("Erro operacional ao atualizar o perfil do usuário ", error);
     throw new AppError("Ocorreu um erro interno ao processar sua solicitação", 500);
   }
 }

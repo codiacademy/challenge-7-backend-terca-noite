@@ -4,7 +4,7 @@ export interface Payload {
   id: string;
   email: string;
   name: string;
-  type: "refresh";
+  type: "refresh" | "access" | "2fa_pending";
   iat?: number;
   exp?: number;
 }
