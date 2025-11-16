@@ -2,6 +2,7 @@ import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { Sales } from "@/types/types";
+import { SaleFormValues } from "@/types/types";
 import { useEffect } from "react";
 import { setMask, removeMask } from "react-input-mask-br";
 import { isValidCPF } from "@/utils/isValidCPF";
@@ -54,12 +55,12 @@ type ModalProps = {
   title: string;
   open: boolean;
   onClose: () => void;
-  onSave: (sale: Sales) => void;
+  onSave: () => void;
   sale?: Sales | null; // Para edição
 };
 
 export default function Modal({ title, open, onClose, onSave, sale }: ModalProps) {
-  const formik = useFormik({
+  const formik = useFormik<SaleFormValues>({
     initialValues: {
       customer: {
         name: sale?.customer.name || "",
@@ -92,6 +93,7 @@ export default function Modal({ title, open, onClose, onSave, sale }: ModalProps
         let response;
 
         if (sale) {
+          console.log("Atualizar venda")
           // --- EDITAR VENDA ---
           response = await api.put(
             "http://localhost:3000/sales/update_sale",
@@ -102,12 +104,11 @@ export default function Modal({ title, open, onClose, onSave, sale }: ModalProps
             { headers },
           );
         } else {
+          console.log("Nova venda")
           // --- CRIAR VENDA ---
           response = await api.post("http://localhost:3000/sales/create_sale", values, { headers });
         }
-
-        onSave(response.data.sale);
-
+        onSave();
         formik.resetForm();
         onClose();
       } catch (error) {

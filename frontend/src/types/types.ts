@@ -35,8 +35,26 @@ export type CourseName =
   | "curso de javascript avançado"
   | "fundamentos do desenvolvimento web";
 
+  export type SaleFormValues = {
+    customer: {
+      name: string;
+      email: string;
+      phone: string;
+      cpf: string;
+    };
+    course: {
+      type: "" | "presencial" | "online";  // <-- aceitando string vazia
+      name: string;
+      price: number;
+    };
+    discount: number;
+    taxes: number;
+    commissions: number;
+    cardFees: number;
+    finalPrice: number;
+};
 export interface Sales {
-  id: number;
+  id: string;
   date: string;
   customer: {
     name: string;
@@ -58,7 +76,7 @@ export interface Sales {
 
 export interface SalesTableProps {
   sales: Sales[];
-  onDelete: (id: number) => void;
+  onDelete: (id: string) => void;
   onEdit: (sale: Sales) => void;
 }
 

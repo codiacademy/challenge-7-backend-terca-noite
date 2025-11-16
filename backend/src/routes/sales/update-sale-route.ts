@@ -49,6 +49,9 @@ const userIdSchema = z.uuid();
 
 export async function updateSaleRoute(app: FastifyInstance) {
   app.put("/update_sale", { preHandler: [app.authenticate] }, async (request, reply) => {
+    console.log("BODY RECEBIDO:", request.body);
+    app.log.info("TO AQUI")
+
     try {
       const userId = userIdSchema.parse((request.user as any).id);
       const { id, customer, course, discount, taxes, commissions, cardFees, finalPrice } =

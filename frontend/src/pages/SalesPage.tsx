@@ -12,7 +12,7 @@ import { TimeRange, Sales } from "@/types/types";
 import { filterSalesByTime } from "@/utils/salesAggregations";
 //import { salesData } from "@/data/SalesData";
 import Modal from "@/components/common/SalesModal";
-import { toast, ToastContainer } from "react-toastify";
+import {  ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useEffect } from "react";
 import api from "../api/axios-client.ts";
@@ -50,33 +50,7 @@ export function SalesPage() {
     }
   }
 
-  async function updateSelectedSale(updatedSale: Sales) {
-    try {
-      const token = localStorage.getItem("accessToken") || null;
-
-      const headers: Record<string, string> = {
-        "Content-Type": "application/json",
-      };
-      if (token) headers["Authorization"] = `Bearer ${token}`;
-
-      const response = await api.put("http://localhost:3000/sales/update_sale", updatedSale, {
-        headers,
-        withCredentials: true,
-      });
-
-      if (!response.data) throw new Error(`HTTP ${response.status}`);
-      setSelectedSale(null);
-      await loadAllSales();
-    } catch (error: any) {
-      toast.error("Erro ao atualizar venda", { theme: "dark" });
-      console.error(error);
-    }
-  }
-
-  async function createNewSale(newSale: Sales) {
-    await loadAllSales();
-    toast.success("Venda criada!", { theme: "dark" });
-  }
+  
 
   useEffect(() => {
     const controller = new AbortController();
@@ -97,7 +71,7 @@ export function SalesPage() {
   };*/
 
   // Função para excluir uma venda
-  const handleDeleteSale = (id: number) => {
+  const handleDeleteSale = (id: string) => {
     setSales(sales.filter((sale) => sale.id !== id));
   };
 
@@ -193,12 +167,8 @@ export function SalesPage() {
           setIsOpen(false);
           setSelectedSale(null); // Limpa a venda selecionada ao fechar
         }}
-        onSave={async (sale) => {
-          if (selectedSale) {
-            await updateSelectedSale(sale);
-          } else {
-            await createNewSale(sale);
-          }
+        onSave={async () => {
+          loadAllSales();
         }} // Passa a função de salvamento
         sale={selectedSale} // Passa a venda selecionada para edição
       />
