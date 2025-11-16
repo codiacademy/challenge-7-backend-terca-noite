@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Header } from "../components/common/Header";
 import { DangerZone } from "../components/settings/DangerZone";
 import { Notifications } from "../components/settings/Notifications";

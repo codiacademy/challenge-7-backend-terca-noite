@@ -16,6 +16,10 @@ export async function updateUserSmsNotificationFunction({ userId }: { userId: st
     });
     return user;
   } catch (error) {
-    throw new AppError("Erro ao buscar usuário", 500);
+    if (error instanceof AppError) {
+      throw error;
+    }
+    console.error("Erro operacional ao atualizar a notificação por SMS do usuário ", error);
+    throw new AppError("Ocorreu um erro interno ao processar sua solicitação", 500);
   }
 }

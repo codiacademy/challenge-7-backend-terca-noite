@@ -1,4 +1,4 @@
-import { prisma } from "../../lib/prisma";
+import { prisma } from "../../lib/prisma.ts";
 import { AppError } from "../../utils/app-error.ts";
 
 export async function updateUserTwoFactorAuthFunction(userId: string) {

@@ -26,7 +26,7 @@ export function PublicRoute({ children }: PublicRouteProps) {
           withCredentials: true,
         });
 
-        setIsLogged(res.data); // true se token válido, false se 401
+        setIsLogged(res.data);
       } catch (error) {
         console.error("Erro ao verificar login:", error);
         setIsLogged(false);

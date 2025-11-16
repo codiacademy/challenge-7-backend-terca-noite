@@ -78,7 +78,6 @@ model refreshtokens {
 
   @@index([userId], map: "refreshTokens_userId_fkey")
 }
-
 enum ExpenseCategory {
   fixa
   variavel

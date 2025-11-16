@@ -17,6 +17,10 @@ export async function updateUserEmailNotificationFunction({ userId }: { userId: 
     });
     return user;
   } catch (error) {
-    throw new AppError("Erro ao buscar usuário", 500);
+    if (error instanceof AppError) {
+      throw error;
+    }
+    console.error("Erro operacional ao atualizar a notificação por email do usuário ", error);
+    throw new AppError("Ocorreu um erro interno ao processar sua solicitação", 500);
   }
 }

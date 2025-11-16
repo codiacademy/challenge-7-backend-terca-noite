@@ -1,12 +1,7 @@
 import { Header } from "../components/common/Header";
 import { motion } from "framer-motion";
 import { StatCard } from "../components/common/StatCard";
-import {
-  BanknoteArrowDown,
-  BanknoteArrowUp,
-  PiggyBank,
-  TrendingUp,
-} from "lucide-react";
+import { BanknoteArrowDown, BanknoteArrowUp, PiggyBank, TrendingUp } from "lucide-react";
 
 import { SalesCoursePie } from "../components/sales/SalesCoursePie";
 import { BalanceLineChart } from "../components/overview/BalanceLineChart";
@@ -20,6 +15,8 @@ import { expensesData } from "@/data/ExpensesData";
 
 import { filterSalesByTime } from "@/utils/salesAggregations";
 import { filterExpensesByTime } from "@/utils/expenseAggregations";
+import { useEffect } from "react";
+import { toast } from "react-toastify";
 
 export function OverviewPage() {
   const [timeRange, setTimeRange] = useState<TimeRange>("all");
@@ -27,29 +24,24 @@ export function OverviewPage() {
   const filteredExpenses = filterExpensesByTime(expensesData, timeRange);
   const filteredSales = filterSalesByTime(salesData, timeRange);
 
+  useEffect(() => {
+    toast.success("Pagina Overview Carregada!");
+  }, []);
   const balanceStats = {
-    totalExpenses: filteredExpenses.reduce(
-      (sum, expense) => sum + expense.value,
-      0
-    ), // total de despesas
+    totalExpenses: filteredExpenses.reduce((sum, expense) => sum + expense.value, 0), // total de despesas
     totalSales: filteredSales.reduce((sum, sale) => sum + sale.finalPrice, 0), // total de vendas
     balance:
       filteredSales.reduce((sum, sale) => sum + sale.finalPrice, 0) -
       filteredExpenses.reduce((sum, expense) => sum + expense.value, 0), // saldo
     avarageSales:
       filteredSales.length > 0
-        ? filteredSales.reduce((sum, sale) => sum + sale.finalPrice, 0) /
-          filteredSales.length
+        ? filteredSales.reduce((sum, sale) => sum + sale.finalPrice, 0) / filteredSales.length
         : 0, // média de vendas
   };
 
   return (
     <div className="flex-1 overflow-auto relative z-10">
-      <Header
-        title="Dashboard Principal"
-        showTimeRange={true}
-        onTimeRangeChange={setTimeRange}
-      />
+      <Header title="Dashboard Principal" showTimeRange={true} onTimeRangeChange={setTimeRange} />
 
       <main className="max-w-7xl mx-auto py-6 px-4 lg:px-8">
         {/* STATS */}

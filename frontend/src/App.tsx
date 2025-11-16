@@ -35,7 +35,7 @@ export function App() {
       {!showSidebar && <Sidebar />}
       <ToastContainer
         position="top-right"
-        autoClose={500}
+        autoClose={3000}
         hideProgressBar={false}
         newestOnTop={false}
         closeOnClick
