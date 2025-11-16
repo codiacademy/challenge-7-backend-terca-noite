@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "forceConsistentCasingInFileNames": true,
     "moduleResolution": "NodeNext", // ou "node" ou "nodenext"
     "target": "ES2022",
     "module": "NodeNext",
