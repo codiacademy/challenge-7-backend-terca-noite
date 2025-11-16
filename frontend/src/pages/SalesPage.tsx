@@ -12,11 +12,10 @@ import { TimeRange, Sales } from "@/types/types";
 import { filterSalesByTime } from "@/utils/salesAggregations";
 //import { salesData } from "@/data/SalesData";
 import Modal from "@/components/common/SalesModal";
-import {  ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useEffect } from "react";
 import api from "../api/axios-client.ts";
-
+import { toast } from "react-toastify";
 export function SalesPage() {
   const [timeRange, setTimeRange] = useState<TimeRange>("all");
   const [isOpen, setIsOpen] = useState(false);
@@ -50,8 +49,6 @@ export function SalesPage() {
     }
   }
 
-  
-
   useEffect(() => {
     const controller = new AbortController();
 
@@ -71,8 +68,22 @@ export function SalesPage() {
   };*/
 
   // Função para excluir uma venda
-  const handleDeleteSale = (id: string) => {
-    setSales(sales.filter((sale) => sale.id !== id));
+  const handleDeleteSale = async (id: string) => {
+    try {
+      const token = localStorage.getItem("accessToken") || null;
+
+      const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+      };
+      if (token) headers["Authorization"] = `Bearer ${token}`;
+      const response = await api.delete(`http://localhost:3000/sales/${id}`, {
+        headers,
+        withCredentials: true,
+      });
+      if (!response.data) return toast.error("Resposta não recebida");
+      console.log("Dados de Deleção:" + response.data);
+      await loadAllSales();
+    } catch (error: any) {}
   };
 
   // Filtrando os dados pelo time range
@@ -172,8 +183,6 @@ export function SalesPage() {
         }} // Passa a função de salvamento
         sale={selectedSale} // Passa a venda selecionada para edição
       />
-
-      <ToastContainer />
     </div>
   );
 }
