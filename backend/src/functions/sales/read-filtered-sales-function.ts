@@ -8,7 +8,9 @@ export async function readFilteredSalesFunction(userId: string, filters: any) {
   };
 
   if (courseType) {
-    where.course_type = courseType;
+    if (courseType != "") {
+      where.course_type = courseType;
+    }
   }
 
   if (search) {

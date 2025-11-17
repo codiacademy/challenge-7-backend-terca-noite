@@ -70,10 +70,13 @@ export const SalesTable = ({
                 courseType !== "todos" ? "border-2 border-blue-500" : ""
               }`}
               value={courseType}
-              onChange={(e) => onFilterTypeChange?.(e.target.value as "presencial" | "online")}
+              onChange={(e) => {
+                onFilterTypeChange?.(e.target.value);
+                console.log(e.target.value);
+              }}
               aria-label="Filtrar por tipo de curso"
             >
-              <option value="todos">Todos</option>
+              <option value="">Todos</option>
               <option value="presencial">Presencial</option>
               <option value="online">Online</option>
             </select>

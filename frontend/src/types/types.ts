@@ -86,7 +86,7 @@ export interface SalesTableProps {
   onEdit: (sale: Sales) => void;
 
   onSearchChange?: (term: string) => void;
-  onFilterTypeChange?: (type: "online" | "presencial" | undefined) => void;
+  onFilterTypeChange?: (type: string) => void;
   onItemsPerPageChange?: (items: number) => void;
   onPageChange?: (page: number) => void;
 }

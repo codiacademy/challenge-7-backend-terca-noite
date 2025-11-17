@@ -3,7 +3,7 @@ import type { FastifyInstance } from "fastify";
 import { readFilteredSalesFunction } from "../../functions/sales/read-filtered-sales-function.ts";
 
 const querySchema = z.object({
-  courseType: z.enum(["online", "presencial"]).optional(),
+  courseType: z.string().optional(),
   search: z.string().optional(),
   from: z.date().optional(),
   to: z.date().optional(),

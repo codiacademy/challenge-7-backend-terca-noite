@@ -19,7 +19,7 @@ import { toast } from "react-toastify";
 
 export function SalesPage() {
   const [search, setSearch] = useState("");
-  const [courseType, setCourseType] = useState<"online" | "presencial" | undefined>(undefined);
+  const [courseType, setCourseType] = useState<string>("");
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
   const [timeRange, setTimeRange] = useState<TimeRange>("all");
@@ -32,7 +32,7 @@ export function SalesPage() {
 
   async function loadFilteredSales(params?: {
     timeRange?: TimeRange;
-    courseType?: "online" | "presencial" | undefined;
+    courseType?: string;
     search?: string;
     page?: number;
     limit?: number;
