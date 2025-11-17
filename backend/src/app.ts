@@ -5,7 +5,7 @@ import cookie from "@fastify/cookie";
 import { env } from "./config/env.ts";
 import { swaggerConfi } from "./config/swagger.ts";
 import { createUserRoute } from "./routes/users/create-user-route.ts";
-import { deleteUserRoute } from "./routes/users/delete-user-route.ts";
+import { deleteUserRoute } from "./routes/users/delete-current-user-route.ts";
 import { authLoginRoute } from "./routes/auth/auth-login-route.ts";
 import { readUserProfileRoute } from "./routes/users/read-user-profile-route.ts";
 import { updateUserProfileRoute } from "./routes/users/update-user-profile-route.ts";
@@ -27,6 +27,7 @@ import { createSaleRoute } from "./routes/sales/create-sale-route.ts";
 import { updateSaleRoute } from "./routes/sales/update-sale-route.ts";
 import { readAllSalesRoute } from "./routes/sales/read-all-sales-route.ts";
 import { deleteSaleRoute } from "./routes/sales/delete-sale-route.ts";
+import { readFilteredSalesRoute } from "./routes/sales/read-filtered-sales.ts";
 
 export const app = Fastify({ logger: true });
 
@@ -87,6 +88,7 @@ app.register(createSaleRoute, { prefix: "/sales" });
 app.register(updateSaleRoute, { prefix: "/sales" });
 app.register(readAllSalesRoute, { prefix: "/sales" });
 app.register(deleteSaleRoute, { prefix: "/sales" });
+app.register(readFilteredSalesRoute, { prefix: "/sales" });
 app.get("/", { preHandler: [app.authenticate] }, async (request, reply) => {
   return "Codi Cash API rodando! Acesse /docs para a documentação.";
 });

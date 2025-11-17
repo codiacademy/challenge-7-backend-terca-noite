@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
 import { getSalesCoursesData } from "@/utils/salesAggregations";
-import { salesData } from "@/data/SalesData";
+//import { salesData } from "@/data/SalesData";
 import { Sales, TimeRange } from "@/types/types";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useState } from "react";
@@ -25,33 +25,28 @@ const COLORS = [
 ];
 
 interface SalesCoursePieProps {
+  salesData: Sales[];
   timeRange: TimeRange;
 }
 
-export const SalesCoursePie = ({ timeRange }: SalesCoursePieProps) => {
+export const SalesCoursePie = ({ salesData, timeRange }: SalesCoursePieProps) => {
   const [showDetails, setShowDetails] = useState(false);
 
   const salesPieData = getSalesCoursesData(salesData, timeRange);
 
   const sortedData = [...salesPieData].sort((a, b) => b.value - a.value);
   const topFive = sortedData.slice(0, 5);
-  const othersTotal = sortedData
-    .slice(5)
-    .reduce((sum, item) => sum + item.value, 0);
+  const othersTotal = sortedData.slice(5).reduce((sum, item) => sum + item.value, 0);
 
   const chartData =
-    othersTotal > 0
-      ? [...topFive, { name: "Outros", value: othersTotal }]
-      : topFive;
+    othersTotal > 0 ? [...topFive, { name: "Outros", value: othersTotal }] : topFive;
 
   // Calcular o valor total para percentuais
   const totalValue = chartData.reduce((sum, item) => sum + item.value, 0);
 
   // Função para obter o tipo do curso a partir do nome (usando salesData)
   const getCourseType = (courseName: string) => {
-    const sale = salesData.find(
-      (sale: Sales) => sale.course.name === courseName
-    );
+    const sale = salesData.find((sale: Sales) => sale.course.name === courseName);
     return sale ? sale.course.type : "N/A";
   };
 
@@ -62,9 +57,7 @@ export const SalesCoursePie = ({ timeRange }: SalesCoursePieProps) => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.3 }}
     >
-      <h2 className="text-lg font-medium mb-4 text-gray-100">
-        Cursos mais vendidos
-      </h2>
+      <h2 className="text-lg font-medium mb-4 text-gray-100">Cursos mais vendidos</h2>
 
       <div className="flex flex-col gap-4">
         {/* Gráfico */}
@@ -72,18 +65,9 @@ export const SalesCoursePie = ({ timeRange }: SalesCoursePieProps) => {
           {chartData.length > 0 ? (
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
-                <Pie
-                  data={chartData}
-                  cx="50%"
-                  cy="50%"
-                  outerRadius={80}
-                  dataKey="value"
-                >
+                <Pie data={chartData} cx="50%" cy="50%" outerRadius={80} dataKey="value">
                   {chartData.map((_, index) => (
-                    <Cell
-                      key={`cell-${index}`}
-                      fill={COLORS[index % COLORS.length]}
-                    />
+                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                   ))}
                 </Pie>
                 <Tooltip
@@ -120,7 +104,12 @@ export const SalesCoursePie = ({ timeRange }: SalesCoursePieProps) => {
                   className="w-3 h-3 rounded-full"
                   style={{ backgroundColor: COLORS[index % COLORS.length] }}
                 />
-                <span className={`text-xs sm:text-lg`} style={{ color: COLORS[index % COLORS.length] }}>{entry.name}</span>
+                <span
+                  className={`text-xs sm:text-lg`}
+                  style={{ color: COLORS[index % COLORS.length] }}
+                >
+                  {entry.name}
+                </span>
               </div>
             ))}
           </div>

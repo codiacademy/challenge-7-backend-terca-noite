@@ -5,7 +5,7 @@ import api from "../../api/axios-client.ts";
 import { useState } from "react";
 import { CheckboxLoginRegister } from "../common/CheckboxLoginRegister";
 import { useNavigate } from "react-router-dom";
-import { ToastContainer, toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const validationSchema = Yup.object().shape({
@@ -147,6 +147,7 @@ export const LoginForm = () => {
               <CheckboxLoginRegister titleChecked="Memorizar senha" />
 
               <button
+                type="button"
                 onClick={() => navigate("/forgotpassword")}
                 className="text-sm cursor-pointer hover:text-gray-400"
               >
@@ -173,7 +174,6 @@ export const LoginForm = () => {
           </Form>
         )}
       </Formik>
-
       <ToastContainer />
     </div>
   );

@@ -3,7 +3,6 @@ import type { FastifyInstance } from "fastify";
 import { AppError } from "../../utils/app-error.ts";
 import { updateSaleFunction } from "../../functions/sales/update-sale-function.ts";
 export const bodySchema = z.object({
-  id: z.uuid(),
   customer: z.object({
     name: z
       .string()
@@ -48,13 +47,11 @@ export const bodySchema = z.object({
 const userIdSchema = z.uuid();
 
 export async function updateSaleRoute(app: FastifyInstance) {
-  app.put("/update_sale", { preHandler: [app.authenticate] }, async (request, reply) => {
-    console.log("BODY RECEBIDO:", request.body);
-    app.log.info("TO AQUI")
-
+  app.put("/:id", { preHandler: [app.authenticate] }, async (request, reply) => {
     try {
+      const { id } = request.params as { id: string };
       const userId = userIdSchema.parse((request.user as any).id);
-      const { id, customer, course, discount, taxes, commissions, cardFees, finalPrice } =
+      const { customer, course, discount, taxes, commissions, cardFees, finalPrice } =
         bodySchema.parse(request.body);
 
       const updatedSale = await updateSaleFunction({

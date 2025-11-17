@@ -6,6 +6,7 @@ import { Profile } from "../components/settings/Profile";
 import { Security } from "../components/settings/Security";
 import { ProfileConfigsType } from "../types/types";
 import api from "../api/axios-client.ts";
+import { ToastContainer } from "react-toastify";
 export function SettingsPage() {
   const [profileData, setProfileData] = useState<ProfileConfigsType | null>(null);
   const [loadingProfile, setLoadingProfile] = useState<boolean>(true);
@@ -54,6 +55,7 @@ export function SettingsPage() {
         <Security {...((profileData ?? {}) as any)} isLoading={loadingProfile} />
         <DangerZone />
       </main>
+      <ToastContainer />
     </div>
   );
 }

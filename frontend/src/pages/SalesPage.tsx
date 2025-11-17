@@ -16,45 +16,144 @@ import "react-toastify/dist/ReactToastify.css";
 import { useEffect } from "react";
 import api from "../api/axios-client.ts";
 import { toast } from "react-toastify";
+
 export function SalesPage() {
+  const [search, setSearch] = useState("");
+  const [courseType, setCourseType] = useState<"online" | "presencial" | undefined>(undefined);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   const [timeRange, setTimeRange] = useState<TimeRange>("all");
   const [isOpen, setIsOpen] = useState(false);
-  const [sales, setSales] = useState<Sales[]>([]); // Estado para gerenciar vendas
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
+  const [filteredSales, setFilteredSales] = useState<Sales[]>([]); // Estado para gerenciar vendas
   const [selectedSale, setSelectedSale] = useState<Sales | null>(null); // Venda selecionada para edição
   const [loadingProfile, setLoadingProfile] = useState<boolean>(true);
 
-  async function loadAllSales() {
+  async function loadFilteredSales(params?: {
+    timeRange?: TimeRange;
+    courseType?: "online" | "presencial" | undefined;
+    search?: string;
+    page?: number;
+    limit?: number;
+  }) {
     try {
       setLoadingProfile(true);
-      const token = localStorage.getItem("accessToken") || null;
 
-      const headers: Record<string, string> = {
-        "Content-Type": "application/json",
-      };
+      const token = localStorage.getItem("accessToken") || null;
+      const headers: Record<string, string> = { "Content-Type": "application/json" };
       if (token) headers["Authorization"] = `Bearer ${token}`;
 
-      const response = await api.get("http://localhost:3000/sales/read_all_sales", {
+      // Converte timeRange para from/to
+      let from: string | undefined;
+      let to: string | undefined;
+      const now = new Date();
+
+      const tr = params?.timeRange;
+
+      if (tr) {
+        if (typeof tr === "string") {
+          // trata os casos string do seu TimeRange
+          switch (tr) {
+            case "lastWeek": {
+              const start = new Date();
+              start.setDate(now.getDate() - 7);
+              from = start.toISOString();
+              to = now.toISOString();
+              break;
+            }
+            case "thisMonth": {
+              const start = new Date(now.getFullYear(), now.getMonth(), 1);
+              from = start.toISOString();
+              to = now.toISOString();
+              break;
+            }
+            case "lastThreeMonths": {
+              const start = new Date();
+              start.setMonth(now.getMonth() - 3);
+              from = start.toISOString();
+              to = now.toISOString();
+              break;
+            }
+            case "thisYear": {
+              const start = new Date(now.getFullYear(), 0, 1);
+              from = start.toISOString();
+              to = now.toISOString();
+              break;
+            }
+            case "all": {
+              // deixa from/to indefinidos para trazer tudo (ou o back decide)
+              break;
+            }
+            default: {
+              // caso seu TimeRange tenha outros valores string
+              break;
+            }
+          }
+        } else if (typeof tr === "object" && tr.type === "custom") {
+          // custom com datas já em Date
+          from = tr.startDate.toISOString();
+          to = tr.endDate.toISOString();
+        }
+      }
+
+      const response = await api.get("http://localhost:3000/sales/read_filtered_sales", {
         headers,
         withCredentials: true,
+        params: {
+          courseType: params?.courseType,
+          search: params?.search,
+          from,
+          to,
+          page: params?.page ?? 1,
+          limit: params?.limit ?? 10,
+        },
       });
 
       if (!response.data) throw new Error(`HTTP ${response.status}`);
+      const mappedSales: Sales[] = response.data.sales.map((sale: any) => ({
+        id: sale.id,
+        date: sale.created_at, // ou updated_at se preferir
+        customer: {
+          name: sale.client_name,
+          email: sale.client_email,
+          phone: sale.client_phone,
+          cpf: sale.cpf,
+        },
+        course: {
+          type: sale.course_type,
+          name: sale.course,
+          price: Number(sale.course_value),
+        },
+        discount: Number(sale.discount_value),
+        taxes: Number(sale.taxes_value),
+        commissions: Number(sale.commission_value),
+        cardFees: Number(sale.card_fee_value),
+        finalPrice: Number(sale.total_value),
+      }));
 
-      setSales(response.data.salesData);
-      console.log("Vendas Carregadas com Sucesso!");
+      setFilteredSales(mappedSales);
+      setCurrentPage(response.data.page);
+      setItemsPerPage(response.data.limit);
+      setTotalPages(response.data.totalPages);
+      setTotalItems(response.data.total);
+      console.log("Vendas filtradas carregadas!");
     } catch (error: any) {
-      if (error.name !== "AbortError") console.error("Erro ao carregar perfil:", error);
+      console.error("Erro ao carregar vendas filtradas:", error);
     } finally {
       setLoadingProfile(false);
     }
   }
 
   useEffect(() => {
-    const controller = new AbortController();
-
-    loadAllSales();
-    return () => controller.abort();
-  }, []);
+    loadFilteredSales({
+      timeRange,
+      courseType,
+      search,
+      page: currentPage,
+      limit: itemsPerPage,
+    });
+  }, [timeRange, courseType, search, currentPage, itemsPerPage]);
   // Função para salvar (criar ou atualizar) uma venda
   /*const handleSaveSale = (newSale: Sales) => {
     if (newSale.id === selectedSale?.id) {
@@ -82,12 +181,11 @@ export function SalesPage() {
       });
       if (!response.data) return toast.error("Resposta não recebida");
       console.log("Dados de Deleção:" + response.data);
-      await loadAllSales();
+      await loadFilteredSales();
     } catch (error: any) {}
   };
 
   // Filtrando os dados pelo time range
-  const filteredSales = filterSalesByTime(sales, timeRange);
 
   const salesStats = {
     totalCourses: filteredSales.length,
@@ -156,19 +254,29 @@ export function SalesPage() {
 
         <SalesTable
           sales={filteredSales}
+          search={search}
+          courseType={courseType}
+          currentPage={currentPage}
+          itemsPerPage={itemsPerPage}
+          totalItems={totalItems}
+          totalPages={totalPages}
+          onSearchChange={setSearch}
+          onFilterTypeChange={setCourseType}
+          onPageChange={setCurrentPage}
+          onItemsPerPageChange={setItemsPerPage}
           onEdit={(sale) => {
-            setSelectedSale(sale); // Define a venda selecionada para edição
-            setIsOpen(true); // Abre o modal
+            setSelectedSale(sale);
+            setIsOpen(true);
           }}
-          onDelete={handleDeleteSale} // Passa a função de exclusão
+          onDelete={handleDeleteSale}
         />
 
         {/* CHARTS */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-          <SalesCoursePie timeRange={timeRange} />
-          <SalesTypesBar timeRange={timeRange} />
+          <SalesCoursePie timeRange={timeRange} salesData={filteredSales} />
+          <SalesTypesBar timeRange={timeRange} salesData={filteredSales} />
         </div>
-        <SalesGrowth timeRange={timeRange} />
+        <SalesGrowth timeRange={timeRange} salesData={filteredSales} />
       </main>
 
       <Modal
@@ -179,7 +287,7 @@ export function SalesPage() {
           setSelectedSale(null); // Limpa a venda selecionada ao fechar
         }}
         onSave={async () => {
-          loadAllSales();
+          loadFilteredSales();
         }} // Passa a função de salvamento
         sale={selectedSale} // Passa a venda selecionada para edição
       />

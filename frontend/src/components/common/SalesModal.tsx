@@ -90,23 +90,20 @@ export default function Modal({ title, open, onClose, onSave, sale }: ModalProps
         };
         if (token) headers["Authorization"] = `Bearer ${token}`;
 
-        let response;
-
         if (sale) {
-          console.log("Atualizar venda")
+          console.log("Atualizar venda");
           // --- EDITAR VENDA ---
-          response = await api.put(
-            "http://localhost:3000/sales/update_sale",
-            {
-              id: sale.id,
-              ...values,
-            },
-            { headers },
-          );
+          const response = await api.put(`http://localhost:3000/sales/${sale.id}`, values, {
+            headers,
+          });
+          if (!response.data) console.log("Sem resposta na hora de atualizar uma venda!");
         } else {
-          console.log("Nova venda")
+          console.log("Nova venda");
           // --- CRIAR VENDA ---
-          response = await api.post("http://localhost:3000/sales/create_sale", values, { headers });
+          const response = await api.post("http://localhost:3000/sales/create_sale", values, {
+            headers,
+          });
+          if (!response.data) console.log("Sem resposta na hora de criar uma venda!");
         }
         onSave();
         formik.resetForm();

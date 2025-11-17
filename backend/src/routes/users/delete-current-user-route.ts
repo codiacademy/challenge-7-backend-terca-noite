@@ -6,7 +6,7 @@ import { deleteUserFunction } from "../../functions/users/delete-user-function.t
 const userIdSchema = z.uuid();
 
 export async function deleteUserRoute(app: FastifyInstance) {
-  app.delete("/delete_user", { preHandler: [app.authenticate] }, async (request, reply) => {
+  app.delete("/delete_current_user", { preHandler: [app.authenticate] }, async (request, reply) => {
     try {
       const userId = userIdSchema.parse((request.user as any).id);
       const result = await deleteUserFunction(userId);
