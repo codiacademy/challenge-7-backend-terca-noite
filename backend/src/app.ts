@@ -29,6 +29,8 @@ import { readAllSalesRoute } from "./routes/sales/read-all-sales-route.ts";
 import { deleteSaleRoute } from "./routes/sales/delete-sale-route.ts";
 import { readFilteredSalesRoute } from "./routes/sales/read-filtered-sales.ts";
 import { readDateFilteredSalesRoute } from "./routes/sales/read-date-filtered-sales.ts";
+import { getSalesChartsDataRoute } from "./routes/sales/get-sales-charts-data.ts";
+import { getSalesKPIsRoute } from "./routes/sales/get-sales-kpis-data.ts";
 
 export const app = Fastify({ logger: true });
 
@@ -91,6 +93,8 @@ app.register(readAllSalesRoute, { prefix: "/sales" });
 app.register(deleteSaleRoute, { prefix: "/sales" });
 app.register(readFilteredSalesRoute, { prefix: "/sales" });
 app.register(readDateFilteredSalesRoute, { prefix: "/sales" });
+app.register(getSalesChartsDataRoute, { prefix: "/sales" });
+app.register(getSalesKPIsRoute, { prefix: "/sales" });
 app.get("/", { preHandler: [app.authenticate] }, async (request, reply) => {
   return "Codi Cash API rodando! Acesse /docs para a documentação.";
 });

@@ -13,13 +13,10 @@ import { getSalesGrowthData } from "@/utils/salesAggregations";
 import { Sales, TimeRange } from "@/types/types";
 
 interface SalesGrowthProps {
-  salesData: Sales[];
-  timeRange: TimeRange;
+  growthData: any;
 }
 
-export const SalesGrowth = ({ salesData, timeRange }: SalesGrowthProps) => {
-  const growthData = getSalesGrowthData(salesData, timeRange);
-
+export const SalesGrowth = ({ growthData }: SalesGrowthProps) => {
   return (
     <motion.div
       className="bg-gray-800 bg-opacity-50 backdrop-blur-md shadow-lg rounded-xl p-6 border border-gray-700"

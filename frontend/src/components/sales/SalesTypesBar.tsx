@@ -8,8 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartConfig, ChartContainer, ChartTooltip } from "@/components/ui/chart";
 
 interface SalesTypesBarProps {
-  salesData: Sales[];
-  timeRange: TimeRange;
+  salesBarData: any;
 }
 
 const chartConfig = {
@@ -23,9 +22,7 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export const SalesTypesBar = ({ salesData, timeRange }: SalesTypesBarProps) => {
-  const salesBarData = getSalesTypesData(salesData, timeRange);
-
+export const SalesTypesBar = ({ salesBarData }: SalesTypesBarProps) => {
   // Verificar se há dados reais (presencial e online ambos zero significa "sem dados")
   const hasData =
     salesBarData.length > 0 && (salesBarData[0].presencial > 0 || salesBarData[0].online > 0);

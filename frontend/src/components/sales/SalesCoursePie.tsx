@@ -25,14 +25,12 @@ const COLORS = [
 ];
 
 interface SalesCoursePieProps {
-  salesData: Sales[];
-  timeRange: TimeRange;
+  dateFilteredSalesData: Sales[];
+  salesPieData: any;
 }
 
-export const SalesCoursePie = ({ salesData, timeRange }: SalesCoursePieProps) => {
+export const SalesCoursePie = ({ dateFilteredSalesData, salesPieData }: SalesCoursePieProps) => {
   const [showDetails, setShowDetails] = useState(false);
-
-  const salesPieData = getSalesCoursesData(salesData, timeRange);
 
   const sortedData = [...salesPieData].sort((a, b) => b.value - a.value);
   const topFive = sortedData.slice(0, 5);
@@ -46,7 +44,7 @@ export const SalesCoursePie = ({ salesData, timeRange }: SalesCoursePieProps) =>
 
   // Função para obter o tipo do curso a partir do nome (usando salesData)
   const getCourseType = (courseName: string) => {
-    const sale = salesData.find((sale: Sales) => sale.course.name === courseName);
+    const sale = dateFilteredSalesData.find((sale: Sales) => sale.course.name === courseName);
     return sale ? sale.course.type : "N/A";
   };
 

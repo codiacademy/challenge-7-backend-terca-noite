@@ -1,18 +1,8 @@
-import {
-  parse,
-  subWeeks,
-  startOfMonth,
-  startOfYear,
-  isWithinInterval,
-  subMonths,
-} from "date-fns";
+import { parse, subWeeks, startOfMonth, startOfYear, isWithinInterval, subMonths } from "date-fns";
 import { Sales, TimeRange } from "../types/types";
 
 // Filtro por período
-export const filterSalesByTime = (
-  sales: Sales[] | undefined,
-  filter: TimeRange
-): Sales[] => {
+export const filterSalesByTime = (sales: Sales[] | undefined, filter: TimeRange): Sales[] => {
   if (!sales || !Array.isArray(sales)) {
     return [];
   }
@@ -55,15 +45,12 @@ export const filterSalesByTime = (
 };
 
 // Função para o gráfico de crescimento
-export const getSalesGrowthData = (sales: Sales[], timeFilter: TimeRange) => {
-  const filteredSales = filterSalesByTime(sales, timeFilter);
-
+export const getSalesGrowthData = (sales: Sales[] = []) => {
   const monthlyTotals: { [key: string]: number } = {};
-  filteredSales.forEach((sale) => {
+  sales.forEach((sale) => {
     const date = parse(sale.date, "yyyy-MM-dd", new Date());
     const monthYear = `${date.getFullYear()}-${date.getMonth() + 1}`;
-    monthlyTotals[monthYear] =
-      (monthlyTotals[monthYear] || 0) + sale.finalPrice;
+    monthlyTotals[monthYear] = (monthlyTotals[monthYear] || 0) + sale.finalPrice;
   });
 
   return Object.entries(monthlyTotals)
@@ -109,18 +96,13 @@ export const getSalesGrowthData = (sales: Sales[], timeFilter: TimeRange) => {
           "Dez",
         ].indexOf(m);
 
-      return (
-        parseInt(aYear) - parseInt(bYear) ||
-        monthIndex(aMonth) - monthIndex(bMonth)
-      );
+      return parseInt(aYear) - parseInt(bYear) || monthIndex(aMonth) - monthIndex(bMonth);
     });
 };
 
 // Função para pegar os dados do gráfico de tipos de vendas (por tipo de curso)
-export const getSalesTypesData = (sales: Sales[], timeFilter: TimeRange) => {
-  const filteredSales = filterSalesByTime(sales, timeFilter);
-
-  const totals = filteredSales.reduce(
+export const getSalesTypesData = (sales: Sales[] = []) => {
+  const totals = sales.reduce(
     (acc, sale) => {
       if (sale.course.type === "presencial") {
         acc.presencial += sale.finalPrice;
@@ -129,21 +111,18 @@ export const getSalesTypesData = (sales: Sales[], timeFilter: TimeRange) => {
       }
       return acc;
     },
-    { presencial: 0, online: 0 }
+    { presencial: 0, online: 0 },
   );
 
   return [{ presencial: totals.presencial, online: totals.online }];
 };
 
 // Nova função para pegar os dados por nome do curso
-export const getSalesCoursesData = (sales: Sales[], timeFilter: TimeRange) => {
-  const filteredSales = filterSalesByTime(sales, timeFilter);
-
+export const getSalesCoursesData = (sales: Sales[] = []) => {
   const totalsByCourse: { [key: string]: number } = {};
-  filteredSales.forEach((sale) => {
+  sales.forEach((sale) => {
     const courseName = sale.course.name;
-    totalsByCourse[courseName] =
-      (totalsByCourse[courseName] || 0) + sale.finalPrice;
+    totalsByCourse[courseName] = (totalsByCourse[courseName] || 0) + sale.finalPrice;
   });
 
   return Object.entries(totalsByCourse).map(([name, value]) => ({

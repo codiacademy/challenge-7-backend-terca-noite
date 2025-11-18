@@ -3,8 +3,8 @@ import type { FastifyInstance } from "fastify";
 import { readDateFilteredSalesFunction } from "../../functions/sales/read-date-filtered-sales-function.ts";
 
 const querySchema = z.object({
-  from: z.date().optional(),
-  to: z.date().optional(),
+  from: z.coerce.date().optional(),
+  to: z.coerce.date().optional(),
 });
 
 export async function readDateFilteredSalesRoute(app: FastifyInstance) {
