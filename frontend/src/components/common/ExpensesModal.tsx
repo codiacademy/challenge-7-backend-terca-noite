@@ -5,7 +5,7 @@ import { Expense } from "@/types/types";
 import { NumericFormat } from "react-number-format";
 import { InputMask } from "@react-input/mask";
 import { parse, isValid, format, parseISO } from "date-fns";
-
+import api from "../../api/axios-client.ts";
 const ExpenseSchema = Yup.object().shape({
   date: Yup.string()
     .required("A data de vencimento é obrigatória")
@@ -15,7 +15,7 @@ const ExpenseSchema = Yup.object().shape({
       (value) => {
         const parsedDate = parse(value, "dd/MM/yyyy", new Date());
         return isValid(parsedDate);
-      }
+      },
     ),
   description: Yup.string()
     .required("A descrição é obrigatória")
@@ -39,13 +39,7 @@ type ModalProps = {
   expense?: Expense | null;
 };
 
-export default function ExpensesModal({
-  title,
-  open,
-  onClose,
-  onSave,
-  expense,
-}: ModalProps) {
+export default function ExpensesModal({ title, open, onClose, onSave, expense }: ModalProps) {
   const formik = useFormik({
     initialValues: {
       date: expense ? format(parseISO(expense.date), "dd/MM/yyyy") : "",
@@ -59,6 +53,7 @@ export default function ExpensesModal({
     onSubmit: (values) => {
       const parsedDate = parse(values.date, "dd/MM/yyyy", new Date());
       const dateString = format(parsedDate, "yyyy-MM-dd");
+      createExpenseRequest(values);
       const newExpense: Expense = {
         ...values,
         id: expense?.id || Date.now(),
@@ -75,11 +70,24 @@ export default function ExpensesModal({
     },
   });
 
-  const handleCurrencyChange =
-    (field: string) => (values: { floatValue?: number }) => {
-      formik.setFieldValue(field, values.floatValue || 0);
-    };
+  const handleCurrencyChange = (field: string) => (values: { floatValue?: number }) => {
+    formik.setFieldValue(field, values.floatValue || 0);
+  };
 
+  async function createExpenseRequest(values: any) {
+    const token = localStorage.getItem("accessToken") || null;
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+    };
+    if (token) headers["Authorization"] = `Bearer ${token}`;
+
+    const response = await api.post(
+      "http://localhost:3000/expenses/create_expense",
+      values,
+      headers,
+    );
+    if (!response.data) console.log("Sem resposta ao criar uma despesa!");
+  }
   return (
     <Dialog open={open} onClose={onClose} className="relative z-30">
       <DialogBackdrop
@@ -99,9 +107,7 @@ export default function ExpensesModal({
                   <h1 className="text-emerald-600">{title}</h1>
                   <form onSubmit={formik.handleSubmit} className="space-y-4">
                     <div className="items-start justify-evenly gap-2">
-                      <label className="text-[12px] text-white">
-                        Data de Vencimento
-                      </label>
+                      <label className="text-[12px] text-white">Data de Vencimento</label>
                       <InputMask
                         mask="dd/mm/yyyy"
                         replacement={{ d: /\d/, m: /\d/, y: /\d/ }}
@@ -114,16 +120,12 @@ export default function ExpensesModal({
                         value={formik.values.date}
                       />
                       {formik.touched.date && formik.errors.date ? (
-                        <div className="text-red-500 text-xs">
-                          {formik.errors.date}
-                        </div>
+                        <div className="text-red-500 text-xs">{formik.errors.date}</div>
                       ) : null}
                     </div>
 
                     <div className="items-start justify-evenly gap-2">
-                      <label className="text-[12px] text-white">
-                        Descrição
-                      </label>
+                      <label className="text-[12px] text-white">Descrição</label>
                       <input
                         id="description"
                         name="description"
@@ -134,18 +136,13 @@ export default function ExpensesModal({
                         value={formik.values.description}
                         placeholder="Digite a descrição..."
                       />
-                      {formik.touched.description &&
-                      formik.errors.description ? (
-                        <div className="text-red-500 text-xs">
-                          {formik.errors.description}
-                        </div>
+                      {formik.touched.description && formik.errors.description ? (
+                        <div className="text-red-500 text-xs">{formik.errors.description}</div>
                       ) : null}
                     </div>
 
                     <div className="items-start justify-evenly gap-2">
-                      <label className="text-[12px] text-white">
-                        Categoria
-                      </label>
+                      <label className="text-[12px] text-white">Categoria</label>
                       <select
                         id="category"
                         name="category"
@@ -161,9 +158,7 @@ export default function ExpensesModal({
                         <option value="Variavel">Variável</option>
                       </select>
                       {formik.touched.category && formik.errors.category ? (
-                        <div className="text-red-500 text-xs">
-                          {formik.errors.category}
-                        </div>
+                        <div className="text-red-500 text-xs">{formik.errors.category}</div>
                       ) : null}
                     </div>
 
@@ -185,9 +180,7 @@ export default function ExpensesModal({
                         placeholder="R$ 0,00"
                       />
                       {formik.touched.value && formik.errors.value ? (
-                        <div className="text-red-500 text-xs">
-                          {formik.errors.value}
-                        </div>
+                        <div className="text-red-500 text-xs">{formik.errors.value}</div>
                       ) : null}
                     </div>
 
@@ -205,9 +198,7 @@ export default function ExpensesModal({
                         <option value="Pago">Pago</option>
                       </select>
                       {formik.touched.status && formik.errors.status ? (
-                        <div className="text-red-500 text-xs">
-                          {formik.errors.status}
-                        </div>
+                        <div className="text-red-500 text-xs">{formik.errors.status}</div>
                       ) : null}
                     </div>
 

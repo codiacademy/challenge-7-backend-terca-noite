@@ -66,7 +66,7 @@ export async function createSaleRoute(app: FastifyInstance) {
 
       return reply.status(201).send({
         message: "Venda criada com sucesso",
-        user: result,
+        createdSale: result,
       });
     } catch (error) {
       app.log.error(error, "Erro ao tentar criar venda no DB");

@@ -34,7 +34,7 @@ export async function createSaleFunction({
     return createdSale;
   } catch (error: any) {
     if (error instanceof AppError) throw error;
-    console.error("Erro operacional ao criar usuário ", error);
+    console.error("Erro operacional ao criar venda ", error);
     throw new AppError("Ocorreu um erro interno ao processar sua solicitação", 500);
   }
 }
