@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { motion } from "framer-motion";
 import {
   Edit,
@@ -14,83 +13,69 @@ import { Expense } from "@/types/types";
 
 interface ExpensesTableProps {
   expenses: Expense[];
+  search: string;
+  category: string | undefined;
+  status: string | undefined;
+  currentPage: number;
+  itemsPerPage: number;
+  totalItems: number;
+  totalPages: number;
+
+  onSearchChange?: (term: string) => void;
+  onCategoryChange?: (category: string) => void;
+  onStatusChange?: (status: string) => void;
+  onPageChange?: (page: number) => void;
+  onItemsPerPageChange?: (items: number) => void;
   onEdit: (expense: Expense) => void;
   onDelete: (id: number) => void;
 }
 
 export const ExpensesTable = ({
-  expenses,
+  expenses = [],
+  search,
+  category,
+  status,
+  currentPage,
+  itemsPerPage,
+  totalPages,
+  totalItems,
+  onSearchChange,
+  onCategoryChange,
+  onStatusChange,
+  onPageChange,
+  onItemsPerPageChange,
   onEdit,
   onDelete,
 }: ExpensesTableProps) => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filterCategory, setFilterCategory] = useState("todos");
-  const [filterStatus, setFilterStatus] = useState("todos");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(5);
-
-  const applyFilters = () => {
-    let filtered = expenses;
-
-    if (filterCategory !== "todos") {
-      filtered = filtered.filter(
-        (expense) => expense.category.toLowerCase() === filterCategory
-      );
-    }
-
-    if (filterStatus !== "todos") {
-      filtered = filtered.filter(
-        (expense) => expense.status.toLowerCase() === filterStatus
-      );
-    }
-
-    if (searchTerm) {
-      const term = searchTerm.toLowerCase();
-      filtered = filtered.filter((expense) =>
-        expense.description.toLowerCase().includes(term)
-      );
-    }
-
-    return filtered;
-  };
-
   const handleSearch = (e: { target: { value: string } }) => {
-    setSearchTerm(e.target.value);
-    setCurrentPage(1);
+    onSearchChange?.(e.target.value);
+    onPageChange?.(1);
   };
 
   const handleFilterCategory = (e: { target: { value: string } }) => {
-    setFilterCategory(e.target.value);
-    setCurrentPage(1);
+    onCategoryChange?.(e.target.value);
+    onPageChange?.(1);
   };
 
   const handleFilterStatus = (e: { target: { value: string } }) => {
-    setFilterStatus(e.target.value);
-    setCurrentPage(1);
+    onStatusChange?.(e.target.value);
+    onPageChange?.(1);
   };
 
   const handleItemsPerPageChange = (e: { target: { value: string } }) => {
-    setItemsPerPage(Number(e.target.value));
-    setCurrentPage(1);
+    onItemsPerPageChange?.(Number(e.target.value));
+    onPageChange?.(1);
   };
-
-  const filteredExpenses = applyFilters();
-
-  const totalItems = filteredExpenses.length;
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const currentExpenses = filteredExpenses.slice(startIndex, endIndex);
 
   const goToPreviousPage = () => {
     if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
+      onPageChange?.(currentPage - 1);
     }
   };
 
   const goToNextPage = () => {
     if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
+      onPageChange?.(currentPage + 1);
     }
   };
 
@@ -102,24 +87,19 @@ export const ExpensesTable = ({
       transition={{ delay: 0.2 }}
     >
       <div className="flex justify-between flex-col sm:flex-row items-center p-6 gap-7 mb-6">
-        <h2 className="text-xl font-semibold text-gray-100">
-          Lista de Despesas
-        </h2>
+        <h2 className="text-xl font-semibold text-gray-100">Lista de Despesas</h2>
 
         <div className="flex gap-3 flex-col sm:flex-row">
           <div className="flex flex-col">
-            <label
-              htmlFor="filterStatus"
-              className="text-sm text-gray-300 mb-1"
-            >
+            <label htmlFor="filterStatus" className="text-sm text-gray-300 mb-1">
               Filtrar por Status
             </label>
             <select
               id="filterStatus"
               className={`w-full sm:w-48 bg-gray-700 text-white rounded-md pl-3 py-1.5 sm:py-1 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ${
-                filterStatus !== "todos" ? "border-2 border-blue-500" : ""
+                status !== "todos" ? "border-2 border-blue-500" : ""
               }`}
-              value={filterStatus}
+              value={status}
               onChange={handleFilterStatus}
               aria-label="Filtrar por status de pagamento"
             >
@@ -130,18 +110,15 @@ export const ExpensesTable = ({
           </div>
 
           <div className="flex flex-col">
-            <label
-              htmlFor="filterCategory"
-              className="text-sm text-gray-300 mb-1"
-            >
+            <label htmlFor="filterCategory" className="text-sm text-gray-300 mb-1">
               Filtrar por Categoria
             </label>
             <select
               id="filterCategory"
               className={`w-full sm:w-48 bg-gray-700 text-white rounded-md pl-3 py-1.5 sm:py-1 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ${
-                filterCategory !== "todos" ? "border-2 border-blue-500" : ""
+                category !== "todos" ? "border-2 border-blue-500" : ""
               }`}
-              value={filterCategory}
+              value={category}
               onChange={handleFilterCategory}
               aria-label="Filtrar por categoria de despesa"
             >
@@ -162,12 +139,9 @@ export const ExpensesTable = ({
                 placeholder="Procurar por descrição..."
                 className="bg-gray-700 text-white placeholder-gray-400 rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 onChange={handleSearch}
-                value={searchTerm}
+                value={search}
               />
-              <Search
-                className="absolute left-3 top-2.5 text-gray-400"
-                size={18}
-              />
+              <Search className="absolute left-3 top-2.5 text-gray-400" size={18} />
             </div>
           </div>
         </div>
@@ -201,8 +175,8 @@ export const ExpensesTable = ({
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-700">
-            {currentExpenses.length > 0 ? (
-              currentExpenses.map((item) => (
+            {expenses.length > 0 ? (
+              expenses.map((item) => (
                 <motion.tr
                   key={item.id}
                   initial={{ opacity: 0 }}

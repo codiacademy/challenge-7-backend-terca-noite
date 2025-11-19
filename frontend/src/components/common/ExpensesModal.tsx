@@ -53,7 +53,11 @@ export default function ExpensesModal({ title, open, onClose, onSave, expense }:
     onSubmit: (values) => {
       const parsedDate = parse(values.date, "dd/MM/yyyy", new Date());
       const dateString = format(parsedDate, "yyyy-MM-dd");
-      createExpenseRequest(values);
+      if (expense) {
+        console.log("Atualizar despesa");
+      } else {
+        createExpenseRequest(values);
+      }
       const newExpense: Expense = {
         ...values,
         id: expense?.id || Date.now(),
