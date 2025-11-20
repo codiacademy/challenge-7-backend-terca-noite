@@ -11,7 +11,6 @@ import { readUserProfileRoute } from "./routes/users/read-user-profile-route.ts"
 import { updateUserProfileRoute } from "./routes/users/update-user-profile-route.ts";
 import { authLogoutRoute } from "./routes/auth/auth-logout-route.ts";
 import { authRefreshRoute } from "./routes/auth/auth-refresh-route.ts";
-import { isRefreshTokenValid } from "./utils/tokens-service.ts";
 import fp from "./plugins/fastify-plugin.ts";
 import { updateUserEmailNotificationRoute } from "./routes/users/update-user-email-notification-route.ts";
 import { updateUserSmsNotificationRoute } from "./routes/users/update-user-sms-notification.ts";

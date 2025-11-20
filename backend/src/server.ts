@@ -1,6 +1,7 @@
 import { app } from "./app.ts";
 import { env } from "./config/env.ts";
 import { cleanExpiredTokens } from "./jobs/clean-expired-tokens.ts";
+import { sendOverviewEmailCron } from "./jobs/overview-email-notification.ts";
 import cron from "node-cron";
 
 await import("./config/auto-seed.ts");
@@ -18,4 +19,9 @@ InitServer();
 cron.schedule("* * * * *", async () => {
   console.log("🧹 Limpando tokens expirados...");
   await cleanExpiredTokens();
+});
+
+cron.schedule("*/3 * * * *", async () => {
+  console.log("✉ Enviando Emails de Overview...");
+  await sendOverviewEmailCron();
 });
