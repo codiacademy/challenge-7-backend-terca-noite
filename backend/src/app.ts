@@ -37,6 +37,8 @@ import { deleteExpenseRoute } from "./routes/expenses/delete-expense-route.ts";
 import { updateExpenseRoute } from "./routes/expenses/update-expense-route.ts";
 import { getExpensesChartsDataRoute } from "./routes/expenses/get-expenses-charts-route.ts";
 import { getExpensesKPIsRoute } from "./routes/expenses/get-expenses-kpis-data-route.ts";
+import { getOverviewKPIsRoute } from "./routes/overview/get-overview-kpis-data-route.ts";
+import { getOverviewChartsDataRoute } from "./routes/overview/get-overview-charts-data-route.ts";
 export const app = Fastify({ logger: true });
 
 await swaggerConfi(app);
@@ -106,6 +108,8 @@ app.register(deleteExpenseRoute, { prefix: "/expenses" });
 app.register(updateExpenseRoute, { prefix: "/expenses" });
 app.register(getExpensesChartsDataRoute, { prefix: "/expenses" });
 app.register(getExpensesKPIsRoute, { prefix: "/expenses" });
+app.register(getOverviewKPIsRoute, { prefix: "/overview" });
+app.register(getOverviewChartsDataRoute, { prefix: "/overview" });
 app.get("/", { preHandler: [app.authenticate] }, async (request, reply) => {
   return "Codi Cash API rodando! Acesse /docs para a documentação.";
 });

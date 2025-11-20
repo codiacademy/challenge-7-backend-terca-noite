@@ -8,9 +8,6 @@ import {
   LineChart,
   Line,
 } from "recharts";
-import { salesData } from "../../data/SalesData";
-import { getSalesGrowthData } from "@/utils/salesAggregations";
-import { Sales, TimeRange } from "@/types/types";
 
 interface SalesGrowthProps {
   growthData: any;
