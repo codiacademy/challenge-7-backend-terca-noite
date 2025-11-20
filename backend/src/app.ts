@@ -33,6 +33,10 @@ import { getSalesChartsDataRoute } from "./routes/sales/get-sales-charts-data-ro
 import { getSalesKPIsRoute } from "./routes/sales/get-sales-kpis-data-route.ts";
 import { createExpenseRoute } from "./routes/expenses/create-expense-route.ts";
 import { readFilteredExpensesRoute } from "./routes/expenses/read-filtered-expenses-route.ts";
+import { deleteExpenseRoute } from "./routes/expenses/delete-expense-route.ts";
+import { updateExpenseRoute } from "./routes/expenses/update-expense-route.ts";
+import { getExpensesChartsDataRoute } from "./routes/expenses/get-expenses-charts-route.ts";
+import { getExpensesKPIsRoute } from "./routes/expenses/get-expenses-kpis-data-route.ts";
 export const app = Fastify({ logger: true });
 
 await swaggerConfi(app);
@@ -98,7 +102,10 @@ app.register(getSalesChartsDataRoute, { prefix: "/sales" });
 app.register(getSalesKPIsRoute, { prefix: "/sales" });
 app.register(createExpenseRoute, { prefix: "/expenses" });
 app.register(readFilteredExpensesRoute, { prefix: "/expenses" });
-
+app.register(deleteExpenseRoute, { prefix: "/expenses" });
+app.register(updateExpenseRoute, { prefix: "/expenses" });
+app.register(getExpensesChartsDataRoute, { prefix: "/expenses" });
+app.register(getExpensesKPIsRoute, { prefix: "/expenses" });
 app.get("/", { preHandler: [app.authenticate] }, async (request, reply) => {
   return "Codi Cash API rodando! Acesse /docs para a documentação.";
 });

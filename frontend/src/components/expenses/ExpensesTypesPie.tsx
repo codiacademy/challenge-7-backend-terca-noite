@@ -1,22 +1,11 @@
 import { motion } from "framer-motion";
-import {
-  PieChart,
-  Pie,
-  Cell,
-  Tooltip,
-  Legend,
-  ResponsiveContainer,
-} from "recharts";
-import { getExpensesTypesData } from "../../utils/expenseAggregations";
-import { expensesData } from "../../data/ExpensesData";
-import { TimeRange } from "../../types/types";
+import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from "recharts";
 
 interface ExpensesTypesPieProps {
-  timeRange: TimeRange;
+  expensePieData: any;
 }
 
-export const ExpensesTypesPie = ({ timeRange }: ExpensesTypesPieProps) => {
-  const expensePieData = getExpensesTypesData(expensesData, timeRange);
+export const ExpensesTypesPie = ({ expensePieData }: ExpensesTypesPieProps) => {
   const chartData = [
     { name: "fixas", value: expensePieData[0]?.fixas || 0 },
     { name: "variaveis", value: expensePieData[0]?.variaveis || 0 },
@@ -35,9 +24,7 @@ export const ExpensesTypesPie = ({ timeRange }: ExpensesTypesPieProps) => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.3 }}
     >
-      <h2 className="text-xl font-semibold text-gray-100 mb-4">
-        Tipos de Despesas
-      </h2>
+      <h2 className="text-xl font-semibold text-gray-100 mb-4">Tipos de Despesas</h2>
       <div style={{ width: "100%", height: 300 }}>
         {chartData.length > 0 ? (
           <ResponsiveContainer>
@@ -51,19 +38,14 @@ export const ExpensesTypesPie = ({ timeRange }: ExpensesTypesPieProps) => {
                 stroke="none"
                 labelLine={true}
                 label={({ name, value }) =>
-                  `${
-                    nameMap[name as keyof typeof nameMap]
-                  } - ${new Intl.NumberFormat("pt-BR", {
+                  `${nameMap[name as keyof typeof nameMap]} - ${new Intl.NumberFormat("pt-BR", {
                     style: "currency",
                     currency: "BRL",
                   }).format(value)}`
                 }
               >
                 {chartData.map((_, index) => (
-                  <Cell
-                    key={`cell-${index}`}
-                    fill={COLORS[index % COLORS.length]}
-                  />
+                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>
               <Tooltip
@@ -84,9 +66,7 @@ export const ExpensesTypesPie = ({ timeRange }: ExpensesTypesPieProps) => {
                 ]}
               />
               <Legend
-                formatter={(value: string) =>
-                  nameMap[value as keyof typeof nameMap]
-                }
+                formatter={(value: string) => nameMap[value as keyof typeof nameMap]}
                 wrapperStyle={{ color: "#E5E7EB" }}
                 iconType="circle"
               />

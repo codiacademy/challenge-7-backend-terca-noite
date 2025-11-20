@@ -97,13 +97,13 @@ export const ExpensesTable = ({
             <select
               id="filterStatus"
               className={`w-full sm:w-48 bg-gray-700 text-white rounded-md pl-3 py-1.5 sm:py-1 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ${
-                status !== "todos" ? "border-2 border-blue-500" : ""
+                status !== "" ? "border-2 border-blue-500" : ""
               }`}
               value={status}
               onChange={handleFilterStatus}
               aria-label="Filtrar por status de pagamento"
             >
-              <option value="todos">Todos os status</option>
+              <option value="">Todos os status</option>
               <option value="pendente">Pendente</option>
               <option value="pago">Pago</option>
             </select>
@@ -116,13 +116,13 @@ export const ExpensesTable = ({
             <select
               id="filterCategory"
               className={`w-full sm:w-48 bg-gray-700 text-white rounded-md pl-3 py-1.5 sm:py-1 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ${
-                category !== "todos" ? "border-2 border-blue-500" : ""
+                category !== "" ? "border-2 border-blue-500" : ""
               }`}
               value={category}
               onChange={handleFilterCategory}
               aria-label="Filtrar por categoria de despesa"
             >
-              <option value="todos">Todas as categorias</option>
+              <option value="">Todas as categorias</option>
               <option value="fixa">Fixa</option>
               <option value="variavel">Variável</option>
             </select>

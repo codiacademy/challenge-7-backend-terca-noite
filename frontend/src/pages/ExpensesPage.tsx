@@ -7,7 +7,6 @@ import { ExpensesTable } from "../components/expenses/ExpensesTable";
 import { ExpensesGrowth } from "../components/expenses/ExpensesGrowth";
 import { ExpensesTypesBar } from "../components/expenses/ExpensesTypesBar";
 import { ButtonAdd } from "../components/common/ButtonAdd";
-import { expensesData } from "../data/ExpensesData";
 import { TimeRange, Expense } from "../types/types";
 import { ExpensesTypesPie } from "@/components/expenses/ExpensesTypesPie";
 import ExpensesModal from "@/components/common/ExpensesModal";
@@ -15,6 +14,12 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { convertTimeRangeToParams } from "../utils/timeRangeTransformations.ts";
 import api from "../api/axios-client.ts";
+export type ExpenseStats = {
+  totalExpenses: number;
+  fixedExpenses: number;
+  variableExpenses: number;
+  pendingExpenses: number;
+};
 
 export function ExpensesPage() {
   const [search, setSearch] = useState("");
@@ -26,36 +31,76 @@ export function ExpensesPage() {
   const [totalItems, setTotalItems] = useState(0);
   const [timeRange, setTimeRange] = useState<TimeRange>("all");
   const [isModalOpen, setModalIsOpen] = useState(false);
-  const [expenses, setExpenses] = useState<Expense[]>(expensesData);
   const [filteredExpenses, setFilteredExpenses] = useState<Expense[]>([]);
   const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
+  const [pieChartData, setPieChartData] = useState<any>([]);
+  const [barChartData, setBarChartData] = useState<any>([]);
+  const [growthChartData, setGrowthChartData] = useState<any>([]);
+  const [expensesStats, setExpensesStats] = useState<ExpenseStats>({
+    totalExpenses: 0,
+    fixedExpenses: 0,
+    variableExpenses: 0,
+    pendingExpenses: 0,
+  });
 
-  const handleSaveExpense = (newExpense: Expense) => {
-    if (newExpense.id === selectedExpense?.id) {
-      setExpenses(expenses.map((expense) => (expense.id === newExpense.id ? newExpense : expense)));
-    } else {
-      setExpenses([...expenses, newExpense]);
-    }
+  const handleSaveExpense = async (newExpense: Expense) => {
+    await loadFilteredExpenses({
+      timeRange,
+      category,
+      status,
+      search,
+      page: currentPage,
+      limit: itemsPerPage,
+    });
+    loadExpensesCharts({ timeRange });
+    loadKPIs({
+      timeRange,
+      category,
+      status,
+      search,
+      page: currentPage,
+      limit: itemsPerPage,
+    });
     toast.success("Despesa salva com sucesso!", { theme: "dark" });
   };
 
-  const handleDeleteExpense = (id: number) => {
-    setExpenses(expenses.filter((expense) => expense.id !== id));
+  const handleDeleteExpense = async (id: number) => {
+    try {
+      const token = localStorage.getItem("accessToken") || null;
+
+      const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+      };
+      if (token) headers["Authorization"] = `Bearer ${token}`;
+      const response = await api.delete(`http://localhost:3000/expenses/${id}`, {
+        headers,
+        withCredentials: true,
+      });
+      if (!response.data) return toast.error("Resposta não recebida");
+      console.log("Dados de Deleção:" + response.data);
+      await loadFilteredExpenses({
+        timeRange,
+        category,
+        status,
+        search,
+        page: currentPage,
+        limit: itemsPerPage,
+      });
+      loadExpensesCharts({ timeRange });
+      loadKPIs({
+        timeRange,
+        category,
+        status,
+        search,
+        page: currentPage,
+        limit: itemsPerPage,
+      });
+    } catch (error: any) {
+      console.error("Erro ao deletar despesa", error);
+    }
   };
 
   // Filtrando os dados pelo time range usando o estado expenses
-  const expensesStats = {
-    totalExpenses: filteredExpenses.reduce((sum, expense) => sum + expense.value, 0),
-    fixedExpenses: filteredExpenses
-      .filter((expense) => expense.category === "Fixa")
-      .reduce((sum, expense) => sum + expense.value, 0),
-    variableExpenses: filteredExpenses
-      .filter((expense) => expense.category === "Variavel")
-      .reduce((sum, expense) => sum + expense.value, 0),
-    pendingExpenses: filteredExpenses
-      .filter((expense) => expense.status === "Pendente")
-      .reduce((sum, expense) => sum + expense.value, 0),
-  };
 
   async function loadFilteredExpenses(params?: {
     timeRange?: TimeRange;
@@ -111,12 +156,96 @@ export function ExpensesPage() {
       console.error("Erro ao carregar despesas por período:", error);
     }
   }
-  function capitalizeFirst(v) {
+
+  function capitalizeFirst(v: string) {
     return typeof v === "string" && v.length > 0 ? v.charAt(0).toUpperCase() + v.slice(1) : v;
   }
 
+  async function loadExpensesCharts(params: { timeRange: TimeRange }) {
+    try {
+      const token = localStorage.getItem("accessToken") || null;
+      const headers: Record<string, string> = { "Content-Type": "application/json" };
+      if (token) headers["Authorization"] = `Bearer ${token}`;
+
+      let from: string | undefined;
+      let to: string | undefined;
+
+      const tr = params?.timeRange;
+      ({ from, to } = convertTimeRangeToParams(tr));
+
+      const response = await api.get("http://localhost:3000/expenses/get_charts", {
+        headers,
+        withCredentials: true,
+        params: {
+          from,
+          to,
+        },
+      });
+
+      if (!response.data) throw new Error(`HTTP ${response.status}`);
+
+      setPieChartData(response.data.pieChartData);
+      setBarChartData(response.data.barChartData);
+      setGrowthChartData(response.data.growthChartData);
+
+      console.log("Gráficos no período carregados!");
+    } catch (error: any) {
+      console.error("Erro ao carregar gráficos:", error);
+    }
+  }
+  async function loadKPIs(params?: {
+    timeRange?: TimeRange;
+    category?: string;
+    status?: string;
+    search?: string;
+    page?: number;
+    limit?: number;
+  }) {
+    try {
+      const token = localStorage.getItem("accessToken") || null;
+      const headers: Record<string, string> = { "Content-Type": "application/json" };
+      if (token) headers["Authorization"] = `Bearer ${token}`;
+
+      // Converte timeRange para from/to
+      let from: string | undefined;
+      let to: string | undefined;
+
+      const tr = params?.timeRange;
+
+      ({ from, to } = convertTimeRangeToParams(tr));
+
+      const response = await api.get("http://localhost:3000/expenses/get_kpis", {
+        headers,
+        withCredentials: true,
+        params: {
+          category: params?.category,
+          status: params?.status,
+          search: params?.search,
+          from,
+          to,
+          page: params?.page ?? 1,
+          limit: params?.limit ?? 10,
+        },
+      });
+
+      if (!response.data) throw new Error(`HTTP ${response.status}`);
+      setExpensesStats(response.data.expensesStats);
+      console.log("Kpis carregados!");
+    } catch (error: any) {
+      console.error("Erro ao carregar Kpis:", error);
+    }
+  }
   useEffect(() => {
     loadFilteredExpenses({
+      timeRange,
+      category,
+      status,
+      search,
+      page: currentPage,
+      limit: itemsPerPage,
+    });
+    loadExpensesCharts({ timeRange });
+    loadKPIs({
       timeRange,
       category,
       status,
@@ -207,11 +336,11 @@ export function ExpensesPage() {
 
         {/* GRAFICOS DE DESPESAS */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8 mb-8">
-          <ExpensesTypesPie timeRange={timeRange} />
-          <ExpensesTypesBar timeRange={timeRange} />
+          <ExpensesTypesPie expensePieData={pieChartData} />
+          <ExpensesTypesBar expenseBarData={barChartData} />
         </div>
 
-        <ExpensesGrowth timeRange={timeRange} />
+        <ExpensesGrowth growthData={growthChartData} />
       </main>
 
       <ExpensesModal
@@ -220,7 +349,23 @@ export function ExpensesPage() {
         onClose={() => {
           setModalIsOpen(false);
           setSelectedExpense(null);
-          loadFilteredExpenses();
+          loadFilteredExpenses({
+            timeRange,
+            category,
+            status,
+            search,
+            page: currentPage,
+            limit: itemsPerPage,
+          });
+          loadExpensesCharts({ timeRange });
+          loadKPIs({
+            timeRange,
+            category,
+            status,
+            search,
+            page: currentPage,
+            limit: itemsPerPage,
+          });
         }}
         onSave={handleSaveExpense}
         expense={selectedExpense}

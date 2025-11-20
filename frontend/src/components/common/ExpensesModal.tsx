@@ -55,6 +55,7 @@ export default function ExpensesModal({ title, open, onClose, onSave, expense }:
       const dateString = format(parsedDate, "yyyy-MM-dd");
       if (expense) {
         console.log("Atualizar despesa");
+        updateExpenseRequest(expense, values);
       } else {
         createExpenseRequest(values);
       }
@@ -78,6 +79,18 @@ export default function ExpensesModal({ title, open, onClose, onSave, expense }:
     formik.setFieldValue(field, values.floatValue || 0);
   };
 
+  async function updateExpenseRequest(expense: Expense, values: any) {
+    const token = localStorage.getItem("accessToken") || null;
+    const headers: Record<string, string> = {
+      "Content-Type": "application/json",
+    };
+    if (token) headers["Authorization"] = `Bearer ${token}`;
+    const response = await api.put(`http://localhost:3000/expenses/${expense.id}`, values, {
+      headers,
+    });
+    if (!response.data) console.log("Sem resposta na hora de atualizar uma despesa!");
+    console.log(response.data);
+  }
   async function createExpenseRequest(values: any) {
     const token = localStorage.getItem("accessToken") || null;
     const headers: Record<string, string> = {
