@@ -43,7 +43,7 @@ export function ExpensesPage() {
     pendingExpenses: 0,
   });
 
-  const handleSaveExpense = async (newExpense: Expense) => {
+  const handleSaveExpense = async () => {
     await loadFilteredExpenses({
       timeRange,
       category,
@@ -55,11 +55,6 @@ export function ExpensesPage() {
     loadExpensesCharts({ timeRange });
     loadKPIs({
       timeRange,
-      category,
-      status,
-      search,
-      page: currentPage,
-      limit: itemsPerPage,
     });
     toast.success("Despesa salva com sucesso!", { theme: "dark" });
   };
@@ -89,11 +84,6 @@ export function ExpensesPage() {
       loadExpensesCharts({ timeRange });
       loadKPIs({
         timeRange,
-        category,
-        status,
-        search,
-        page: currentPage,
-        limit: itemsPerPage,
       });
     } catch (error: any) {
       console.error("Erro ao deletar despesa", error);
@@ -193,14 +183,7 @@ export function ExpensesPage() {
       console.error("Erro ao carregar gráficos:", error);
     }
   }
-  async function loadKPIs(params?: {
-    timeRange?: TimeRange;
-    category?: string;
-    status?: string;
-    search?: string;
-    page?: number;
-    limit?: number;
-  }) {
+  async function loadKPIs(params?: { timeRange?: TimeRange }) {
     try {
       const token = localStorage.getItem("accessToken") || null;
       const headers: Record<string, string> = { "Content-Type": "application/json" };
@@ -218,17 +201,13 @@ export function ExpensesPage() {
         headers,
         withCredentials: true,
         params: {
-          category: params?.category,
-          status: params?.status,
-          search: params?.search,
           from,
           to,
-          page: params?.page ?? 1,
-          limit: params?.limit ?? 10,
         },
       });
 
       if (!response.data) throw new Error(`HTTP ${response.status}`);
+      console.log(response.data.expensesStats);
       setExpensesStats(response.data.expensesStats);
       console.log("Kpis carregados!");
     } catch (error: any) {
@@ -247,11 +226,6 @@ export function ExpensesPage() {
     loadExpensesCharts({ timeRange });
     loadKPIs({
       timeRange,
-      category,
-      status,
-      search,
-      page: currentPage,
-      limit: itemsPerPage,
     });
   }, [timeRange, category, status, search, currentPage, itemsPerPage]);
 
@@ -360,11 +334,6 @@ export function ExpensesPage() {
           loadExpensesCharts({ timeRange });
           loadKPIs({
             timeRange,
-            category,
-            status,
-            search,
-            page: currentPage,
-            limit: itemsPerPage,
           });
         }}
         onSave={handleSaveExpense}

@@ -247,7 +247,7 @@ export function SalesPage() {
     });
     loadDateFilteredSales({ timeRange });
     loadSalesCharts({ timeRange });
-    loadKPIs();
+    loadKPIs({ timeRange });
   }, [timeRange, courseType, search, currentPage, itemsPerPage]);
 
   // Função para excluir uma venda
@@ -363,7 +363,7 @@ export function SalesPage() {
           loadFilteredSales();
           loadDateFilteredSales({ timeRange });
           loadSalesCharts({ timeRange });
-          loadKPIs();
+          loadKPIs({ timeRange });
         }} // Passa a função de salvamento
         sale={selectedSale} // Passa a venda selecionada para edição
       />

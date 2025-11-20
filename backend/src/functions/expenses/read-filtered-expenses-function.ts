@@ -36,7 +36,7 @@ export async function readFilteredExpensesFunction(userId: string, filters: any)
       where,
       skip,
       take: limit,
-      orderBy: { created_at: "desc" },
+      orderBy: { due_date: "desc" },
     }),
   ]);
 

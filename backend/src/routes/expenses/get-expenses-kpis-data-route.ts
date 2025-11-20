@@ -1,14 +1,9 @@
 import z from "zod";
 import type { FastifyInstance } from "fastify";
-import { readFilteredExpensesFunction } from "../../functions/expenses/read-filtered-expenses-function.ts";
-
+import { readDateFilteredExpensesFunction } from "../../functions/expenses/read-date-filtered-expenses-function.ts";
 const querySchema = z.object({
-  courseType: z.string().optional(),
-  search: z.string().optional(),
   from: z.coerce.date().optional(),
   to: z.coerce.date().optional(),
-  page: z.coerce.number().int().min(1).default(1),
-  limit: z.coerce.number().int().min(1).max(50).default(10),
 });
 
 export async function getExpensesKPIsRoute(app: FastifyInstance) {
@@ -18,7 +13,7 @@ export async function getExpensesKPIsRoute(app: FastifyInstance) {
 
       const filters = querySchema.parse(request.query);
 
-      const result = await readFilteredExpensesFunction(userId, filters);
+      const result = await readDateFilteredExpensesFunction(userId, filters);
       const filteredExpenses = result.expenses;
       const expensesStats = {
         totalExpenses: filteredExpenses.reduce((sum, expense) => sum + Number(expense.value), 0),

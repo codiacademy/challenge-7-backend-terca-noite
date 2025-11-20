@@ -8,19 +8,17 @@ export async function readDateFilteredExpensesFunction(userId: string, filters: 
   };
 
   if (from || to) {
-    where.created_at = {};
-    if (from) where.created_at.gte = new Date(from);
-    if (to) where.created_at.lte = new Date(to);
+    where.due_date = {};
+    if (from) where.due_date.gte = new Date(from);
+    if (to) where.due_date.lte = new Date(to);
   }
 
-  const [total, expenses] = await Promise.all([
-    prisma.expense.count({ where }),
+  const [expenses] = await Promise.all([
     prisma.expense.findMany({
       where,
-      orderBy: { created_at: "desc" },
+      orderBy: { due_date: "desc" },
     }),
   ]);
-
   return {
     expenses,
   };

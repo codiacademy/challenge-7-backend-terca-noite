@@ -1,14 +1,9 @@
 import z from "zod";
 import type { FastifyInstance } from "fastify";
-import { readFilteredSalesFunction } from "../../functions/sales/read-filtered-sales-function.ts";
-
+import { readDateFilteredSalesFunction } from "../../functions/sales/read-date-filtered-sales-function.ts";
 const querySchema = z.object({
-  courseType: z.string().optional(),
-  search: z.string().optional(),
   from: z.coerce.date().optional(),
   to: z.coerce.date().optional(),
-  page: z.coerce.number().int().min(1).default(1),
-  limit: z.coerce.number().int().min(1).max(50).default(10),
 });
 
 export async function getSalesKPIsRoute(app: FastifyInstance) {
@@ -18,7 +13,7 @@ export async function getSalesKPIsRoute(app: FastifyInstance) {
 
       const filters = querySchema.parse(request.query);
 
-      const result = await readFilteredSalesFunction(userId, filters);
+      const result = await readDateFilteredSalesFunction(userId, filters);
       const filteredSales = result.sales;
       const salesStats = {
         totalCourses: filteredSales.length,

@@ -39,6 +39,7 @@ import { getExpensesChartsDataRoute } from "./routes/expenses/get-expenses-chart
 import { getExpensesKPIsRoute } from "./routes/expenses/get-expenses-kpis-data-route.ts";
 import { getOverviewKPIsRoute } from "./routes/overview/get-overview-kpis-data-route.ts";
 import { getOverviewChartsDataRoute } from "./routes/overview/get-overview-charts-data-route.ts";
+
 export const app = Fastify({ logger: true });
 
 await swaggerConfi(app);
