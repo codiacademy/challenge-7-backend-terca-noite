@@ -2,6 +2,8 @@ import Fastify from "fastify";
 import cors from "@fastify/cors";
 import fastifyJwt from "@fastify/jwt";
 import cookie from "@fastify/cookie";
+import fastifyOauth2 from "@fastify/oauth2";
+import { randomUUID } from "crypto";
 import { env } from "./config/env.ts";
 import { swaggerConfi } from "./config/swagger.ts";
 import { createUserRoute } from "./routes/users/create-user-route.ts";
@@ -38,7 +40,11 @@ import { getExpensesChartsDataRoute } from "./routes/expenses/get-expenses-chart
 import { getExpensesKPIsRoute } from "./routes/expenses/get-expenses-kpis-data-route.ts";
 import { getOverviewKPIsRoute } from "./routes/overview/get-overview-kpis-data-route.ts";
 import { getOverviewChartsDataRoute } from "./routes/overview/get-overview-charts-data-route.ts";
-
+import { authLinkDiscordRoute } from "./routes/auth/auth-link-discord-route.ts";
+import { AuthCallbackDiscordRoute } from "./routes/auth/auth-callback-discord-route.ts";
+import { authUnlinkDiscordRoute } from "./routes/auth/auth-unlink-discord-route.ts";
+import { getDiscordLinkedRoute } from "./routes/auth/get-discord-linked-route.ts";
+import { getAuthStateFunction } from "./functions/auth/get-auth-state-function.ts";
 export const app = Fastify({ logger: true });
 
 await swaggerConfi(app);
@@ -51,8 +57,46 @@ app.register(cors, {
 });
 app.register(fastifyJwt, { secret: env.JWT_SECRET });
 app.register(cookie, {
-  secret: env.COOKIE_SECRET, // opcional, caso queira cookies assinados
+  secret: env.COOKIE_SECRET,
+  // opcional, caso queira cookies assinados
   // outras opções
+});
+
+app.register(fastifyOauth2, {
+  name: "discordOAuth2", // nome para referenciar depois
+  credentials: {
+    client: {
+      id: process.env.DISCORD_CLIENT_ID!,
+      secret: process.env.DISCORD_CLIENT_SECRET!,
+    },
+    // usar a configuração pronta para Discord
+    auth: fastifyOauth2.fastifyOauth2.DISCORD_CONFIGURATION,
+  },
+  startRedirectPath: "/auth/discord/redirect-automatico",
+  scope: ["identify", "email"],
+  callbackUri: "http://localhost:3000/auth/discord/callback",
+  generateStateFunction: async function (request: any) {
+    return randomUUID();
+  },
+  checkStateFunction: async (request) => {
+    const query = request.query as { state?: string };
+    const fullState = query.state;
+
+    if (!fullState) {
+      throw new Error("Parâmetro 'state' ausente na requisição de callback.");
+    }
+    const state = fullState.substring(0, 36);
+
+    try {
+      const authState = await getAuthStateFunction(state);
+
+      (request as any).authState = authState;
+      return true;
+    } catch (error) {
+      console.error("Falha na validação do state:", (error as Error).message);
+      throw new Error("Invalid state: Sessão de vínculo expirada ou inválida.");
+    }
+  },
 });
 
 fp(app);
@@ -110,6 +154,10 @@ app.register(getExpensesChartsDataRoute, { prefix: "/expenses" });
 app.register(getExpensesKPIsRoute, { prefix: "/expenses" });
 app.register(getOverviewKPIsRoute, { prefix: "/overview" });
 app.register(getOverviewChartsDataRoute, { prefix: "/overview" });
+app.register(authLinkDiscordRoute, { prefix: "/auth" });
+app.register(AuthCallbackDiscordRoute, { prefix: "/auth" });
+app.register(authUnlinkDiscordRoute, { prefix: "/auth" });
+app.register(getDiscordLinkedRoute, { prefix: "/auth" });
 app.get("/", { preHandler: [app.authenticate] }, async (request, reply) => {
   return "Codi Cash API rodando! Acesse /docs para a documentação.";
 });
