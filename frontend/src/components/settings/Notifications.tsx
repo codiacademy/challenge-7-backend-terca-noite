@@ -17,7 +17,7 @@ export const Notifications = ({
   }
   const [notifications, setNotifications] = useState({
     email: user.notification_email_enabled || false,
-    sms: user.notification_sms_enabled || false,
+    discord: user.notification_discord_enabled || false,
   });
   const [isDiscordConnected, setIsDiscordConnected] = useState<Boolean>(false);
 
@@ -70,7 +70,7 @@ export const Notifications = ({
     }
   }
 
-  async function updateSmsNotificationSettings() {
+  async function updateDiscordNotificationSettings() {
     try {
       const token = localStorage.getItem("accessToken");
       if (!token) {
@@ -89,8 +89,11 @@ export const Notifications = ({
       );
 
       if (response.status === 200) {
-        setNotifications({ ...notifications, sms: !notifications.sms });
-        console.log("Configurações de notificação por SMS atualizadas com sucesso:", response.data);
+        setNotifications({ ...notifications, discord: !notifications.discord });
+        console.log(
+          "Configurações de notificação por discord atualizadas com sucesso:",
+          response.data,
+        );
       }
       console.log("Olhe a resposta do servidor:", response.data);
     } catch (error) {
@@ -176,13 +179,13 @@ export const Notifications = ({
       {isDiscordConnected ? (
         <>
           <ToggleSwitch
-            label="Notificações por SMS"
-            isOn={notifications.sms}
-            onToggle={() => updateSmsNotificationSettings()}
+            label="Notificações por Discord"
+            isOn={notifications.discord}
+            onToggle={() => updateDiscordNotificationSettings()}
           />
           <button
             onClick={unlinkDiscordAccount}
-            className="relative flex flex-row w-[350px] justify-start items-center bg-gray-900 px-[20px] py-[15px] rounded-xl cursor-pointer hover:bg-gray-600 transition-colors duration-700"
+            className="relative flex flex-row w-[350px] justify-start items-center bg-red-900 px-[20px] py-[15px] rounded-xl cursor-pointer hover:bg-gray-600 transition-colors duration-700"
           >
             <span>Desvincule sua conta do Discord</span>
             <img className="h-[36px] absolute right-[6%]" src={discordIcon}></img>

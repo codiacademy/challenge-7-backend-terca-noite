@@ -15,7 +15,7 @@ export type ProfileConfigsType = {
   telephone: string;
   two_factor_enabled: boolean;
   notification_email_enabled: boolean;
-  notification_sms_enabled: boolean;
+  notification_discord_enabled: boolean;
 };
 
 export type CourseName =

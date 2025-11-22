@@ -1,5 +1,4 @@
 import type { FastifyInstance } from "fastify";
-
 import { AppError } from "../../utils/app-error.ts";
 import { createAuthStateFunction } from "../../functions/auth/create-auth-state-function.ts";
 import { randomUUID } from "crypto";
@@ -19,7 +18,7 @@ export async function authLinkDiscordRoute(app: FastifyInstance) {
 
       // 2. Retorna uma nova Promise para encapsular o callback
       return new Promise<void>((resolve, reject) => {
-        app.oauth2DiscordOAuth2.generateAuthorizationUri(
+        app.oauth2DiscordOAuth2?.generateAuthorizationUri(
           request,
           reply,
           (err, authorizationEndpoint) => {
@@ -30,13 +29,16 @@ export async function authLinkDiscordRoute(app: FastifyInstance) {
               return reject(err); // Rejeita a Promise
             }
 
-            const authDiscordURL = injectStateIntoUrl(
-              authorizationEndpoint,
-              createdAuthState.state,
+            let authDiscordURL = injectStateIntoUrl(authorizationEndpoint, createdAuthState.state);
+
+            authDiscordURL = injectGuildParamsIntoUrl(
+              authDiscordURL,
+              process.env.DISCORD_TARGET_GUILD_ID,
+              process.env.BOT_REQUIRED_PERMISSIONS_INT,
             );
             // Se for sucesso, envia a resposta de sucesso e resolve a Promise
             reply.code(200).send({ message: "Url Recebida", authDiscordURL });
-            console.log("url:" + authorizationEndpoint);
+            console.log("URL de Autorização do Discord (FINAL): " + authDiscordURL);
             return resolve(); // Resolve a Promise
           },
         );
@@ -73,4 +75,24 @@ function injectStateIntoUrl(url: string, generatedState: string): string {
     const separator = url.includes("?") ? "&" : "?";
     return `${url}${separator}${newStateParam}`;
   }
+}
+
+function injectGuildParamsIntoUrl(
+  url: string,
+  guildId: string | undefined,
+  permissionsInt: string | undefined,
+): string {
+  const separator = url.includes("?") ? "&" : "?"; // 1. Define os parâmetros para a instalação do Bot
+  // guild_id: O ID do servidor alvo (o seu servidor Codi Cash)
+  // disable_guild_select=true: Impede que o usuário escolha outro servidor
+  // permissions: O inteiro que define as permissões que o Bot precisa
+  const guildParams = [
+    `guild_id=${guildId}`,
+    `disable_guild_select=true`,
+    `permissions=${permissionsInt}`, // 🚨 IMPORTANTE: Se o seu plugin NÃO incluir o scope 'bot' na URL,
+    // você precisará adicioná-lo manualmente aqui, ou ele não funcionará.
+    // Ex: `scope=identify%20bot` (assumindo que 'identify' é o outro scope)
+  ]; // 2. Anexa os parâmetros à URL
+
+  return `${url}${separator}${guildParams.join("&")}`;
 }

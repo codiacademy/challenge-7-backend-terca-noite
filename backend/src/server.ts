@@ -1,7 +1,8 @@
 import { app } from "./app.ts";
 import { env } from "./config/env.ts";
 import { cleanExpiredTokens } from "./jobs/clean-expired-tokens.ts";
-import { sendOverviewEmailCron } from "./jobs/overview-email-notification.ts";
+import { sendOverviewEmailtoAllUsers } from "./functions/notifications/send-overview-email-to-all-users-function.ts";
+import { sendDiscordNotificationToAllUsersFunction } from "./functions/notifications/send-discord-notification-to-all-users-function.ts";
 import cron from "node-cron";
 
 await import("./config/auto-seed.ts");
@@ -21,7 +22,12 @@ cron.schedule("* * * * *", async () => {
   await cleanExpiredTokens();
 });
 
-cron.schedule("*/3 * * * *", async () => {
+cron.schedule("*0 8 1 * *", async () => {
   console.log("✉ Enviando Emails de Overview...");
-  await sendOverviewEmailCron();
+  await sendOverviewEmailtoAllUsers();
+});
+
+cron.schedule("*0 8 1 * *", async () => {
+  console.log("🤖 Enviando Mensagens do Discord de Overview...");
+  await sendDiscordNotificationToAllUsersFunction();
 });

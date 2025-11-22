@@ -9,7 +9,7 @@ type BalanceStats = {
   avarageSales: number;
 };
 
-export async function readOverviewDataForEmail(userId: string): Promise<BalanceStats> {
+export async function readOverviewData(userId: string): Promise<BalanceStats> {
   // Define o período: Últimos 30 dias
   const to = new Date();
   const from = subMonths(new Date(), 1);

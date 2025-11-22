@@ -12,7 +12,7 @@ export async function readUserProfileFunction(userId: string) {
         telephone: true,
         two_factor_enabled: true,
         notification_email_enabled: true,
-        notification_sms_enabled: true,
+        notification_discord_enabled: true,
       },
     });
 

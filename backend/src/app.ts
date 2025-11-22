@@ -15,7 +15,7 @@ import { authLogoutRoute } from "./routes/auth/auth-logout-route.ts";
 import { authRefreshRoute } from "./routes/auth/auth-refresh-route.ts";
 import fp from "./plugins/fastify-plugin.ts";
 import { updateUserEmailNotificationRoute } from "./routes/users/update-user-email-notification-route.ts";
-import { updateUserSmsNotificationRoute } from "./routes/users/update-user-sms-notification.ts";
+import { updateUserDiscordNotificationRoute } from "./routes/users/update-user-discord-notification-route.ts";
 import { twoFactorVerifyRoute } from "./routes/auth/two-factor-verify-route.ts";
 import type { Payload } from "./types/auth/refresh-token-types.ts";
 import { updateUserTwoFactorAuthRoute } from "./routes/users/update-user-two-factor-auth-route.ts";
@@ -73,7 +73,7 @@ app.register(fastifyOauth2, {
     auth: fastifyOauth2.fastifyOauth2.DISCORD_CONFIGURATION,
   },
   startRedirectPath: "/auth/discord/redirect-automatico",
-  scope: ["identify", "email"],
+  scope: ["identify", "email", "guilds.join"],
   callbackUri: "http://localhost:3000/auth/discord/callback",
   generateStateFunction: async function (request: any) {
     return randomUUID();
@@ -130,7 +130,7 @@ app.register(authLogoutRoute);
 app.register(authRefreshRoute);
 app.register(authLoginRoute);
 app.register(updateUserEmailNotificationRoute, { prefix: "/users" });
-app.register(updateUserSmsNotificationRoute, { prefix: "/users" });
+app.register(updateUserDiscordNotificationRoute, { prefix: "/users" });
 app.register(updateUserPasswordRoute, { prefix: "/users" });
 app.register(updateUserTwoFactorAuthRoute, { prefix: "/2fa" });
 app.register(twoFactorVerifyRoute, { prefix: "/2fa" });

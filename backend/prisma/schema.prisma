@@ -15,7 +15,7 @@ model User {
   telephone                  String?
   two_factor_enabled         Boolean         @default(false)
   notification_email_enabled Boolean         @default(false)
-  notification_sms_enabled   Boolean         @default(false)
+  notification_discord_enabled   Boolean         @default(false)
   created_at                 DateTime        @default(now())
   updated_at                 DateTime        @updatedAt
   password_hash              String          @db.VarChar(255)
