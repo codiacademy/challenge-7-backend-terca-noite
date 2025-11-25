@@ -4,9 +4,9 @@ import { AppError } from "../../utils/app-error.ts";
 import type { CreateUserType } from "../../types/users/user-types.ts";
 
 type OptionalCreateUserType = Partial<CreateUserType>;
-export async function createTestUser({
-  fullName = "John Doe",
-  email = "john.doe@gmail.com",
+export async function createTestUser2FA({
+  fullName = "Mary Joe",
+  email = "mary.joe@gmail.com",
   telephone = "32997667943",
   password = "12345678",
 }: OptionalCreateUserType = {}) {
@@ -23,6 +23,7 @@ export async function createTestUser({
       email,
       telephone,
       password_hash: passwordHash,
+      two_factor_enabled: true,
     },
     // Adiciona a seleção para garantir que o hash da senha NUNCA saia
     select: {

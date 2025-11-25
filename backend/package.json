@@ -4,7 +4,8 @@
   "description": "Back",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "vitest",
+    "test:watch": "vitest --watch",
     "dev": "tsx watch src/server.ts",
     "build": "tsc",
     "start": "node dist/src/server.js",
@@ -60,6 +61,7 @@
   },
   "devDependencies": {
     "@types/nodemailer": "^7.0.3",
+    "@types/supertest": "^6.0.3",
     "@typescript-eslint/eslint-plugin": "^8.46.3",
     "@typescript-eslint/parser": "^8.46.3",
     "eslint": "^9.39.1",
@@ -69,8 +71,10 @@
     "lint-staged": "^16.2.6",
     "prettier": "^3.6.2",
     "prisma": "^6.19.0",
+    "supertest": "^7.1.4",
     "ts-node-dev": "^2.0.0",
     "tsx": "^4.20.6",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "vitest": "^4.0.13"
   }
 }
