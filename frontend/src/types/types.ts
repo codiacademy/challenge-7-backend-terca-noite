@@ -10,12 +10,12 @@ export interface Expense {
 
 export type ProfileConfigsType = {
   userId: string;
-  name: string ;
-  email: string ;
-  telephone: string ;
-  two_factor_enabled: boolean ;
-  notification_email_enabled: boolean ;
-  notification_sms_enabled: boolean ;
+  name: string;
+  email: string;
+  telephone: string;
+  two_factor_enabled: boolean;
+  notification_email_enabled: boolean;
+  notification_discord_enabled: boolean;
 };
 
 export type CourseName =
@@ -35,8 +35,26 @@ export type CourseName =
   | "curso de javascript avançado"
   | "fundamentos do desenvolvimento web";
 
+export type SaleFormValues = {
+  customer: {
+    name: string;
+    email: string;
+    phone: string;
+    cpf: string;
+  };
+  course: {
+    type: "" | "presencial" | "online"; // <-- aceitando string vazia
+    name: string;
+    price: number;
+  };
+  discount: number;
+  taxes: number;
+  commissions: number;
+  cardFees: number;
+  finalPrice: number;
+};
 export interface Sales {
-  id: number;
+  id: string;
   date: string;
   customer: {
     name: string;
@@ -58,8 +76,19 @@ export interface Sales {
 
 export interface SalesTableProps {
   sales: Sales[];
-  onDelete: (id: number) => void;
+  search: string;
+  courseType: string | undefined;
+  itemsPerPage: number;
+  currentPage: number;
+  totalPages: number;
+  totalItems: number;
+  onDelete: (id: string) => void;
   onEdit: (sale: Sales) => void;
+
+  onSearchChange?: (term: string) => void;
+  onFilterTypeChange?: (type: string) => void;
+  onItemsPerPageChange?: (items: number) => void;
+  onPageChange?: (page: number) => void;
 }
 
 export type TimeRange =
@@ -68,5 +97,4 @@ export type TimeRange =
   | "lastThreeMonths"
   | "thisYear"
   | "all"
-  | { type: "custom"; startDate: Date; endDate: Date }
-
+  | { type: "custom"; startDate: Date; endDate: Date };

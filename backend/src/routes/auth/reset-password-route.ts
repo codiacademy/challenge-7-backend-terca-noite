@@ -37,7 +37,7 @@ export async function resetPasswordRoute(app: FastifyInstance) {
         });
       } else {
         return reply.status(401).send({
-          message: "Senha Incorreta!",
+          message: "Código incorreto!",
         });
       }
     } catch (error: any) {

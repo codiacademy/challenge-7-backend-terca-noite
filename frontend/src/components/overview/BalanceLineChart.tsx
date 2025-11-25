@@ -10,16 +10,12 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { TimeRange } from "@/types/types";
-import { salesData } from "@/data/SalesData";
-import { expensesData } from "@/data/ExpensesData";
-import { getBalanceDataGrowth } from "@/utils/balanceAggregations";
+
 interface BalanceLineChartProps {
-  timeRange: TimeRange;
+  revenueData: any;
 }
 
-export const BalanceLineChart = ({ timeRange }: BalanceLineChartProps) => {
-  const revenueData = getBalanceDataGrowth(salesData, expensesData, timeRange);
-
+export const BalanceLineChart = ({ revenueData }: BalanceLineChartProps) => {
   return (
     <motion.div
       className="bg-gray-800 bg-opacity-50 backdrop-filter backdrop-blur-lg shadow-lg rounded-xl p-6 border border-gray-700 mb-8"
@@ -28,9 +24,7 @@ export const BalanceLineChart = ({ timeRange }: BalanceLineChartProps) => {
       transition={{ delay: 0.2 }}
     >
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-semibold text-gray-100">
-          Receitas vs Despesas
-        </h2>
+        <h2 className="text-xl font-semibold text-gray-100">Receitas vs Despesas</h2>
       </div>
 
       <div className="h-[320px] sm:h-[400px] overflow-x-auto scrollbar-thin scrollbar-thumb-gray-600 scrollbar-track-gray-800 scrollbar-rounded">
@@ -39,11 +33,7 @@ export const BalanceLineChart = ({ timeRange }: BalanceLineChartProps) => {
             <ResponsiveContainer>
               <AreaChart data={revenueData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-                <XAxis
-                  dataKey="month"
-                  stroke="#9CA3AF"
-                  tick={{ fontSize: 11 }}
-                />
+                <XAxis dataKey="month" stroke="#9CA3AF" tick={{ fontSize: 11 }} />
                 <YAxis stroke="#9CA3AF" />
                 <Tooltip
                   contentStyle={{

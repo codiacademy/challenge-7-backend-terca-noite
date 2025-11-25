@@ -2,7 +2,7 @@ import { z } from "zod";
 import type { FastifyInstance } from "fastify";
 import { AppError } from "../../utils/app-error.ts";
 import { updateUserEmailNotificationFunction } from "../../functions/users/update-user-email-notification-function.ts";
-
+import { sendOverviewEmailtoUser } from "../../functions/notifications/send-overview-email-to-user-function.ts";
 const idSchema = z.uuid();
 export async function updateUserEmailNotificationRoute(app: FastifyInstance) {
   app.patch(
@@ -12,6 +12,7 @@ export async function updateUserEmailNotificationRoute(app: FastifyInstance) {
       try {
         const userId = idSchema.parse((request.user as any).id);
         const updatedUser = await updateUserEmailNotificationFunction({ userId });
+        await sendOverviewEmailtoUser(userId);
         return reply.status(200).send({
           message: "Notificações por email atualizadas com sucesso",
           user: updatedUser,

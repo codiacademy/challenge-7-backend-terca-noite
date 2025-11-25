@@ -8,7 +8,6 @@ import api from "../../api/axios-client.ts";
 import { toast } from "react-toastify";
 import { Mail } from "lucide-react";
 import { Phone } from "lucide-react";
-import { useNavigate } from "react-router-dom";
 
 // formata telefone no padrão (XX) XXXXX XXXX
 

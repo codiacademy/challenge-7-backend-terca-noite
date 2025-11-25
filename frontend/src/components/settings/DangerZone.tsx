@@ -1,8 +1,36 @@
 import { motion } from "framer-motion";
 import { Trash2 } from "lucide-react";
 import { ConfirmDeleteModal } from "../common/ConfirmDeleteModal";
-
+import api from "../../api/axios-client.ts";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 export const DangerZone = () => {
+  const navigate = useNavigate();
+
+  const deleteAccount = async () => {
+    try {
+      const token = localStorage.getItem("accessToken") || null;
+
+      const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+      };
+      if (token) headers["Authorization"] = `Bearer ${token}`;
+      const response = await api.delete("http://localhost:3000/users/delete_current_user", {
+        headers,
+        withCredentials: true,
+      });
+      if (!response.data) {
+        console.log("Data");
+      } else {
+        toast.success("Conta deletada com sucesso!", {
+          onClose: () => navigate("/signin"),
+        });
+      }
+    } catch (error: any) {
+      console.log("error: " + error);
+    }
+  };
+
   return (
     <motion.div
       className="bg-red-900 bg-opacity-50 backdrop-filter backdrop-blur-lg shadow-lg rounded-xl p-6 border border-red-700 mb-8"
@@ -17,7 +45,13 @@ export const DangerZone = () => {
       <p className="text-gray-300 mb-4">
         Deletar sua conta significa que todos os seus dados serão perdidos permanentemente.
       </p>
-      <ConfirmDeleteModal onConfirm={() => {}} title="Tem certeza que quer deletar sua conta? " text="Essa operação não pode ser desfeita">
+      <ConfirmDeleteModal
+        onConfirm={() => {
+          deleteAccount();
+        }}
+        title="Tem certeza que quer deletar sua conta? "
+        text="Essa operação não pode ser desfeita"
+      >
         <span
           className="cursor-pointer bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded 
           transition duration-200"

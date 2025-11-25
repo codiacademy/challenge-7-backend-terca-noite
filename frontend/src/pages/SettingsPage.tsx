@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Header } from "../components/common/Header";
 import { DangerZone } from "../components/settings/DangerZone";
 import { Notifications } from "../components/settings/Notifications";
@@ -6,7 +6,7 @@ import { Profile } from "../components/settings/Profile";
 import { Security } from "../components/settings/Security";
 import { ProfileConfigsType } from "../types/types";
 import api from "../api/axios-client.ts";
-import { toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 export function SettingsPage() {
   const [profileData, setProfileData] = useState<ProfileConfigsType | null>(null);
   const [loadingProfile, setLoadingProfile] = useState<boolean>(true);
@@ -33,7 +33,6 @@ export function SettingsPage() {
         if (!res.data) throw new Error(`HTTP ${res.status}`);
         const data = await res.data;
         console.log("Dados do perfil:", data);
-        toast.success("Página Carregada");
         setProfileData(data);
       } catch (err: any) {
         if (err.name !== "AbortError") console.error("Erro ao carregar perfil:", err);
@@ -56,6 +55,7 @@ export function SettingsPage() {
         <Security {...((profileData ?? {}) as any)} isLoading={loadingProfile} />
         <DangerZone />
       </main>
+      <ToastContainer />
     </div>
   );
 }

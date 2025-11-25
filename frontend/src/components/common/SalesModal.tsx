@@ -1,20 +1,20 @@
 import { Dialog, DialogBackdrop, DialogPanel } from "@headlessui/react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { Sales, CourseName } from "@/types/types";
+import { Sales } from "@/types/types";
+import { SaleFormValues } from "@/types/types";
 import { useEffect } from "react";
 import { setMask, removeMask } from "react-input-mask-br";
 import { isValidCPF } from "@/utils/isValidCPF";
 import { NumericFormat } from "react-number-format";
+import api from "../../api/axios-client.ts";
 
 const SaleSchema = Yup.object().shape({
   customer: Yup.object().shape({
     name: Yup.string()
       .required("Nome completo é obrigatório")
       .min(2, "Nome deve ter pelo menos 2 caracteres"),
-    email: Yup.string()
-      .email("E-mail inválido")
-      .required("E-mail é obrigatório"),
+    email: Yup.string().email("E-mail inválido").required("E-mail é obrigatório"),
     phone: Yup.string()
       .matches(/^\d{11}$/, "Telefone inválido (ex: (11) 9 9999-9999)")
       .required("Telefone é obrigatório"),
@@ -55,18 +55,12 @@ type ModalProps = {
   title: string;
   open: boolean;
   onClose: () => void;
-  onSave: (sale: Sales) => void;
+  onSave: () => void;
   sale?: Sales | null; // Para edição
 };
 
-export default function Modal({
-  title,
-  open,
-  onClose,
-  onSave,
-  sale,
-}: ModalProps) {
-  const formik = useFormik({
+export default function Modal({ title, open, onClose, onSave, sale }: ModalProps) {
+  const formik = useFormik<SaleFormValues>({
     initialValues: {
       customer: {
         name: sale?.customer.name || "",
@@ -87,32 +81,42 @@ export default function Modal({
     },
     validationSchema: SaleSchema,
     enableReinitialize: true, // Permite reinicializar os valores quando a prop `sale` muda
-    onSubmit: (values) => {
-      const newSale: Sales = {
-        id: sale?.id || Date.now(), // Usa o ID existente ou gera um novo
-        date: new Date().toISOString().split("T")[0], // Data atual no formato YYYY-MM-DD
-        customer: values.customer,
-        course: {
-          name: values.course.name as CourseName,
-          price: values.course.price,
-          type: values.course.type as "online" | "presencial",
-        },
-        discount: values.discount,
-        taxes: values.taxes,
-        commissions: values.commissions,
-        cardFees: values.cardFees,
-        finalPrice: values.finalPrice,
-      };
-      onSave(newSale);
-      formik.resetForm();
-      onClose();
+    onSubmit: async (values) => {
+      try {
+        const token = localStorage.getItem("accessToken") || null;
+
+        const headers: Record<string, string> = {
+          "Content-Type": "application/json",
+        };
+        if (token) headers["Authorization"] = `Bearer ${token}`;
+
+        if (sale) {
+          console.log("Atualizar venda");
+          // --- EDITAR VENDA ---
+          const response = await api.put(`http://localhost:3000/sales/${sale.id}`, values, {
+            headers,
+          });
+          if (!response.data) console.log("Sem resposta na hora de atualizar uma venda!");
+        } else {
+          console.log("Nova venda");
+          // --- CRIAR VENDA ---
+          const response = await api.post("http://localhost:3000/sales/create_sale", values, {
+            headers,
+          });
+          if (!response.data) console.log("Sem resposta na hora de criar uma venda!");
+        }
+        onSave();
+        formik.resetForm();
+        onClose();
+      } catch (error) {
+        console.error(error);
+      }
     },
   });
 
-  const handleCurrencyChange =
-    (field: string) => (values: { floatValue?: number }) => {
-      formik.setFieldValue(field, values.floatValue || 0);
-    };
+  const handleCurrencyChange = (field: string) => (values: { floatValue?: number }) => {
+    formik.setFieldValue(field, values.floatValue || 0);
+  };
 
   useEffect(() => {
     const calculatedFinalPrice =
@@ -121,10 +125,7 @@ export default function Modal({
       formik.values.taxes -
       formik.values.commissions -
       formik.values.cardFees;
-    formik.setFieldValue(
-      "finalPrice",
-      calculatedFinalPrice >= 0 ? calculatedFinalPrice : 0
-    );
+    formik.setFieldValue("finalPrice", calculatedFinalPrice >= 0 ? calculatedFinalPrice : 0);
   }, [
     formik.values.course.price,
     formik.values.discount,
@@ -165,28 +166,20 @@ export default function Modal({
                         value={formik.values.customer.name}
                         placeholder="Nome completo do aluno..."
                       />
-                      {formik.touched.customer?.name &&
-                      formik.errors.customer?.name ? (
-                        <div className="text-red-500 text-xs">
-                          {formik.errors.customer.name}
-                        </div>
+                      {formik.touched.customer?.name && formik.errors.customer?.name ? (
+                        <div className="text-red-500 text-xs">{formik.errors.customer.name}</div>
                       ) : null}
                     </div>
 
                     <div className="items-start justify-evenly gap-2">
-                      <label className="items-start text-[12px] text-white">
-                        CPF:
-                      </label>
+                      <label className="items-start text-[12px] text-white">CPF:</label>
                       <input
                         id="customer.cpf"
                         name="customer.cpf"
                         type="text"
                         className="w-full rounded border border-white bg-black p-2 text-white"
                         onChange={(e) =>
-                          formik.setFieldValue(
-                            "customer.cpf",
-                            removeMask(e.target.value)
-                          )
+                          formik.setFieldValue("customer.cpf", removeMask(e.target.value))
                         }
                         onBlur={formik.handleBlur}
                         value={setMask({
@@ -195,28 +188,20 @@ export default function Modal({
                         })}
                         placeholder="123.456.789-10"
                       />
-                      {formik.touched.customer?.cpf &&
-                      formik.errors.customer?.cpf ? (
-                        <div className="text-red-500 text-xs">
-                          {formik.errors.customer.cpf}
-                        </div>
+                      {formik.touched.customer?.cpf && formik.errors.customer?.cpf ? (
+                        <div className="text-red-500 text-xs">{formik.errors.customer.cpf}</div>
                       ) : null}
                     </div>
 
                     <div className="col-6">
-                      <label className="text-[12px] text-white">
-                        Número de telefone
-                      </label>
+                      <label className="text-[12px] text-white">Número de telefone</label>
                       <input
                         id="customer.phone"
                         name="customer.phone"
                         type="text"
                         className="w-full rounded border border-white bg-black p-2 text-white"
                         onChange={(e) =>
-                          formik.setFieldValue(
-                            "customer.phone",
-                            removeMask(e.target.value)
-                          )
+                          formik.setFieldValue("customer.phone", removeMask(e.target.value))
                         }
                         onBlur={formik.handleBlur}
                         value={setMask({
@@ -225,11 +210,8 @@ export default function Modal({
                         })}
                         placeholder="(99) 9 9999-9999"
                       />
-                      {formik.touched.customer?.phone &&
-                      formik.errors.customer?.phone ? (
-                        <div className="text-red-500 text-xs">
-                          {formik.errors.customer.phone}
-                        </div>
+                      {formik.touched.customer?.phone && formik.errors.customer?.phone ? (
+                        <div className="text-red-500 text-xs">{formik.errors.customer.phone}</div>
                       ) : null}
                     </div>
 
@@ -246,18 +228,13 @@ export default function Modal({
                           value={formik.values.customer.email}
                           placeholder="seuemail@exemplo.com"
                         />
-                        {formik.touched.customer?.email &&
-                        formik.errors.customer?.email ? (
-                          <div className="text-red-500 text-xs">
-                            {formik.errors.customer.email}
-                          </div>
+                        {formik.touched.customer?.email && formik.errors.customer?.email ? (
+                          <div className="text-red-500 text-xs">{formik.errors.customer.email}</div>
                         ) : null}
                       </div>
 
                       <div>
-                        <label className="text-[12px] text-white">
-                          Curso adquirido
-                        </label>
+                        <label className="text-[12px] text-white">Curso adquirido</label>
                         <select
                           id="course.name"
                           name="course.name"
@@ -269,9 +246,7 @@ export default function Modal({
                           <option value="" disabled>
                             Selecione
                           </option>
-                          <option value="curso fullstack">
-                            Curso Fullstack
-                          </option>
+                          <option value="curso fullstack">Curso Fullstack</option>
                           <option value="curso frontend">Curso Frontend</option>
                           <option value="curso backend">Curso Backend</option>
                           <option value="inglês para programadores">
@@ -281,16 +256,12 @@ export default function Modal({
                           <option value="data science">Data Science</option>
                           <option value="código limpo">Código Limpo</option>
                           <option value="areas de TI">Áreas de TI</option>
-                          <option value="linkedin para devs">
-                            LinkedIn para Devs
-                          </option>
+                          <option value="linkedin para devs">LinkedIn para Devs</option>
                           <option value="bootcamp magic com contratação">
                             Bootcamp Magic com Contratação
                           </option>
                           <option value="github">GitHub</option>
-                          <option value="rotina de resultados">
-                            Rotina de Resultados
-                          </option>
+                          <option value="rotina de resultados">Rotina de Resultados</option>
                           <option value="intensivão html, css e js">
                             Intensivão HTML, CSS e JS
                           </option>
@@ -301,18 +272,13 @@ export default function Modal({
                             Fundamentos do Desenvolvimento Web
                           </option>
                         </select>
-                        {formik.touched.course?.name &&
-                        formik.errors.course?.name ? (
-                          <div className="text-red-500 text-xs">
-                            {formik.errors.course.name}
-                          </div>
+                        {formik.touched.course?.name && formik.errors.course?.name ? (
+                          <div className="text-red-500 text-xs">{formik.errors.course.name}</div>
                         ) : null}
                       </div>
 
                       <div>
-                        <label className="text-[12px] text-white">
-                          Tipo de curso
-                        </label>
+                        <label className="text-[12px] text-white">Tipo de curso</label>
                         <select
                           id="course.type"
                           name="course.type"
@@ -327,20 +293,15 @@ export default function Modal({
                           <option value="presencial">Presencial</option>
                           <option value="online">Online</option>
                         </select>
-                        {formik.touched.course?.type &&
-                        formik.errors.course?.type ? (
-                          <div className="text-red-500 text-xs">
-                            {formik.errors.course.type}
-                          </div>
+                        {formik.touched.course?.type && formik.errors.course?.type ? (
+                          <div className="text-red-500 text-xs">{formik.errors.course.type}</div>
                         ) : null}
                       </div>
                     </div>
 
                     <div className="flex-wrow flex grid-cols-2 justify-evenly gap-2">
                       <div className="col-6">
-                        <label className="text-sm text-[12px] text-white">
-                          Valor do curso
-                        </label>
+                        <label className="text-sm text-[12px] text-white">Valor do curso</label>
                         <NumericFormat
                           id="course.price"
                           name="course.price"
@@ -356,11 +317,8 @@ export default function Modal({
                           value={formik.values.course.price}
                           placeholder="R$ 0,00"
                         />
-                        {formik.touched.course?.price &&
-                        formik.errors.course?.price ? (
-                          <div className="text-red-500 text-xs">
-                            {formik.errors.course.price}
-                          </div>
+                        {formik.touched.course?.price && formik.errors.course?.price ? (
+                          <div className="text-red-500 text-xs">{formik.errors.course.price}</div>
                         ) : null}
                       </div>
                       <div className="col-6">
@@ -383,18 +341,14 @@ export default function Modal({
                           placeholder="R$ 0,00"
                         />
                         {formik.touched.discount && formik.errors.discount ? (
-                          <div className="text-red-500 text-xs">
-                            {formik.errors.discount}
-                          </div>
+                          <div className="text-red-500 text-xs">{formik.errors.discount}</div>
                         ) : null}
                       </div>
                     </div>
 
                     <div className="flex grid-cols-2 flex-row justify-center gap-2">
                       <div className="col-6">
-                        <label className="text-[12px] text-white">
-                          Impostos
-                        </label>
+                        <label className="text-[12px] text-white">Impostos</label>
                         <NumericFormat
                           id="taxes"
                           name="taxes"
@@ -411,15 +365,11 @@ export default function Modal({
                           placeholder="R$ 0,00"
                         />
                         {formik.touched.taxes && formik.errors.taxes ? (
-                          <div className="text-red-500 text-xs">
-                            {formik.errors.taxes}
-                          </div>
+                          <div className="text-red-500 text-xs">{formik.errors.taxes}</div>
                         ) : null}
                       </div>
                       <div className="col-6">
-                        <label className="text-[12px] text-white">
-                          Comissões
-                        </label>
+                        <label className="text-[12px] text-white">Comissões</label>
                         <NumericFormat
                           id="commissions"
                           name="commissions"
@@ -435,20 +385,15 @@ export default function Modal({
                           value={formik.values.commissions}
                           placeholder="R$ 0,00"
                         />
-                        {formik.touched.commissions &&
-                        formik.errors.commissions ? (
-                          <div className="text-red-500 text-xs">
-                            {formik.errors.commissions}
-                          </div>
+                        {formik.touched.commissions && formik.errors.commissions ? (
+                          <div className="text-red-500 text-xs">{formik.errors.commissions}</div>
                         ) : null}
                       </div>
                     </div>
 
                     <div className="flex grid-cols-2 flex-row justify-center gap-2">
                       <div className="col-6">
-                        <label className="text-[12px] text-white">
-                          Taxa do cartão
-                        </label>
+                        <label className="text-[12px] text-white">Taxa do cartão</label>
                         <NumericFormat
                           id="cardFees"
                           name="cardFees"
@@ -465,15 +410,11 @@ export default function Modal({
                           placeholder="R$ 0,00"
                         />
                         {formik.touched.cardFees && formik.errors.cardFees ? (
-                          <div className="text-red-500 text-xs">
-                            {formik.errors.cardFees}
-                          </div>
+                          <div className="text-red-500 text-xs">{formik.errors.cardFees}</div>
                         ) : null}
                       </div>
                       <div className="col-6">
-                        <label className="text-[12px] text-white">
-                          Valor Final
-                        </label>
+                        <label className="text-[12px] text-white">Valor Final</label>
                         <NumericFormat
                           id="finalPrice"
                           name="finalPrice"
@@ -488,11 +429,8 @@ export default function Modal({
                           placeholder="R$ 0,00"
                           disabled
                         />
-                        {formik.touched.finalPrice &&
-                        formik.errors.finalPrice ? (
-                          <div className="text-red-500 text-xs">
-                            {formik.errors.finalPrice}
-                          </div>
+                        {formik.touched.finalPrice && formik.errors.finalPrice ? (
+                          <div className="text-red-500 text-xs">{formik.errors.finalPrice}</div>
                         ) : null}
                       </div>
                     </div>

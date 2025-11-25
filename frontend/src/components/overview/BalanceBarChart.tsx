@@ -1,12 +1,4 @@
-import {
-  Bar,
-  BarChart,
-  CartesianGrid,
-  Legend,
-  ResponsiveContainer,
-  XAxis,
-  YAxis,
-} from "recharts";
+import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, XAxis, YAxis } from "recharts";
 import { motion } from "framer-motion";
 import { expensesData } from "../../data/ExpensesData";
 import { salesData } from "../../data/SalesData";
@@ -28,15 +20,12 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 interface BalanceBarChartProps {
-  timeRange: TimeRange;
+  balanceBarData: any;
 }
 
-export const BalanceBarChart = ({ timeRange }: BalanceBarChartProps) => {
-  const balanceBarData = getBalanceData(salesData, expensesData, timeRange);
-
+export const BalanceBarChart = ({ balanceBarData }: BalanceBarChartProps) => {
   const hasData =
-    balanceBarData.length > 0 &&
-    (balanceBarData[0].receitas > 0 || balanceBarData[0].despesas > 0);
+    balanceBarData.length > 0 && (balanceBarData[0].receitas > 0 || balanceBarData[0].despesas > 0);
 
   return (
     <motion.div
@@ -63,12 +52,7 @@ export const BalanceBarChart = ({ timeRange }: BalanceBarChartProps) => {
                     stroke="#9CA3AF"
                     tickFormatter={(value) => value || ""}
                   />
-                  <XAxis
-                    tickLine={false}
-                    tickMargin={10}
-                    axisLine={false}
-                    tick={false}
-                  />
+                  <XAxis tickLine={false} tickMargin={10} axisLine={false} tick={false} />
                   <Tooltip
                     cursor={false}
                     content={({ active, payload }) => {
@@ -86,10 +70,7 @@ export const BalanceBarChart = ({ timeRange }: BalanceBarChartProps) => {
                           >
                             {payload.map((entry, index) => (
                               <p key={index} style={{ color: "#E5E7EB" }}>
-                                {entry.name === "receitas"
-                                  ? "Receitas"
-                                  : "Despesas"}
-                                :{" "}
+                                {entry.name === "receitas" ? "Receitas" : "Despesas"}:{" "}
                                 {new Intl.NumberFormat("pt-BR", {
                                   style: "currency",
                                   currency: "BRL",
@@ -102,20 +83,10 @@ export const BalanceBarChart = ({ timeRange }: BalanceBarChartProps) => {
                       return null;
                     }}
                   />
-                  <Bar
-                    dataKey="receitas"
-                    fill="var(--color-receitas)"
-                    radius={8}
-                  />
-                  <Bar
-                    dataKey="despesas"
-                    fill="var(--color-despesas)"
-                    radius={8}
-                  />
+                  <Bar dataKey="receitas" fill="var(--color-receitas)" radius={8} />
+                  <Bar dataKey="despesas" fill="var(--color-despesas)" radius={8} />
                   <Legend
-                    formatter={(name: string) =>
-                      name === "receitas" ? "Receitas" : "Despesas"
-                    }
+                    formatter={(name: string) => (name === "receitas" ? "Receitas" : "Despesas")}
                     wrapperStyle={{ fontSize: "16px", color: "#E5E7EB" }}
                   />
                 </BarChart>

@@ -1,79 +1,41 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import {
-  Edit,
-  Search,
-  Trash2,
-  ChevronLeft,
-  ChevronRight,
-  Eye,
-} from "lucide-react";
+import { Edit, Search, Trash2, ChevronLeft, ChevronRight, Eye } from "lucide-react";
 import { ConfirmDeleteModal } from "../common/ConfirmDeleteModal";
 import { Sales } from "@/types/types";
 import { SaleDetailsModal } from "./SaleDatailsModal";
 import { SalesTableProps } from "@/types/types";
 
-export const SalesTable = ({ sales, onEdit, onDelete }: SalesTableProps) => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filterType, setFilterType] = useState("todos");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(5);
+export const SalesTable = ({
+  sales,
+  search,
+  courseType,
+  currentPage,
+  itemsPerPage,
+  totalPages,
+  totalItems,
+  onSearchChange,
+  onFilterTypeChange,
+  onPageChange,
+  onItemsPerPageChange,
+  onEdit,
+  onDelete,
+}: SalesTableProps) => {
   const [selectedSale, setSelectedSale] = useState<Sales | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const applyFilters = () => {
-    let filtered = sales;
-
-    if (filterType !== "todos") {
-      filtered = filtered.filter(
-        (sale) => sale.course.type.toLowerCase() === filterType
-      );
-    }
-
-    if (searchTerm) {
-      const term = searchTerm.toLowerCase();
-      filtered = filtered.filter(
-        (sale) =>
-          sale.customer.name.toLowerCase().includes(term) ||
-          sale.customer.email.toLowerCase().includes(term)
-      );
-    }
-
-    return filtered;
-  };
-
-  const handleSearch = (e: { target: { value: string } }) => {
-    setSearchTerm(e.target.value);
-    setCurrentPage(1);
-  };
-
-  const handleFilterType = (e: { target: { value: string } }) => {
-    setFilterType(e.target.value);
-    setCurrentPage(1);
-  };
-
-  const handleItemsPerPageChange = (e: { target: { value: string } }) => {
-    setItemsPerPage(Number(e.target.value));
-    setCurrentPage(1);
-  };
-
-  const filteredSales = applyFilters();
-
-  const totalItems = filteredSales.length;
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const currentSales = filteredSales.slice(startIndex, endIndex);
+  const currentSales = sales;
 
   const goToPreviousPage = () => {
     if (currentPage > 1) {
-      setCurrentPage(currentPage - 1);
+      const newPage = currentPage - 1;
+      onPageChange?.(newPage);
     }
   };
 
   const goToNextPage = () => {
     if (currentPage < totalPages) {
-      setCurrentPage(currentPage + 1);
+      const newPage = currentPage + 1;
+      onPageChange?.(newPage);
     }
   };
 
@@ -105,13 +67,16 @@ export const SalesTable = ({ sales, onEdit, onDelete }: SalesTableProps) => {
             <select
               id="filterType"
               className={`w-full sm:w-48 bg-gray-700 text-white rounded-md pl-3 py-1.5 sm:py-1 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200 ${
-                filterType !== "todos" ? "border-2 border-blue-500" : ""
+                courseType !== "todos" ? "border-2 border-blue-500" : ""
               }`}
-              value={filterType}
-              onChange={handleFilterType}
+              value={courseType}
+              onChange={(e) => {
+                onFilterTypeChange?.(e.target.value);
+                console.log(e.target.value);
+              }}
               aria-label="Filtrar por tipo de curso"
             >
-              <option value="todos">Todos</option>
+              <option value="">Todos</option>
               <option value="presencial">Presencial</option>
               <option value="online">Online</option>
             </select>
@@ -127,13 +92,10 @@ export const SalesTable = ({ sales, onEdit, onDelete }: SalesTableProps) => {
                 type="text"
                 placeholder="Procurar por nome ou email..."
                 className="bg-gray-700 text-white placeholder-gray-400 rounded-lg pl-10 pr-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                onChange={handleSearch}
-                value={searchTerm}
+                onChange={(e) => onSearchChange?.(e.target.value)}
+                value={search}
               />
-              <Search
-                className="absolute left-3 top-2.5 text-gray-400"
-                size={18}
-              />
+              <Search className="absolute left-3 top-2.5 text-gray-400" size={18} />
             </div>
           </div>
         </div>
@@ -190,9 +152,7 @@ export const SalesTable = ({ sales, onEdit, onDelete }: SalesTableProps) => {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap flex-col text-sm font-medium text-gray-100 flex gap-2">
                     {item.customer.name}
-                    <p className="text-xs text-gray-400">
-                      {item.customer.email}
-                    </p>
+                    <p className="text-xs text-gray-400">{item.customer.email}</p>
                   </td>
                   <td className="px-6 py-4 text-sm">
                     <span
@@ -202,8 +162,7 @@ export const SalesTable = ({ sales, onEdit, onDelete }: SalesTableProps) => {
                           : "text-sky-400 bg-blue-950"
                       }`}
                     >
-                      {item.course.type.charAt(0).toUpperCase() +
-                        item.course.type.slice(1)}
+                      {item.course.type.charAt(0).toUpperCase() + item.course.type.slice(1)}
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
@@ -275,7 +234,7 @@ export const SalesTable = ({ sales, onEdit, onDelete }: SalesTableProps) => {
               id="itemsPerPage"
               className="bg-gray-700 text-white rounded-md px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={itemsPerPage}
-              onChange={handleItemsPerPageChange}
+              onChange={(e) => onItemsPerPageChange?.(Number(e.target.value))}
             >
               <option value={5}>5</option>
               <option value={10}>10</option>
@@ -317,11 +276,7 @@ export const SalesTable = ({ sales, onEdit, onDelete }: SalesTableProps) => {
       )}
 
       {/* Uso do componente modal */}
-      <SaleDetailsModal
-        sale={selectedSale}
-        isOpen={isModalOpen}
-        onClose={closeModal}
-      />
+      <SaleDetailsModal sale={selectedSale} isOpen={isModalOpen} onClose={closeModal} />
     </motion.div>
   );
 };

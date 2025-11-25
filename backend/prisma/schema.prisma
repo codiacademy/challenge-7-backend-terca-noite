@@ -5,7 +5,7 @@ generator client {
 
 datasource db {
   provider = "mysql"
-  url      = env("DATABASE_URL")
+  url = env("DATABASE_URL")
 }
 
 model User {
@@ -15,14 +15,17 @@ model User {
   telephone                  String?
   two_factor_enabled         Boolean         @default(false)
   notification_email_enabled Boolean         @default(false)
-  notification_sms_enabled   Boolean         @default(false)
+  notification_discord_enabled   Boolean         @default(false)
   created_at                 DateTime        @default(now())
   updated_at                 DateTime        @updatedAt
   password_hash              String          @db.VarChar(255)
+  discordId                  String?         @unique @db.VarChar(255)
+  discordName                String? 
   created_expenses           Expense[]       @relation("CreatedExpenses")
   created_sales              Sale[]          @relation("CreatedSales")
   refreshtokens              refreshtokens[]
   two_factor_requests        TwoFactorRequest[]
+  auth_states                AuthState[] 
 
   @@map("users")
 }
@@ -79,6 +82,18 @@ model refreshtokens {
   @@index([userId], map: "refreshTokens_userId_fkey")
 }
 
+
+model AuthState {
+  state      String   @id @default(uuid()) @db.Char(36)
+  
+  userId     String   
+  
+  createdAt  DateTime @default(now())
+  
+  expiresAt  DateTime
+  
+  user       User     @relation(fields: [userId], references: [id])
+}
 enum ExpenseCategory {
   fixa
   variavel

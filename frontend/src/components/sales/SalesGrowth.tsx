@@ -8,17 +8,12 @@ import {
   LineChart,
   Line,
 } from "recharts";
-import { salesData } from "../../data/SalesData";
-import { getSalesGrowthData } from "@/utils/salesAggregations";
-import { TimeRange } from "@/types/types";
 
 interface SalesGrowthProps {
-  timeRange: TimeRange;
+  growthData: any;
 }
 
-export const SalesGrowth = ({ timeRange }: SalesGrowthProps) => {
-  const growthData = getSalesGrowthData(salesData, timeRange);
-
+export const SalesGrowth = ({ growthData }: SalesGrowthProps) => {
   return (
     <motion.div
       className="bg-gray-800 bg-opacity-50 backdrop-blur-md shadow-lg rounded-xl p-6 border border-gray-700"
@@ -26,28 +21,14 @@ export const SalesGrowth = ({ timeRange }: SalesGrowthProps) => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.3 }}
     >
-      <h2 className="text-xl font-semibold text-gray-100 mb-4">
-        Crescimento de Vendas
-      </h2>
+      <h2 className="text-xl font-semibold text-gray-100 mb-4">Crescimento de Vendas</h2>
       <div className="h-[320px] sm:h-[400px] overflow-x-auto">
         {growthData.length > 0 ? (
           <div className="h-full min-w-[600px] w-full">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart
-                data={growthData}
-                margin={{ top: 5, right: 20, left: 0, bottom: 20 }}
-              >
-                <CartesianGrid
-                  strokeDasharray="3 3"
-                  stroke="#374151"
-                  opacity={0.5}
-                />
-                <XAxis
-                  dataKey="month"
-                  stroke="#9CA3AF"
-                  tick={{ fontSize: 12 }}
-                  
-                />
+              <LineChart data={growthData} margin={{ top: 5, right: 20, left: 0, bottom: 20 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#374151" opacity={0.5} />
+                <XAxis dataKey="month" stroke="#9CA3AF" tick={{ fontSize: 12 }} />
                 <YAxis
                   stroke="#9CA3AF"
                   tickFormatter={(value) =>

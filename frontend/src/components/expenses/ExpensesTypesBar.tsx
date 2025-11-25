@@ -1,23 +1,8 @@
-import {
-  Bar,
-  BarChart,
-  CartesianGrid,
-  Legend,
-  ResponsiveContainer,
-  XAxis,
-  YAxis,
-} from "recharts";
+import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, XAxis, YAxis } from "recharts";
 import { motion } from "framer-motion";
-import { getExpensesTypesData } from "../../utils/expenseAggregations";
-import { expensesData } from "../../data/ExpensesData";
-import { TimeRange } from "../../types/types";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  ChartConfig,
-  ChartContainer,
-  ChartTooltip,
-} from "@/components/ui/chart";
+import { ChartConfig, ChartContainer, ChartTooltip } from "@/components/ui/chart";
 
 const chartConfig = {
   fixas: {
@@ -31,15 +16,12 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 interface ExpensesTypesBarProps {
-  timeRange: TimeRange;
+  expenseBarData: any;
 }
 
-export function ExpensesTypesBar({ timeRange }: ExpensesTypesBarProps) {
-  const expenseBarData = getExpensesTypesData(expensesData, timeRange);
-
+export function ExpensesTypesBar({ expenseBarData }: ExpensesTypesBarProps) {
   const hasData =
-    expenseBarData.length > 0 &&
-    (expenseBarData[0].fixas > 0 || expenseBarData[0].variaveis > 0);
+    expenseBarData.length > 0 && (expenseBarData[0].fixas > 0 || expenseBarData[0].variaveis > 0);
 
   return (
     <motion.div
@@ -85,17 +67,11 @@ export function ExpensesTypesBar({ timeRange }: ExpensesTypesBarProps) {
                         style: "currency",
                         currency: "BRL",
                       }).format(value),
-                      name === "fixas"
-                        ? "Despesas Fixas"
-                        : "Despesas Variáveis",
+                      name === "fixas" ? "Despesas Fixas" : "Despesas Variáveis",
                     ]}
                   />
                   <Bar dataKey="fixas" fill="var(--color-fixas)" radius={8} />
-                  <Bar
-                    dataKey="variaveis"
-                    fill="var(--color-variaveis)"
-                    radius={8}
-                  />
+                  <Bar dataKey="variaveis" fill="var(--color-variaveis)" radius={8} />
                   <Legend
                     formatter={(name: string) =>
                       name === "fixas" ? "Despesas Fixas" : "Despesas Variáveis"

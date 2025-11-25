@@ -1,26 +1,14 @@
-import {
-  Bar,
-  BarChart,
-  CartesianGrid,
-  Legend,
-  ResponsiveContainer,
-  XAxis,
-  YAxis,
-} from "recharts";
+import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, XAxis, YAxis } from "recharts";
 import { motion } from "framer-motion";
 import { getSalesTypesData } from "@/utils/salesAggregations";
-import { salesData } from "@/data/SalesData";
-import { TimeRange } from "@/types/types";
+//import { salesData } from "@/data/SalesData";
+import { Sales, TimeRange } from "@/types/types";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  ChartConfig,
-  ChartContainer,
-  ChartTooltip,
-} from "@/components/ui/chart";
+import { ChartConfig, ChartContainer, ChartTooltip } from "@/components/ui/chart";
 
 interface SalesTypesBarProps {
-  timeRange: TimeRange;
+  salesBarData: any;
 }
 
 const chartConfig = {
@@ -34,13 +22,10 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export const SalesTypesBar = ({ timeRange }: SalesTypesBarProps) => {
-  const salesBarData = getSalesTypesData(salesData, timeRange);
-
+export const SalesTypesBar = ({ salesBarData }: SalesTypesBarProps) => {
   // Verificar se há dados reais (presencial e online ambos zero significa "sem dados")
   const hasData =
-    salesBarData.length > 0 &&
-    (salesBarData[0].presencial > 0 || salesBarData[0].online > 0);
+    salesBarData.length > 0 && (salesBarData[0].presencial > 0 || salesBarData[0].online > 0);
 
   return (
     <motion.div
@@ -89,16 +74,10 @@ export const SalesTypesBar = ({ timeRange }: SalesTypesBarProps) => {
                       name === "presencial" ? "Presencial" : "Online",
                     ]}
                   />
-                  <Bar
-                    dataKey="presencial"
-                    fill="var(--color-presencial)"
-                    radius={8}
-                  />
+                  <Bar dataKey="presencial" fill="var(--color-presencial)" radius={8} />
                   <Bar dataKey="online" fill="var(--color-online)" radius={8} />
                   <Legend
-                    formatter={(name: string) =>
-                      name === "presencial" ? "Presencial" : "Online"
-                    }
+                    formatter={(name: string) => (name === "presencial" ? "Presencial" : "Online")}
                     wrapperStyle={{ fontSize: "16px", color: "#E5E7EB" }}
                   />
                 </BarChart>

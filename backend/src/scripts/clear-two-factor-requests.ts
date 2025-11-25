@@ -1,4 +1,4 @@
-import { prisma } from "../src/lib/prisma.ts";
+import { prisma } from "../lib/prisma.ts";
 
 async function clearTwoFactorRequests() {
   const deleted = await prisma.twoFactorRequest.deleteMany({});

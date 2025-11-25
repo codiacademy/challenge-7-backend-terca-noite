@@ -9,56 +9,270 @@ import { ButtonAdd } from "../components/common/ButtonAdd";
 import { SalesTypesBar } from "../components/sales/SalesTypesBar";
 import { useState } from "react";
 import { TimeRange, Sales } from "@/types/types";
-import { filterSalesByTime } from "@/utils/salesAggregations";
-import { salesData } from "@/data/SalesData";
 import Modal from "@/components/common/SalesModal";
-import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useEffect } from "react";
+import api from "../api/axios-client.ts";
+import { toast } from "react-toastify";
+import { convertTimeRangeToParams } from "../utils/timeRangeTransformations.ts";
+export type SalesStats = {
+  totalCourses: number;
+  avarageSales: number;
+  grossValue: number;
+  netValue: number;
+};
 
 export function SalesPage() {
+  const [search, setSearch] = useState("");
+  const [courseType, setCourseType] = useState<string>("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   const [timeRange, setTimeRange] = useState<TimeRange>("all");
   const [isOpen, setIsOpen] = useState(false);
-  const [sales, setSales] = useState<Sales[]>(salesData); // Estado para gerenciar vendas
-  const [selectedSale, setSelectedSale] = useState<Sales | null>(null); // Venda selecionada para edição
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalItems, setTotalItems] = useState(0);
+  const [filteredSales, setFilteredSales] = useState<Sales[]>([]); // Estado para gerenciar vendas filtradas
+  const [dateFilteredSales, setDateFilteredSales] = useState<Sales[]>([]);
+  const [pieChartData, setPieChartData] = useState<any>([]);
+  const [barChartData, setBarChartData] = useState<any>([]);
+  const [growthChartData, setGrowthChartData] = useState<any>([]);
+  const [salesStats, setSalesStats] = useState<SalesStats>({
+    totalCourses: 0,
+    avarageSales: 0,
+    grossValue: 0,
+    netValue: 0,
+  });
 
-  // Função para salvar (criar ou atualizar) uma venda
-  const handleSaveSale = (newSale: Sales) => {
-    if (newSale.id === selectedSale?.id) {
-      // Atualizar venda existente
-      setSales(sales.map((sale) => (sale.id === newSale.id ? newSale : sale)));
-    } else {
-      // Adicionar nova venda
-      setSales([...sales, newSale]);
+  const [selectedSale, setSelectedSale] = useState<Sales | null>(null); // Venda selecionada para edição
+  const [loadingProfile, setLoadingProfile] = useState<boolean>(true);
+
+  async function loadKPIs(params?: {
+    timeRange?: TimeRange;
+    courseType?: string;
+    search?: string;
+    page?: number;
+    limit?: number;
+  }) {
+    try {
+      const token = localStorage.getItem("accessToken") || null;
+      const headers: Record<string, string> = { "Content-Type": "application/json" };
+      if (token) headers["Authorization"] = `Bearer ${token}`;
+
+      // Converte timeRange para from/to
+      let from: string | undefined;
+      let to: string | undefined;
+
+      const tr = params?.timeRange;
+
+      ({ from, to } = convertTimeRangeToParams(tr));
+
+      const response = await api.get("http://localhost:3000/sales/get_kpis", {
+        headers,
+        withCredentials: true,
+        params: {
+          courseType: params?.courseType,
+          search: params?.search,
+          from,
+          to,
+          page: params?.page ?? 1,
+          limit: params?.limit ?? 10,
+        },
+      });
+
+      if (!response.data) throw new Error(`HTTP ${response.status}`);
+      setSalesStats(response.data.salesStats);
+      console.log("Kpis carregados!");
+    } catch (error: any) {
+      console.error("Erro ao carregar Kpis:", error);
     }
-    toast.success("Venda salva com sucesso!", { theme: "dark" });
-  };
+  }
+  async function loadSalesCharts(params: { timeRange: TimeRange }) {
+    try {
+      const token = localStorage.getItem("accessToken") || null;
+      const headers: Record<string, string> = { "Content-Type": "application/json" };
+      if (token) headers["Authorization"] = `Bearer ${token}`;
+
+      let from: string | undefined;
+      let to: string | undefined;
+
+      const tr = params?.timeRange;
+      ({ from, to } = convertTimeRangeToParams(tr));
+
+      const response = await api.get("http://localhost:3000/sales/get_charts", {
+        headers,
+        withCredentials: true,
+        params: {
+          from,
+          to,
+        },
+      });
+
+      if (!response.data) throw new Error(`HTTP ${response.status}`);
+
+      setPieChartData(response.data.pieChartData);
+      setBarChartData(response.data.barChartData);
+      setGrowthChartData(response.data.growthChartData);
+
+      console.log("Gráficos no período carregados!");
+    } catch (error: any) {
+      console.error("Erro ao carregar gráficos:", error);
+    }
+  }
+  async function loadDateFilteredSales(params: { timeRange: TimeRange }) {
+    try {
+      const token = localStorage.getItem("accessToken") || null;
+      const headers: Record<string, string> = { "Content-Type": "application/json" };
+      if (token) headers["Authorization"] = `Bearer ${token}`;
+
+      let from: string | undefined;
+      let to: string | undefined;
+
+      const tr = params?.timeRange;
+      ({ from, to } = convertTimeRangeToParams(tr));
+
+      const response = await api.get("http://localhost:3000/sales/read_filtered_sales", {
+        headers,
+        withCredentials: true,
+        params: {
+          from,
+          to,
+        },
+      });
+
+      if (!response.data) throw new Error(`HTTP ${response.status}`);
+      const mappedSales: Sales[] = response.data.sales.map((sale: any) => ({
+        id: sale.id,
+        date: sale.created_at, // ou updated_at se preferir
+        customer: {
+          name: sale.client_name,
+          email: sale.client_email,
+          phone: sale.client_phone,
+          cpf: sale.cpf,
+        },
+        course: {
+          type: sale.course_type,
+          name: sale.course,
+          price: Number(sale.course_value),
+        },
+        discount: Number(sale.discount_value),
+        taxes: Number(sale.taxes_value),
+        commissions: Number(sale.commission_value),
+        cardFees: Number(sale.card_fee_value),
+        finalPrice: Number(sale.total_value),
+      }));
+
+      setDateFilteredSales(mappedSales);
+      console.log("Vendas no período carregadas!");
+    } catch (error: any) {
+      console.error("Erro ao carregar vendas por período:", error);
+    }
+  }
+  async function loadFilteredSales(params?: {
+    timeRange?: TimeRange;
+    courseType?: string;
+    search?: string;
+    page?: number;
+    limit?: number;
+  }) {
+    try {
+      setLoadingProfile(true);
+
+      const token = localStorage.getItem("accessToken") || null;
+      const headers: Record<string, string> = { "Content-Type": "application/json" };
+      if (token) headers["Authorization"] = `Bearer ${token}`;
+
+      // Converte timeRange para from/to
+      let from: string | undefined;
+      let to: string | undefined;
+
+      const tr = params?.timeRange;
+
+      ({ from, to } = convertTimeRangeToParams(tr));
+
+      const response = await api.get("http://localhost:3000/sales/read_filtered_sales", {
+        headers,
+        withCredentials: true,
+        params: {
+          courseType: params?.courseType,
+          search: params?.search,
+          from,
+          to,
+          page: params?.page ?? 1,
+          limit: params?.limit ?? 10,
+        },
+      });
+
+      if (!response.data) throw new Error(`HTTP ${response.status}`);
+      const mappedSales: Sales[] = response.data.sales.map((sale: any) => ({
+        id: sale.id,
+        date: sale.created_at, // ou updated_at se preferir
+        customer: {
+          name: sale.client_name,
+          email: sale.client_email,
+          phone: sale.client_phone,
+          cpf: sale.cpf,
+        },
+        course: {
+          type: sale.course_type,
+          name: sale.course,
+          price: Number(sale.course_value),
+        },
+        discount: Number(sale.discount_value),
+        taxes: Number(sale.taxes_value),
+        commissions: Number(sale.commission_value),
+        cardFees: Number(sale.card_fee_value),
+        finalPrice: Number(sale.total_value),
+      }));
+
+      setFilteredSales(mappedSales);
+      setCurrentPage(response.data.page);
+      setItemsPerPage(response.data.limit);
+      setTotalPages(response.data.totalPages);
+      setTotalItems(response.data.total);
+      console.log("Vendas filtradas carregadas!");
+    } catch (error: any) {
+      console.error("Erro ao carregar vendas filtradas:", error);
+    } finally {
+      setLoadingProfile(false);
+    }
+  }
+
+  useEffect(() => {
+    loadFilteredSales({
+      timeRange,
+      courseType,
+      search,
+      page: currentPage,
+      limit: itemsPerPage,
+    });
+    loadDateFilteredSales({ timeRange });
+    loadSalesCharts({ timeRange });
+    loadKPIs({ timeRange });
+  }, [timeRange, courseType, search, currentPage, itemsPerPage]);
 
   // Função para excluir uma venda
-  const handleDeleteSale = (id: number) => {
-    setSales(sales.filter((sale) => sale.id !== id));
-  };
+  const handleDeleteSale = async (id: string) => {
+    try {
+      const token = localStorage.getItem("accessToken") || null;
 
-  // Filtrando os dados pelo time range
-  const filteredSales = filterSalesByTime(sales, timeRange);
-
-  const salesStats = {
-    totalCourses: filteredSales.length,
-    avarageSales:
-      filteredSales.length > 0
-        ? filteredSales.reduce((sum, sale) => sum + sale.finalPrice, 0) /
-          filteredSales.length
-        : 0,
-    grossValue: filteredSales.reduce((sum, sale) => sum + sale.course.price, 0),
-    netValue: filteredSales.reduce((sum, sale) => sum + sale.finalPrice, 0),
+      const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+      };
+      if (token) headers["Authorization"] = `Bearer ${token}`;
+      const response = await api.delete(`http://localhost:3000/sales/${id}`, {
+        headers,
+        withCredentials: true,
+      });
+      if (!response.data) return toast.error("Resposta não recebida");
+      console.log("Dados de Deleção:" + response.data);
+      await loadFilteredSales();
+      await loadDateFilteredSales({ timeRange });
+    } catch (error: any) {}
   };
 
   return (
     <div className="flex-1 overflow-auto relative z-10">
-      <Header
-        title="Vendas"
-        showTimeRange={true}
-        onTimeRangeChange={setTimeRange}
-      >
+      <Header title="Vendas" showTimeRange={true} onTimeRangeChange={setTimeRange}>
         <ButtonAdd
           titleButton="Adicionar Venda"
           onClick={() => {
@@ -113,19 +327,29 @@ export function SalesPage() {
 
         <SalesTable
           sales={filteredSales}
+          search={search}
+          courseType={courseType}
+          currentPage={currentPage}
+          itemsPerPage={itemsPerPage}
+          totalItems={totalItems}
+          totalPages={totalPages}
+          onSearchChange={setSearch}
+          onFilterTypeChange={setCourseType}
+          onPageChange={setCurrentPage}
+          onItemsPerPageChange={setItemsPerPage}
           onEdit={(sale) => {
-            setSelectedSale(sale); // Define a venda selecionada para edição
-            setIsOpen(true); // Abre o modal
+            setSelectedSale(sale);
+            setIsOpen(true);
           }}
-          onDelete={handleDeleteSale} // Passa a função de exclusão
+          onDelete={handleDeleteSale}
         />
 
         {/* CHARTS */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-          <SalesCoursePie timeRange={timeRange} />
-          <SalesTypesBar timeRange={timeRange} />
+          <SalesCoursePie salesPieData={pieChartData} dateFilteredSalesData={dateFilteredSales} />
+          <SalesTypesBar salesBarData={barChartData} />
         </div>
-        <SalesGrowth timeRange={timeRange} />
+        <SalesGrowth growthData={growthChartData} />
       </main>
 
       <Modal
@@ -135,11 +359,14 @@ export function SalesPage() {
           setIsOpen(false);
           setSelectedSale(null); // Limpa a venda selecionada ao fechar
         }}
-        onSave={handleSaveSale} // Passa a função de salvamento
+        onSave={async () => {
+          loadFilteredSales();
+          loadDateFilteredSales({ timeRange });
+          loadSalesCharts({ timeRange });
+          loadKPIs({ timeRange });
+        }} // Passa a função de salvamento
         sale={selectedSale} // Passa a venda selecionada para edição
       />
-
-      <ToastContainer />
     </div>
   );
 }
