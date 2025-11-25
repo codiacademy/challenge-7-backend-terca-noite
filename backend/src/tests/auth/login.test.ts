@@ -2,6 +2,7 @@ import { it, expect, beforeAll, afterAll, describe } from "vitest";
 import supertest from "supertest";
 import { app } from "../../app.ts";
 import { vi } from "vitest";
+import { deleteUserFunction } from "../../functions/users/delete-user-function.ts";
 
 vi.mock("../../utils/mail-service.ts", () => {
   return {
@@ -29,17 +30,20 @@ const MOCKED_USER_2FA = {
 };
 
 let requestClient: supertest.Agent;
-
+let testUserId: string;
+let testUser2FAId: string;
 describe("POST /login - Autenticação de Usuário", () => {
   // Configuração: Cria os usuários de teste ANTES de todos os testes
   beforeAll(async () => {
     await app.ready();
     requestClient = supertest(app.server);
-    await createTestUser(MOCKED_USER_DEFAULT); // Cria usuário sem 2FA
-    await createTestUser2FA(MOCKED_USER_2FA); // Cria usuário com 2FA
+    testUserId = (await createTestUser(MOCKED_USER_DEFAULT)).id; // Cria usuário sem 2FA
+    testUser2FAId = (await createTestUser2FA(MOCKED_USER_2FA)).id; // Cria usuário com 2FA
   });
 
   afterAll(async () => {
+    await deleteUserFunction(testUserId);
+    await deleteUserFunction(testUser2FAId);
     await app.close();
   });
 
