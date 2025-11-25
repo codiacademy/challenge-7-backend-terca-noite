@@ -6,7 +6,7 @@ import { sendDiscordNotificationToUserFunction } from "../../functions/notificat
 const idSchema = z.uuid();
 export async function updateUserDiscordNotificationRoute(app: FastifyInstance) {
   app.patch(
-    "/update_sms_notification",
+    "/update_discord_notification",
     { preHandler: [app.authenticate] },
     async (request: any, reply) => {
       try {

@@ -79,7 +79,7 @@ export const Notifications = ({
       }
 
       const response = await axios.patch(
-        "http://localhost:3000/users/update_sms_notification",
+        "http://localhost:3000/users/update_discord_notification",
         {},
         {
           headers: {
