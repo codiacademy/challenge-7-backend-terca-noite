@@ -26,12 +26,17 @@ export async function resetPasswordRoute(app: FastifyInstance) {
       if (decoded.type != "2fa_pending") {
         throw new AppError("Token inválido para 2FA", 401);
       }
+
       const { code, password } = bodySchema.parse(request.body);
+      console.log("Parse sendo Chamado 😁");
+      console.log("Code" + code);
+      console.log("password" + code);
 
       const isRightCode = await verify2faCodeFunction({ userId: decoded.id, code });
       if (isRightCode) {
         const changedUser = await updateUserPasswordFunction({ userId: decoded.id, password });
-        return reply.status(200).send({
+        reply.header("Content-Type", "application/json");
+        return reply.type("application/json").status(200).send({
           message: "Senha alterada com sucesso! Faça login a seguir!",
           changedUser,
         });
