@@ -5,15 +5,9 @@ import { createTestUser } from "../../functions/users/create-test-user-function.
 import { deleteUserFunction } from "../../functions/users/delete-user-function.ts";
 import { prisma } from "../../lib/prisma.ts";
 import { generateTwoFactorTempToken } from "../../utils/tokens-service.ts";
-
-// Mocks das funções internas que a rota utiliza
-import { verify2faCodeFunction } from "../../functions/auth/verify-2fa-code-function.ts";
-import { authRefreshFunction } from "../../functions/auth/auth-refresh-function.ts";
-import { createTwoFactorRequest } from "../../functions/auth/create-two-factor-request.ts";
-
-const MOCKED_ACCESS_TOKEN = "MOCKED_FINAL_ACCESS_TOKEN_JWT";
-const MOCKED_REFRESH_TOKEN = "MOCKED_FINAL_REFRESH_TOKEN_JWT";
-
+import { createTwoFactorRequestFunction } from "../mocks/create-two-factor-request-function.ts";
+import { deleteTwoFactorRequestFunction } from "../mocks/delete-two-factor-request-function.ts";
+import { generateExpiredTempTokenFunction } from "../mocks/generate-expired-temp-token-function.ts";
 // Dados do Usuário Padrão para Setup
 const MOCKED_USER = {
   fullName: "2FA Verify Test User",
@@ -22,10 +16,26 @@ const MOCKED_USER = {
   two_factor_enabled: true,
 };
 
+type TwoFactorRequestData = {
+  // Propriedade 'createdTwoFactorRequest' que é um objeto
+  createdTwoFactorRequest: {
+    id: string;
+    codeHash: string;
+    expiresAt: Date;
+    consumed: boolean;
+    createdAt: Date;
+    ip: string | null;
+    userId: string;
+  }; // <--- Fechamento do objeto
+
+  // Propriedade 'code'
+  code: string;
+};
 let requestClient: supertest.Agent;
 let testUserId: string;
 let tempToken: string; // Token '2fa_pending' (emitido após verificar credenciais, antes de verificar o código)
 let createdCode: string;
+let twoFactorRequestData: TwoFactorRequestData;
 describe("POST /verify - Verificação de Código 2FA e Emissão de Tokens Finais", () => {
   beforeAll(async () => {
     await app.ready();
@@ -33,7 +43,6 @@ describe("POST /verify - Verificação de Código 2FA e Emissão de Tokens Finai
 
     const user = await createTestUser(MOCKED_USER);
     testUserId = user.id; // 2. Simula a emissão de um token temporário '2fa_pending'
-
     tempToken = await generateTwoFactorTempToken(
       app,
       testUserId,
@@ -41,12 +50,18 @@ describe("POST /verify - Verificação de Código 2FA e Emissão de Tokens Finai
       MOCKED_USER.fullName,
     );
 
-    createdCode = await createTwoFactorRequest(testUserId);
+    twoFactorRequestData = await createTwoFactorRequestFunction(testUserId);
+    createdCode = twoFactorRequestData.code;
   });
 
   afterAll(async () => {
-    // Limpa o usuário do banco após todos os testes
-    await deleteUserFunction(testUserId);
+    const requestIdToDelete = twoFactorRequestData.createdTwoFactorRequest?.id;
+    console.log(`[AFTERALL] Tentando deletar Two Factor Request com ID: ${requestIdToDelete}`);
+
+    if (requestIdToDelete) {
+      await deleteTwoFactorRequestFunction(requestIdToDelete);
+    }
+    await deleteTwoFactorRequestFunction(twoFactorRequestData.createdTwoFactorRequest.id);
     await app.close();
   });
   // --- TESTE 1: Caminho Feliz (Código Correto) ---
@@ -63,11 +78,10 @@ describe("POST /verify - Verificação de Código 2FA e Emissão de Tokens Finai
 
     expect(response.statusCode).toBe(200);
     expect(response.body).toHaveProperty("message", "Autenticação 2FA concluída com sucesso");
-    expect(response.body).toHaveProperty("accessToken", MOCKED_ACCESS_TOKEN); // 1. Verifica se a função de verificação foi chamada com os dados corretos
-
+    expect(response.body).toHaveProperty("accessToken"); // 1. Verifica se a função de verificação foi chamada com os dados corretos
     expect(response.headers["set-cookie"]).toBeDefined();
     if (!response.headers["set-cookie"]) return;
-    expect(response.headers["set-cookie"][0]).toContain(`refreshToken=${MOCKED_REFRESH_TOKEN}`);
+    expect(response.headers["set-cookie"][0]).toContain(`refreshToken=`);
   }); // --- TESTE 2: Código Incorreto ---
 
   it("2. Deve retornar 401 e a mensagem 'Código incorreto!' quando o código 2FA for inválido", async () => {
@@ -88,7 +102,7 @@ describe("POST /verify - Verificação de Código 2FA e Emissão de Tokens Finai
     const response = await requestClient
       .post("/2fa/verify") // Sem .set("Authorization", ...)
       .send({
-        code: "123456",
+        code: createdCode,
       });
 
     expect(response.statusCode).toBe(401);
@@ -96,13 +110,16 @@ describe("POST /verify - Verificação de Código 2FA e Emissão de Tokens Finai
   }); // --- TESTE 4: Token Expirado (Erro FAST_JWT_EXPIRED) ---
 
   it("4. Deve retornar 401 e a mensagem de expiração se o tempToken estiver expirado", async () => {
-    // Token JWT expirado (exp: 1672529660, no passado)
-    const expiredToken =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjAwMDAwMDAwLTAwMDAtMDAwMC0wMDAwLTAwMDAwMDAwMDAwMCIsImVtYWlsIjoiZXhwaXJlZUBleGFtcGxlLmNvbSIsIm5hbWUiOiJFeHBpcmVkIiwidHlwZSI6IjJmYV9wZW5kaW5nIiwiaWF0IjoxNjcyNTI5NjAwLCJleHAiOjE2NzI1Mjk2NjB9.t0h3qF-Z1kY8gB7C6w-e4L5sU7XmH9R0VwX4X5k8Q_g";
+    const payload = {
+      id: testUserId,
+      email: MOCKED_USER.email,
+      name: MOCKED_USER.fullName,
+    };
+    const expiredTempToken = await generateExpiredTempTokenFunction(app, payload);
 
     const response = await requestClient
       .post("/2fa/verify")
-      .set("Authorization", `Bearer ${expiredToken}`)
+      .set("Authorization", `Bearer ${expiredTempToken}`)
       .send({
         code: "123456",
       });

@@ -18,6 +18,7 @@ export async function twoFactorSendFunction(userId: string) {
       expiresAt,
     },
   });
+  console.log("gerou codigo e colocou no db");
   await sendOtpEmail(existingUser.email, code);
   return createdTwoFactorRequest;
 }

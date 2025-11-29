@@ -18,24 +18,23 @@ interface RefreshPayload {
 }
 
 export async function getValidToken(userId: string, refreshToken: string) {
-  // CORREÇÃO: Busca TODOS os tokens (revogados ou não) para o usuário.
-  // Isso permite que verifiquemos explicitamente o status 'is_revoked' após o bcrypt.compare.
   const userTokens = await prisma.refreshtokens.findMany({
     where: { userId },
   });
-
   if (!userTokens.length) {
-    // Token não encontrado (nunca existiu para este usuário).
-    throw new AppError("Token inválido ou expirado", 401);
+    console.log("Usuário não tem tokens no DB.");
+    throw new AppError("Token inválido ou expirado (Usuário sem tokens)", 401);
   }
-
+  console.log("Procurando Tokens no db...");
   // Compara o hash de todos os tokens.
   for (const token of userTokens) {
     const isMatch = await bcrypt.compare(refreshToken, token.tokenHash);
 
     if (isMatch) {
+      console.log("Token Encontrado no db!");
       // Token encontrado pelo hash. Agora, verifica o status de revogação.
       if (token.is_revoked) {
+        console.log("Token já revogado!");
         // Se o token for encontrado, mas já estiver revogado (o que acontece no Token Replay)
         // LANÇA ERRO 401, corrigindo o Teste 3.
         throw new AppError("Token já foi revogado", 401);
@@ -43,6 +42,8 @@ export async function getValidToken(userId: string, refreshToken: string) {
       return token; // Token válido e não revogado.
     }
   }
+
+  console.log("Token não encontrado!");
 
   // Se o hash não corresponder a nenhum token (ativo ou inativo).
   throw new AppError("Token inválido ou expirado", 401);
@@ -57,16 +58,22 @@ export async function isRefreshTokenValid(userId: string, refreshToken: string) 
 
     const now = Date.now();
     const expiresAt = new Date(retrievedToken.expiresAt).getTime();
-
+    console.log("A analisar expiração do token ");
     if (expiresAt < now) {
+      console.log("Token expirado!");
       // Se expirou (mas não foi revogado), revoga no DB e retorna false
       await revokeRefreshToken(userId, refreshToken);
       return false;
     }
+
+    console.log("Token Válido!");
+
     return true; // Token válido, não expirado, e não revogado.
   } catch (error) {
     // Se getValidToken lançar um 401/403 (Token revogado ou não encontrado), a validação falha.
     if (error instanceof AppError && error.statusCode === 401) {
+      console.log("Token com erro: " + refreshToken);
+      console.log("Erro 401: " + error);
       return false;
     }
     // Repassa outros erros

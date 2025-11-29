@@ -7,10 +7,13 @@ export async function verify2faCodeFunction({ userId, code }: { userId: string; 
       where: { userId },
       orderBy: { createdAt: "desc" },
     });
+    console.log("Codigo sendo procurado...");
     if (!record) throw new AppError("Código não encontrado", 400);
+    console.log("Codigo encontrado!");
     if (record.expiresAt < new Date()) throw new AppError("Código expirado", 400);
     const match = await compareOtp(code, record.codeHash);
-    if (!match) throw new AppError("Código inválido", 400);
+    if (!match) throw new AppError("Código incorreto!", 401);
+    console.log("Codigo é match: " + match);
 
     const updatedTwoFactorRequest = await prisma.twoFactorRequest.update({
       where: { id: record.id },

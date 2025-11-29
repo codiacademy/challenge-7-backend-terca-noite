@@ -20,7 +20,7 @@ export async function resendTwoFactor(app: FastifyInstance) {
       if (decoded.type != "2fa_pending") {
         throw new AppError("Token inválido para 2FA", 401);
       }
-
+      console.log("Chegou no send!");
       await twoFactorSendFunction(decoded.id);
 
       const newTempToken = await generateTwoFactorTempToken(
@@ -47,8 +47,9 @@ export async function resendTwoFactor(app: FastifyInstance) {
           code: error.statusCode,
         });
       }
+      console.log("Erro aconteceu:" + error);
       return reply.status(500).send({
-        message: "Erro interno do servidor. Tente novamente mais tarde.",
+        message: "Erro interno do servidor: " + (error.message || String(error)),
       });
     }
   });

@@ -28,11 +28,10 @@ export async function resetPasswordRoute(app: FastifyInstance) {
       }
 
       const { code, password } = bodySchema.parse(request.body);
-      console.log("Parse sendo Chamado 😁");
-      console.log("Code" + code);
-      console.log("password" + code);
+      console.log("Codigo e nova senha pegas");
 
       const isRightCode = await verify2faCodeFunction({ userId: decoded.id, code });
+      console.log("Codigo verificado: " + isRightCode);
       if (isRightCode) {
         const changedUser = await updateUserPasswordFunction({ userId: decoded.id, password });
         reply.header("Content-Type", "application/json");
@@ -50,6 +49,18 @@ export async function resetPasswordRoute(app: FastifyInstance) {
         return reply.status(401).send({
           message: "Seu código expirou. Faça login novamente.",
           code: "TEMP_TOKEN_EXPIRED",
+        });
+      }
+      if (error instanceof z.ZodError) {
+        return reply.status(400).send({
+          message: "Dados de entrada em formato inválido",
+          errors: error.issues, // Retorna erros por campo
+        });
+      }
+      if (error instanceof AppError) {
+        return reply.status(error.statusCode).send({
+          message: error.message,
+          code: error.statusCode,
         });
       }
     }

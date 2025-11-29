@@ -12,10 +12,10 @@ export async function authRefreshFunction(
 ) {
   try {
     const valid = await isRefreshTokenValid(userId, refreshToken);
+    console.log("👍 Token Válido: " + valid);
     if (!valid) {
       throw new AppError("Refresh token revogado ou inválido", 403);
     }
-    console.log("o id do usuario na authrefreshfunction é " + userId);
     const tokens = await generateTokens(app, {
       userId,
       email: decodedToken.email,
