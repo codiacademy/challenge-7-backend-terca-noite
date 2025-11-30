@@ -1,6 +1,7 @@
 import { it, expect, beforeAll, afterAll, describe } from "vitest";
 import supertest from "supertest";
-import { app } from "../../app.ts"; // A instância do Fastify
+import { createApp } from "../../app.ts"; // Importa a função fábrica
+import type { FastifyInstance } from "fastify"; // Importa o tipo FastifyInstance;
 import { createTestUser } from "../../functions/users/create-test-user-function.ts";
 import { deleteUserFunction } from "../../functions/users/delete-user-function.ts";
 import { prisma } from "../../lib/prisma.ts";
@@ -16,11 +17,13 @@ const MOCKED_USER = {
 let requestClient: supertest.Agent;
 let testUserId: string;
 let accessToken: string;
+let appInstance: FastifyInstance;
 
 describe("POST /verify_password - Verificação de Senha de Usuário Autenticado", () => {
   beforeAll(async () => {
-    await app.ready();
-    requestClient = supertest(app.server);
+    appInstance = await createApp();
+    await appInstance.ready();
+    requestClient = supertest(appInstance.server);
 
     // 1. Cria o usuário de teste
     const user = await createTestUser(MOCKED_USER);
@@ -31,7 +34,7 @@ describe("POST /verify_password - Verificação de Senha de Usuário Autenticado
       email: MOCKED_USER.email,
       password: MOCKED_USER.password,
     });
-
+    expect(loginResponse.statusCode).toBe(200);
     // Assume que o accessToken é retornado no corpo da resposta
     accessToken = loginResponse.body.accessToken;
 
@@ -42,7 +45,7 @@ describe("POST /verify_password - Verificação de Senha de Usuário Autenticado
   afterAll(async () => {
     // Limpa o usuário do banco
     await deleteUserFunction(testUserId);
-    await app.close();
+    await appInstance.close();
   });
 
   // --- TESTE 1: Caminho Feliz (Senha Correta) ---

@@ -8,10 +8,13 @@ export async function createUserFunction({ fullName, email, telephone, password 
     const existingUser = await prisma.user.findUnique({
       where: { email },
     });
+    console.log("Usuário procurado!");
     if (existingUser) {
+      console.log("Usuário já cadastrado!");
       throw new AppError("Este e-mail já está cadastrado", 409);
     }
     const passwordHash = await bcrypt.hash(password, 10);
+    console.log("Usuário com nova senha criptografada!");
     const createdUser = await prisma.user.create({
       data: {
         name: fullName,
@@ -26,8 +29,11 @@ export async function createUserFunction({ fullName, email, telephone, password 
         email: true,
         created_at: true,
         updated_at: true,
+        telephone: true,
       },
     });
+    console.log("Usuário criado");
+
     return createdUser;
   } catch (error) {
     if (error instanceof AppError) {

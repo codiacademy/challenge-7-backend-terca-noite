@@ -42,12 +42,14 @@ const createUserSchema = {
         user: {
           type: "object",
           properties: {
-            id: { type: "number", description: "ID único do usuário" },
-            fullName: { type: "string" },
+            id: { type: "string", description: "ID único do usuário" },
+            name: { type: "string" },
             email: { type: "string" },
-            createdAt: { type: "string", format: "date-time" },
+            telephone: { type: "string" },
+            created_at: { type: "string", format: "date-time" },
+            updated_at: { type: "string", format: "date-time" },
           },
-          required: ["id", "fullName", "email"],
+          required: ["id", "name", "email", "created_at", "updated_at", "telephone"],
         },
       },
     },
@@ -112,7 +114,7 @@ export async function createUserRoute(app: FastifyInstance) {
   app.post("/create_user", { schema: createUserSchema }, async (request, reply) => {
     try {
       const { fullName, email, telephone, password } = bodySchema.parse(request.body);
-
+      console.log("Rota de Criação de Usuário!");
       const result = await createUserFunction({
         fullName,
         email,
@@ -120,6 +122,7 @@ export async function createUserRoute(app: FastifyInstance) {
         password,
       });
 
+      console.log("Usuário criado e retornado!");
       return reply.status(201).send({
         message: "Usuário criado com sucesso",
         user: result,

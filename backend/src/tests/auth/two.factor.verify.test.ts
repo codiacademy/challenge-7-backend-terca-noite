@@ -1,6 +1,7 @@
 import { it, expect, beforeAll, afterAll, describe, vi, beforeEach } from "vitest";
 import supertest from "supertest";
-import { app } from "../../app.ts"; // A instância do Fastify
+import { createApp } from "../../app.ts"; // Importa a função fábrica
+import type { FastifyInstance } from "fastify"; // Importa o tipo FastifyInstance;
 import { createTestUser } from "../../functions/users/create-test-user-function.ts";
 import { deleteUserFunction } from "../../functions/users/delete-user-function.ts";
 import { prisma } from "../../lib/prisma.ts";
@@ -36,15 +37,17 @@ let testUserId: string;
 let tempToken: string; // Token '2fa_pending' (emitido após verificar credenciais, antes de verificar o código)
 let createdCode: string;
 let twoFactorRequestData: TwoFactorRequestData;
+let appInstance: FastifyInstance;
 describe("POST /verify - Verificação de Código 2FA e Emissão de Tokens Finais", () => {
   beforeAll(async () => {
-    await app.ready();
-    requestClient = supertest(app.server); // 1. Cria o usuário de teste no banco
+    appInstance = await createApp();
+    await appInstance.ready();
+    requestClient = supertest(appInstance.server); // 1. Cria o usuário de teste no banco
 
     const user = await createTestUser(MOCKED_USER);
     testUserId = user.id; // 2. Simula a emissão de um token temporário '2fa_pending'
     tempToken = await generateTwoFactorTempToken(
-      app,
+      appInstance,
       testUserId,
       MOCKED_USER.email,
       MOCKED_USER.fullName,
@@ -62,7 +65,7 @@ describe("POST /verify - Verificação de Código 2FA e Emissão de Tokens Finai
       await deleteTwoFactorRequestFunction(requestIdToDelete);
     }
     await deleteTwoFactorRequestFunction(twoFactorRequestData.createdTwoFactorRequest.id);
-    await app.close();
+    await appInstance.close();
   });
   // --- TESTE 1: Caminho Feliz (Código Correto) ---
 
@@ -115,7 +118,7 @@ describe("POST /verify - Verificação de Código 2FA e Emissão de Tokens Finai
       email: MOCKED_USER.email,
       name: MOCKED_USER.fullName,
     };
-    const expiredTempToken = await generateExpiredTempTokenFunction(app, payload);
+    const expiredTempToken = await generateExpiredTempTokenFunction(appInstance, payload);
 
     const response = await requestClient
       .post("/2fa/verify")
@@ -130,7 +133,7 @@ describe("POST /verify - Verificação de Código 2FA e Emissão de Tokens Finai
 
   it("5. Deve retornar 401 se o token não for do tipo '2fa_pending'", async () => {
     // Simula a criação de um token de acesso normal ('access')
-    const wrongTypeToken = await app.jwt.sign(
+    const wrongTypeToken = await appInstance.jwt.sign(
       { id: testUserId, email: MOCKED_USER.email, name: MOCKED_USER.fullName, type: "access" },
       { expiresIn: "1h" },
     );

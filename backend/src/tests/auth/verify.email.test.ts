@@ -1,6 +1,7 @@
 import { it, expect, beforeAll, afterAll, describe } from "vitest";
 import supertest from "supertest";
-import { app } from "../../app.ts"; // A instância do Fastify
+import { createApp } from "../../app.ts"; // Importa a função fábrica
+import type { FastifyInstance } from "fastify"; // Importa o tipo FastifyInstance;
 import { createTestUser } from "../../functions/users/create-test-user-function.ts";
 import { deleteUserFunction } from "../../functions/users/delete-user-function.ts";
 import { prisma } from "../../lib/prisma.ts";
@@ -20,13 +21,15 @@ const MOCKED_USER = {
 
 const NON_EXISTENT_EMAIL = "non.existent.user@codicash.com";
 
+let appInstance: FastifyInstance;
 let requestClient: supertest.Agent;
 let testUserId: string;
 
 describe("POST /verify_email - Inicia 2FA e Envia Código", () => {
   beforeAll(async () => {
-    await app.ready();
-    requestClient = supertest(app.server);
+    appInstance = await createApp();
+    await appInstance.ready();
+    requestClient = supertest(appInstance.server);
 
     // 1. Cria o usuário de teste
     const user = await createTestUser(MOCKED_USER);
@@ -42,7 +45,7 @@ describe("POST /verify_email - Inicia 2FA e Envia Código", () => {
   afterAll(async () => {
     // Limpa o usuário do banco
     await deleteUserFunction(testUserId);
-    await app.close();
+    await appInstance.close();
   });
 
   // --- TESTE 1: Caminho Feliz (E-mail Existente) ---

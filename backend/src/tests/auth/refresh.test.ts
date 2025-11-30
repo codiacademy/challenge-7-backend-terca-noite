@@ -1,6 +1,7 @@
 import { it, expect, beforeAll, afterAll, describe } from "vitest";
 import supertest from "supertest";
-import { app } from "../../app.ts";
+import { createApp } from "../../app.ts"; // Importa a função fábrica
+import type { FastifyInstance } from "fastify"; // Importa o tipo FastifyInstance;
 import { createTestUser } from "../../functions/users/create-test-user-function.ts";
 import { deleteUserFunction } from "../../functions/users/delete-user-function.ts";
 import { prisma } from "../../lib/prisma.ts";
@@ -19,13 +20,14 @@ const MOCKED_USER = {
 let requestClient: supertest.Agent;
 let testUserId: string;
 let initialRefreshTokenCookie: string;
-
+let appInstance: FastifyInstance;
 // Função auxiliar para extrair o valor do token da string do cookie
 
 describe("POST /refresh - Renovação de Token", () => {
   beforeAll(async () => {
-    await app.ready();
-    requestClient = supertest(app.server);
+    appInstance = await createApp();
+    await appInstance.ready();
+    requestClient = supertest(appInstance.server);
 
     // 1. Cria o usuário de teste
     const user = await createTestUser(MOCKED_USER);
@@ -47,7 +49,7 @@ describe("POST /refresh - Renovação de Token", () => {
 
   afterAll(async () => {
     await deleteUserFunction(testUserId);
-    await app.close();
+    await appInstance.close();
   });
 
   // --- TESTE 1: Caminho Feliz (Geração de Novos Tokens) ---

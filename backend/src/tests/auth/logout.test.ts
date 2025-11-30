@@ -1,6 +1,7 @@
 import { it, expect, beforeAll, afterAll, describe } from "vitest";
 import supertest from "supertest";
-import { app } from "../../app.ts"; // A instância do Fastify
+import { createApp } from "../../app.ts"; // Importa a função fábrica
+import type { FastifyInstance } from "fastify"; // Importa o tipo FastifyInstance;
 import { createTestUser } from "../../functions/users/create-test-user-function.ts"; // Assume-se que você tem uma função para deletar
 import { deleteUserFunction } from "../../functions/users/delete-user-function.ts";
 import { prisma } from "../../lib/prisma.ts"; // Para verificar o DB
@@ -18,12 +19,13 @@ const MOCKED_USER = {
 let requestClient: supertest.Agent;
 let testUserId: string;
 let successfulLoginResponse: supertest.Response;
-
+let appInstance: FastifyInstance;
 describe("POST /logout - Encerramento de Sessão", () => {
   beforeAll(async () => {
     // Garante que o Fastify esteja pronto
-    await app.ready();
-    requestClient = supertest(app.server);
+    appInstance = await createApp();
+    await appInstance.ready();
+    requestClient = supertest(appInstance.server);
 
     // 1. Cria o usuário de teste e obtém o ID
     testUserId = (await createTestUser(MOCKED_USER)).id;
@@ -38,7 +40,7 @@ describe("POST /logout - Encerramento de Sessão", () => {
   afterAll(async () => {
     // Limpa o usuário do banco após todos os testes
     await deleteUserFunction(testUserId);
-    await app.close();
+    await appInstance.close();
   });
 
   // --- TESTE 1: Caminho Feliz (Logout com Token Válido) ---

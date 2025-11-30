@@ -45,119 +45,124 @@ import { AuthCallbackDiscordRoute } from "./routes/auth/auth-callback-discord-ro
 import { authUnlinkDiscordRoute } from "./routes/auth/auth-unlink-discord-route.ts";
 import { getDiscordLinkedRoute } from "./routes/auth/get-discord-linked-route.ts";
 import { getAuthStateFunction } from "./functions/auth/get-auth-state-function.ts";
-export const app = Fastify({ logger: true });
+import type { FastifyInstance } from "fastify";
 
-await swaggerConfi(app);
+export async function createApp(): Promise<FastifyInstance> {
+  const app = Fastify({ logger: true });
 
-app.register(cors, {
-  origin: ["http://localhost:5173", "http://192.168.2.102:5173"],
-  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"], // <--- adicione PATCH aqui
-  allowedHeaders: ["Content-Type", "Authorization"], // ajuste conforme o necessário
-  credentials: true,
-});
-app.register(fastifyJwt, { secret: env.JWT_SECRET });
-app.register(cookie, {
-  secret: env.COOKIE_SECRET,
-  // opcional, caso queira cookies assinados
-  // outras opções
-});
+  await swaggerConfi(app);
 
-app.register(fastifyOauth2, {
-  name: "discordOAuth2", // nome para referenciar depois
-  credentials: {
-    client: {
-      id: process.env.DISCORD_CLIENT_ID!,
-      secret: process.env.DISCORD_CLIENT_SECRET!,
+  app.register(cors, {
+    origin: ["http://localhost:5173", "http://192.168.2.102:5173"],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
+  });
+  app.register(fastifyJwt, { secret: env.JWT_SECRET });
+  app.register(cookie, {
+    secret: env.COOKIE_SECRET, // opcional, caso queira cookies assinados
+    // outras opções
+  });
+
+  app.register(fastifyOauth2, {
+    name: "discordOAuth2", // nome para referenciar depois
+    credentials: {
+      client: {
+        id: process.env.DISCORD_CLIENT_ID!,
+        secret: process.env.DISCORD_CLIENT_SECRET!,
+      }, // usar a configuração pronta para Discord
+      auth: fastifyOauth2.fastifyOauth2.DISCORD_CONFIGURATION,
     },
-    // usar a configuração pronta para Discord
-    auth: fastifyOauth2.fastifyOauth2.DISCORD_CONFIGURATION,
-  },
-  startRedirectPath: "/auth/discord/redirect-automatico",
-  scope: ["identify", "email", "guilds.join"],
-  callbackUri: "http://localhost:3000/auth/discord/callback",
-  generateStateFunction: async function (request: any) {
-    return randomUUID();
-  },
-  checkStateFunction: async (request) => {
-    const query = request.query as { state?: string };
-    const fullState = query.state;
+    startRedirectPath: "/auth/discord/redirect-automatico",
+    scope: ["identify", "email", "guilds.join"],
+    callbackUri: "http://localhost:3000/auth/discord/callback",
+    generateStateFunction: async function (request: any) {
+      return randomUUID();
+    },
+    checkStateFunction: async (request) => {
+      const query = request.query as { state?: string };
+      const fullState = query.state;
 
-    if (!fullState) {
-      throw new Error("Parâmetro 'state' ausente na requisição de callback.");
-    }
-    const state = fullState.substring(0, 36);
+      if (!fullState) {
+        throw new Error("Parâmetro 'state' ausente na requisição de callback.");
+      }
+      const state = fullState.substring(0, 36);
 
+      try {
+        const authState = await getAuthStateFunction(state);
+
+        (request as any).authState = authState;
+        return true;
+      } catch (error) {
+        console.error("Falha na validação do state:", (error as Error).message);
+        throw new Error("Invalid state: Sessão de vínculo expirada ou inválida.");
+      }
+    },
+  });
+
+  fp(app);
+  app.decorate("authenticate", async (request: any, reply: any) => {
     try {
-      const authState = await getAuthStateFunction(state);
+      const authHeader = request.headers.authorization;
+      console.log("Auth Header:", authHeader);
+      if (!authHeader) {
+        return reply.status(401).send({ message: "Token ausente" });
+      }
 
-      (request as any).authState = authState;
-      return true;
-    } catch (error) {
-      console.error("Falha na validação do state:", (error as Error).message);
-      throw new Error("Invalid state: Sessão de vínculo expirada ou inválida.");
+      const token = authHeader.split(" ")[1];
+      const decoded = await app.jwt.verify<Payload>(token); // então:
+
+      request.user = {
+        id: decoded.id,
+        email: decoded.email,
+        name: decoded.name,
+      };
+    } catch (err) {
+      console.log("Erro", err);
+      return reply.status(401).send({ message: "Token inválido ou ausente" });
     }
-  },
-});
+  });
+  app.register(createUserRoute, { prefix: "/users" });
+  app.register(deleteUserRoute, { prefix: "/users" });
+  app.register(readUserProfileRoute, { prefix: "/users" });
+  app.register(updateUserProfileRoute, { prefix: "/users" });
+  app.register(authLogoutRoute);
+  app.register(authRefreshRoute);
+  app.register(authLoginRoute);
+  app.register(updateUserEmailNotificationRoute, { prefix: "/users" });
+  app.register(updateUserDiscordNotificationRoute, { prefix: "/users" });
+  app.register(updateUserPasswordRoute, { prefix: "/users" });
+  app.register(updateUserTwoFactorAuthRoute, { prefix: "/2fa" });
+  app.register(twoFactorVerifyRoute, { prefix: "/2fa" });
+  app.register(resendTwoFactor, { prefix: "/2fa" });
+  app.register(verifyPasswordRoute, { prefix: "/auth" });
+  app.register(verifyEmailRoute, { prefix: "/auth" });
+  app.register(resetPasswordRoute, { prefix: "/users" });
+  app.register(createSaleRoute, { prefix: "/sales" });
+  app.register(updateSaleRoute, { prefix: "/sales" });
+  app.register(readAllSalesRoute, { prefix: "/sales" });
+  app.register(deleteSaleRoute, { prefix: "/sales" });
+  app.register(readFilteredSalesRoute, { prefix: "/sales" });
+  app.register(readDateFilteredSalesRoute, { prefix: "/sales" });
+  app.register(getSalesChartsDataRoute, { prefix: "/sales" });
+  app.register(getSalesKPIsRoute, { prefix: "/sales" });
+  app.register(createExpenseRoute, { prefix: "/expenses" });
+  app.register(readFilteredExpensesRoute, { prefix: "/expenses" });
+  app.register(deleteExpenseRoute, { prefix: "/expenses" });
+  app.register(updateExpenseRoute, { prefix: "/expenses" });
+  app.register(getExpensesChartsDataRoute, { prefix: "/expenses" });
+  app.register(getExpensesKPIsRoute, { prefix: "/expenses" });
+  app.register(getOverviewKPIsRoute, { prefix: "/overview" });
+  app.register(getOverviewChartsDataRoute, { prefix: "/overview" });
+  app.register(authLinkDiscordRoute, { prefix: "/auth" });
+  app.register(AuthCallbackDiscordRoute, { prefix: "/auth" });
+  app.register(authUnlinkDiscordRoute, { prefix: "/auth" });
+  app.register(getDiscordLinkedRoute, { prefix: "/auth" });
+  app.get("/", { preHandler: [app.authenticate] }, async (request, reply) => {
+    return "Codi Cash API rodando! Acesse /docs para a documentação.";
+  }); // ------------------------------------------------------------------
+  // ESTE É O RETURN QUE ESTAVA FALTANDO OU INACESSÍVEL NO SEU ERRO!
+  // ------------------------------------------------------------------
 
-fp(app);
-app.decorate("authenticate", async (request: any, reply: any) => {
-  try {
-    const authHeader = request.headers.authorization;
-    console.log("Auth Header:", authHeader);
-    if (!authHeader) {
-      return reply.status(401).send({ message: "Token ausente" });
-    }
-
-    const token = authHeader.split(" ")[1];
-    const decoded = await app.jwt.verify<Payload>(token);
-
-    // então:
-    request.user = {
-      id: decoded.id,
-      email: decoded.email,
-      name: decoded.name,
-    };
-  } catch (err) {
-    console.log("Erro", err);
-    return reply.status(401).send({ message: "Token inválido ou ausente" });
-  }
-});
-app.register(createUserRoute, { prefix: "/users" });
-app.register(deleteUserRoute, { prefix: "/users" });
-app.register(readUserProfileRoute, { prefix: "/users" });
-app.register(updateUserProfileRoute, { prefix: "/users" });
-app.register(authLogoutRoute);
-app.register(authRefreshRoute);
-app.register(authLoginRoute);
-app.register(updateUserEmailNotificationRoute, { prefix: "/users" });
-app.register(updateUserDiscordNotificationRoute, { prefix: "/users" });
-app.register(updateUserPasswordRoute, { prefix: "/users" });
-app.register(updateUserTwoFactorAuthRoute, { prefix: "/2fa" });
-app.register(twoFactorVerifyRoute, { prefix: "/2fa" });
-app.register(resendTwoFactor, { prefix: "/2fa" });
-app.register(verifyPasswordRoute, { prefix: "/auth" });
-app.register(verifyEmailRoute, { prefix: "/auth" });
-app.register(resetPasswordRoute, { prefix: "/users" });
-app.register(createSaleRoute, { prefix: "/sales" });
-app.register(updateSaleRoute, { prefix: "/sales" });
-app.register(readAllSalesRoute, { prefix: "/sales" });
-app.register(deleteSaleRoute, { prefix: "/sales" });
-app.register(readFilteredSalesRoute, { prefix: "/sales" });
-app.register(readDateFilteredSalesRoute, { prefix: "/sales" });
-app.register(getSalesChartsDataRoute, { prefix: "/sales" });
-app.register(getSalesKPIsRoute, { prefix: "/sales" });
-app.register(createExpenseRoute, { prefix: "/expenses" });
-app.register(readFilteredExpensesRoute, { prefix: "/expenses" });
-app.register(deleteExpenseRoute, { prefix: "/expenses" });
-app.register(updateExpenseRoute, { prefix: "/expenses" });
-app.register(getExpensesChartsDataRoute, { prefix: "/expenses" });
-app.register(getExpensesKPIsRoute, { prefix: "/expenses" });
-app.register(getOverviewKPIsRoute, { prefix: "/overview" });
-app.register(getOverviewChartsDataRoute, { prefix: "/overview" });
-app.register(authLinkDiscordRoute, { prefix: "/auth" });
-app.register(AuthCallbackDiscordRoute, { prefix: "/auth" });
-app.register(authUnlinkDiscordRoute, { prefix: "/auth" });
-app.register(getDiscordLinkedRoute, { prefix: "/auth" });
-app.get("/", { preHandler: [app.authenticate] }, async (request, reply) => {
-  return "Codi Cash API rodando! Acesse /docs para a documentação.";
-});
+  return app;
+}

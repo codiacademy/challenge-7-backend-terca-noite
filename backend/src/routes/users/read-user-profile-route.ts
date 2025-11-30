@@ -33,8 +33,12 @@ const readUserProfileSchema = {
           description: "Estrutura simplificada do perfil do usuário.",
           properties: {
             id: { type: "string", format: "uuid" },
-            fullName: { type: "string" },
+            name: { type: "string" },
             email: { type: "string", format: "email" },
+            telephone: { type: "string" },
+            two_factor_enabled: { type: "boolean" },
+            notification_email_enabled: { type: "boolean" },
+            notification_discord_enabled: { type: "boolean" },
             // Adicione aqui outros campos que readUserProfileFunction retorna
           },
         },

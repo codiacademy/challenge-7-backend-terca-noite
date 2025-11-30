@@ -1,6 +1,7 @@
 import { it, expect, beforeAll, afterAll, describe } from "vitest";
 import supertest from "supertest";
-import { app } from "../../app.ts";
+import { createApp } from "../../app.ts"; // Importa a função fábrica
+import type { FastifyInstance } from "fastify"; // Importa o tipo FastifyInstance;
 import { createTestUser } from "../../functions/users/create-test-user-function.ts";
 import { deleteUserFunction } from "../../functions/users/delete-user-function.ts";
 import { prisma } from "../../lib/prisma.ts";
@@ -16,19 +17,22 @@ const MOCKED_USER = {
   two_factor_enabled: false,
 };
 
+let appInstance: FastifyInstance; // Nova variável para a instância Fastify
+
 let requestClient: supertest.Agent;
 let testUserId: string;
 let accessToken: string;
 
 describe("GET /get_discord_linked - Verifica status de link com Discord", () => {
   beforeAll(async () => {
-    await app.ready();
-    requestClient = supertest(app.server); // 1. Cria o usuário de teste (sem discordId por padrão)
+    appInstance = await createApp();
+    await appInstance.ready();
+    requestClient = supertest(appInstance.server); // 1. Cria o usuário de teste (sem discordId por padrão)
 
     const user = await createTestUser(MOCKED_USER);
     testUserId = user.id; // 2. Gera um Access Token válido para a autenticação
 
-    accessToken = await app.jwt.sign(
+    accessToken = await appInstance.jwt.sign(
       {
         id: testUserId,
         email: MOCKED_USER.email,
@@ -49,7 +53,7 @@ describe("GET /get_discord_linked - Verifica status de link com Discord", () => 
   afterAll(async () => {
     // Limpa o usuário do banco
     await deleteUserFunction(testUserId);
-    await app.close();
+    await appInstance.close();
   }); // --- TESTE 1: Usuário NÃO vinculado (Status inicial) ---
 
   it("1. Deve retornar 200 e isDiscordLinked: false quando o usuário não tiver DiscordId", async () => {

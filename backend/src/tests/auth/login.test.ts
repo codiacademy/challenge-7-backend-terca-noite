@@ -1,6 +1,7 @@
 import { it, expect, beforeAll, afterAll, describe } from "vitest";
 import supertest from "supertest";
-import { app } from "../../app.ts";
+import { createApp } from "../../app.ts"; // Importa a função fábrica
+import type { FastifyInstance } from "fastify"; // Importa o tipo FastifyInstance;
 import { vi } from "vitest";
 import { deleteUserFunction } from "../../functions/users/delete-user-function.ts";
 
@@ -32,11 +33,13 @@ const MOCKED_USER_2FA = {
 let requestClient: supertest.Agent;
 let testUserId: string;
 let testUser2FAId: string;
+let appInstance: FastifyInstance;
 describe("POST /login - Autenticação de Usuário", () => {
   // Configuração: Cria os usuários de teste ANTES de todos os testes
   beforeAll(async () => {
-    await app.ready();
-    requestClient = supertest(app.server);
+    appInstance = await createApp();
+    await appInstance.ready();
+    requestClient = supertest(appInstance.server);
     testUserId = (await createTestUser(MOCKED_USER_DEFAULT)).id; // Cria usuário sem 2FA
     testUser2FAId = (await createTestUser2FA(MOCKED_USER_2FA)).id; // Cria usuário com 2FA
   });
@@ -44,7 +47,7 @@ describe("POST /login - Autenticação de Usuário", () => {
   afterAll(async () => {
     await deleteUserFunction(testUserId);
     await deleteUserFunction(testUser2FAId);
-    await app.close();
+    await appInstance.close();
   });
 
   // --- TESTE 1: Sucesso (2FA Desabilitado) ---

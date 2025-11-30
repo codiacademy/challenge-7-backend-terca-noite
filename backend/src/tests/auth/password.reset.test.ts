@@ -1,6 +1,7 @@
 import { it, expect, beforeAll, afterAll, describe, vi, beforeEach } from "vitest";
 import supertest from "supertest";
-import { app } from "../../app.ts";
+import { createApp } from "../../app.ts"; // Importa a função fábrica
+import type { FastifyInstance } from "fastify"; // Importa o tipo FastifyInstance;
 import { createTestUser } from "../../functions/users/create-test-user-function.ts";
 import { deleteUserFunction } from "../../functions/users/delete-user-function.ts";
 import { prisma } from "../../lib/prisma.ts";
@@ -43,10 +44,12 @@ let tempToken: string; // Token gerado na primeira etapa (simulando /verify_emai
 let expiredTempToken: string;
 let twoFactorRequestData: TwoFactorRequestData;
 let createdCode: string;
+let appInstance: FastifyInstance;
 describe("POST /reset_password - Alteração de Senha via 2FA", () => {
   beforeAll(async () => {
-    await app.ready();
-    requestClient = supertest(app.server);
+    appInstance = await createApp();
+    await appInstance.ready();
+    requestClient = supertest(appInstance.server);
     const user = await createTestUser(MOCKED_USER);
     testUserId = user.id;
     const payload = {
@@ -55,13 +58,13 @@ describe("POST /reset_password - Alteração de Senha via 2FA", () => {
       name: MOCKED_USER.fullName,
     };
     tempToken = await generateTwoFactorTempToken(
-      app,
+      appInstance,
       testUserId,
       MOCKED_USER.email,
       MOCKED_USER.fullName,
     );
 
-    expiredTempToken = await generateExpiredTempTokenFunction(app, payload);
+    expiredTempToken = await generateExpiredTempTokenFunction(appInstance, payload);
 
     twoFactorRequestData = await createTwoFactorRequestFunction(testUserId);
     createdCode = twoFactorRequestData.code;
@@ -78,7 +81,7 @@ describe("POST /reset_password - Alteração de Senha via 2FA", () => {
       await deleteTwoFactorRequestFunction(requestIdToDelete);
     }
     await deleteTwoFactorRequestFunction(twoFactorRequestData.createdTwoFactorRequest.id);
-    await app.close();
+    await appInstance.close();
   });
 
   it("1. Deve retornar 200 e alterar a senha quando o código 2FA for correto", async () => {
@@ -149,7 +152,7 @@ describe("POST /reset_password - Alteração de Senha via 2FA", () => {
       email: MOCKED_USER.email,
       name: MOCKED_USER.fullName,
     };
-    const expiredTempToken = await generateExpiredTempTokenFunction(app, payload);
+    const expiredTempToken = await generateExpiredTempTokenFunction(appInstance, payload);
     const response = await requestClient
       .post("/users/reset_password")
       .set("Authorization", `Bearer ${expiredTempToken}`)
@@ -165,7 +168,7 @@ describe("POST /reset_password - Alteração de Senha via 2FA", () => {
 
   it("6. Deve retornar 401 se o token não for do tipo '2fa_pending'", async () => {
     // Simula a criação de um token de acesso normal
-    const wrongTypeToken = await app.jwt.sign(
+    const wrongTypeToken = await appInstance.jwt.sign(
       { id: testUserId, email: MOCKED_USER.email, name: MOCKED_USER.fullName, type: "access" },
       { expiresIn: "1h" },
     );

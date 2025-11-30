@@ -1,10 +1,11 @@
 import { it, expect, beforeAll, afterAll, describe, vi, beforeEach } from "vitest";
 import supertest from "supertest";
-import { app } from "../../app.ts";
+import { createApp } from "../../app.ts";
 import { createTestUser } from "../../functions/users/create-test-user-function.ts";
 import { deleteUserFunction } from "../../functions/users/delete-user-function.ts";
 import { generateTwoFactorTempToken } from "../../utils/tokens-service.ts";
 import { AppError } from "../../utils/app-error.ts";
+import type { FastifyInstance } from "fastify";
 
 var twoFactorSendFunctionMock = vi.fn();
 vi.mock("../../functions/auth/two-factor-send-function.ts", () => ({
@@ -21,17 +22,18 @@ const MOCKED_USER = {
 let requestClient: supertest.Agent;
 let testUserId: string;
 let originalTempToken: string;
-
+let appInstance: FastifyInstance;
 describe("POST /resend_two_factor - Reenvio do Código de Verificação 2FA", () => {
   beforeAll(async () => {
-    await app.ready();
-    requestClient = supertest(app.server);
+    appInstance = await createApp();
+    await appInstance.ready();
+    requestClient = supertest(appInstance.server);
 
     const user = await createTestUser(MOCKED_USER);
     testUserId = user.id;
 
     originalTempToken = await generateTwoFactorTempToken(
-      app,
+      appInstance,
       testUserId,
       MOCKED_USER.email,
       MOCKED_USER.fullName,
@@ -43,7 +45,7 @@ describe("POST /resend_two_factor - Reenvio do Código de Verificação 2FA", ()
   afterAll(async () => {
     // Limpa o usuário do banco
     await deleteUserFunction(testUserId);
-    await app.close();
+    await appInstance.close();
   });
 
   beforeEach(() => {
@@ -92,7 +94,7 @@ describe("POST /resend_two_factor - Reenvio do Código de Verificação 2FA", ()
 
   it("4. Deve retornar 401 se o token não for do tipo '2fa_pending'", async () => {
     // Simula a criação de um token de acesso normal ('access')
-    const wrongTypeToken = await app.jwt.sign(
+    const wrongTypeToken = await appInstance.jwt.sign(
       { id: testUserId, email: MOCKED_USER.email, name: MOCKED_USER.fullName, type: "access" },
       { expiresIn: "1h" },
     );
