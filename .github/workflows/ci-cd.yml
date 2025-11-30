@@ -1,0 +1,64 @@
+name: CI/CD com Docker
+
+on:
+  push:
+    branches:
+      - main # Aciona o fluxo em pushes para o branch principal
+
+jobs:
+  # 1. Job para o Backend (API)
+  build-and-push-backend:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: ⬇️ Checkout do Código
+        uses: actions/checkout@v4
+
+      - name: 🐳 Login no GHCR (GitHub Container Registry)
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: ⚙️ Configura Variaveis do Backend
+        id: vars
+        run: |
+          echo "image_tag=$(echo $GITHUB_SHA | cut -c1-7)" >> $GITHUB_OUTPUT
+          echo "repo=ghcr.io/${{ github.repository_owner }}/api-backend" >> $GITHUB_OUTPUT
+
+      - name: 🛠️ Build e Teste da Imagem Backend
+        uses: docker/build-push-action@v6
+        with:
+          context: ./backend # Onde está o Dockerfile do Backend
+          push: true
+          tags: ${{ steps.vars.outputs.repo }}:latest, ${{ steps.vars.outputs.repo }}:${{ steps.vars.outputs.image_tag }}
+          # O build multi-stage já roda 'npm test' e 'npm run build'
+
+    # 2. Job para o Frontend (React)
+  build-and-push-frontend:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: ⬇️ Checkout do Código
+        uses: actions/checkout@v4
+
+      - name: 🐳 Login no GHCR (GitHub Container Registry)
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: ⚙️ Configura Variaveis do Frontend
+        id: vars
+        run: |
+          echo "image_tag=$(echo $GITHUB_SHA | cut -c1-7)" >> $GITHUB_OUTPUT
+          echo "repo=ghcr.io/${{ github.repository_owner }}/web-frontend" >> $GITHUB_OUTPUT
+
+      - name: 🛠️ Build da Imagem Frontend
+        uses: docker/build-push-action@v6
+        with:
+          context: ./frontend # Onde está o Dockerfile do Frontend
+          push: true
+          tags: ${{ steps.vars.outputs.repo }}:latest, ${{ steps.vars.outputs.repo }}:${{ steps.vars.outputs.image_tag }}

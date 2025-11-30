@@ -1,8 +1,7 @@
 import { motion } from "framer-motion";
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from "recharts";
-import { getSalesCoursesData } from "@/utils/salesAggregations";
 //import { salesData } from "@/data/SalesData";
-import { Sales, TimeRange } from "@/types/types";
+import { Sales } from "@/types/types";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useState } from "react";
 

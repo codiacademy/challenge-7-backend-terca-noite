@@ -10,16 +10,10 @@ import { SalesGrowth } from "@/components/sales/SalesGrowth";
 import { useState } from "react";
 import { TimeRange, Sales } from "@/types/types";
 
-import { salesData } from "@/data/SalesData";
-import { expensesData } from "@/data/ExpensesData";
-
-import { filterSalesByTime } from "@/utils/salesAggregations";
-import { filterExpensesByTime } from "@/utils/expenseAggregations";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
 import { convertTimeRangeToParams } from "../utils/timeRangeTransformations.ts";
 import api from "../api/axios-client.ts";
-import { setDate } from "date-fns";
 
 type BalanceStats = {
   totalExpenses: number;
@@ -29,7 +23,6 @@ type BalanceStats = {
 };
 export function OverviewPage() {
   const [timeRange, setTimeRange] = useState<TimeRange>("all");
-  const filteredExpenses = filterExpensesByTime(expensesData, timeRange);
   const [dateFilteredSales, setDateFilteredSales] = useState<Sales[]>([]);
   const [balanceStats, setBalanceStats] = useState<BalanceStats>({
     totalExpenses: 0,

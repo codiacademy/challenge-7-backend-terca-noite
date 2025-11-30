@@ -1,8 +1,6 @@
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, XAxis, YAxis } from "recharts";
 import { motion } from "framer-motion";
-import { getSalesTypesData } from "@/utils/salesAggregations";
 //import { salesData } from "@/data/SalesData";
-import { Sales, TimeRange } from "@/types/types";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartConfig, ChartContainer, ChartTooltip } from "@/components/ui/chart";
