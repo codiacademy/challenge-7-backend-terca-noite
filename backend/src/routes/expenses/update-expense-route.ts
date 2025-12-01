@@ -1,7 +1,7 @@
 import { z } from "zod";
 import type { FastifyInstance } from "fastify";
-import { AppError } from "../../utils/app-error.ts";
-import { updateExpenseFunction } from "../../functions/expenses/update-expense-function.ts";
+import { AppError } from "../../utils/app-error";
+import { updateExpenseFunction } from "../../functions/expenses/update-expense-function";
 
 export const bodySchema = z.object({
   date: z.string().min(1, "A data de vencimento é obrigatória"),

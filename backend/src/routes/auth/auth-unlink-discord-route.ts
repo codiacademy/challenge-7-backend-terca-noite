@@ -1,6 +1,6 @@
 import type { FastifyInstance } from "fastify";
-import { AppError } from "../../utils/app-error.ts";
-import { deleteDiscordUserInfosFunction } from "../../functions/users/delete-discord-user-infos-function.ts";
+import { AppError } from "../../utils/app-error";
+import { deleteDiscordUserInfosFunction } from "../../functions/users/delete-discord-user-infos-function";
 
 export async function authUnlinkDiscordRoute(app: FastifyInstance) {
   app.post("/discord/unlink", { preHandler: [app.authenticate] }, async (request, reply) => {

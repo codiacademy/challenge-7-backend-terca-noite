@@ -2,7 +2,7 @@ import z from "zod";
 import type { FastifyInstance } from "fastify";
 import { parse, subWeeks, startOfMonth, startOfYear, isWithinInterval, subMonths } from "date-fns";
 import type { Sale } from "../../types/sales/sale-types.ts";
-import { readDateFilteredSalesFunction } from "../../functions/sales/read-date-filtered-sales-function.ts";
+import { readDateFilteredSalesFunction } from "../../functions/sales/read-date-filtered-sales-function";
 
 const querySchema = z.object({
   from: z.coerce.date().optional(),

@@ -1,7 +1,7 @@
 import axios from "axios";
-import { prisma } from "../../lib/prisma.ts";
-import { readOverviewData } from "./read-overview-data-function.ts";
-import { generateOverviewDiscordNotificationEmbed } from "./generate-overview-discord-notification-embed.ts";
+import { prisma } from "../../lib/prisma";
+import { readOverviewData } from "./read-overview-data-function";
+import { generateOverviewDiscordNotificationEmbed } from "./generate-overview-discord-notification-embed";
 
 /**
  * Envia uma notificação de resumo financeiro por DM do Discord para um utilizador específico.

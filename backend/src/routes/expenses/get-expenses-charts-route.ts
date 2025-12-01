@@ -1,7 +1,7 @@
 import z from "zod";
 import type { FastifyInstance } from "fastify";
-import type { Expense } from "../../types/expenses/expense-types.ts";
-import { readDateFilteredExpensesFunction } from "../../functions/expenses/read-date-filtered-expenses-function.ts";
+import type { Expense } from "../../types/expenses/expense-types";
+import { readDateFilteredExpensesFunction } from "../../functions/expenses/read-date-filtered-expenses-function";
 
 const querySchema = z.object({
   from: z.coerce.date().optional(),

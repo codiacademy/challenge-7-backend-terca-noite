@@ -4,47 +4,47 @@ import fastifyJwt from "@fastify/jwt";
 import cookie from "@fastify/cookie";
 import fastifyOauth2 from "@fastify/oauth2";
 import { randomUUID } from "crypto";
-import { env } from "./config/env.ts";
-import { swaggerConfi } from "./config/swagger.ts";
-import { createUserRoute } from "./routes/users/create-user-route.ts";
-import { deleteUserRoute } from "./routes/users/delete-current-user-route.ts";
-import { authLoginRoute } from "./routes/auth/auth-login-route.ts";
-import { readUserProfileRoute } from "./routes/users/read-user-profile-route.ts";
-import { updateUserProfileRoute } from "./routes/users/update-user-profile-route.ts";
-import { authLogoutRoute } from "./routes/auth/auth-logout-route.ts";
-import { authRefreshRoute } from "./routes/auth/auth-refresh-route.ts";
-import fp from "./plugins/fastify-plugin.ts";
-import { updateUserEmailNotificationRoute } from "./routes/users/update-user-email-notification-route.ts";
-import { updateUserDiscordNotificationRoute } from "./routes/users/update-user-discord-notification-route.ts";
-import { twoFactorVerifyRoute } from "./routes/auth/two-factor-verify-route.ts";
+import { ENV } from "./config/env";
+import { swaggerConfi } from "./config/swagger";
+import { createUserRoute } from "./routes/users/create-user-route";
+import { deleteUserRoute } from "./routes/users/delete-current-user-route";
+import { authLoginRoute } from "./routes/auth/auth-login-route";
+import { readUserProfileRoute } from "./routes/users/read-user-profile-route";
+import { updateUserProfileRoute } from "./routes/users/update-user-profile-route";
+import { authLogoutRoute } from "./routes/auth/auth-logout-route";
+import { authRefreshRoute } from "./routes/auth/auth-refresh-route";
+import fp from "./plugins/fastify-plugin";
+import { updateUserEmailNotificationRoute } from "./routes/users/update-user-email-notification-route";
+import { updateUserDiscordNotificationRoute } from "./routes/users/update-user-discord-notification-route";
+import { twoFactorVerifyRoute } from "./routes/auth/two-factor-verify-route";
 import type { Payload } from "./types/auth/refresh-token-types.ts";
-import { updateUserTwoFactorAuthRoute } from "./routes/users/update-user-two-factor-auth-route.ts";
-import { resendTwoFactor } from "./routes/auth/resend-two-factor-route.ts";
-import { verifyPasswordRoute } from "./routes/auth/verify-password-route.ts";
-import { updateUserPasswordRoute } from "./routes/users/update-user-password-route.ts";
-import { verifyEmailRoute } from "./routes/auth/verify-email-route.ts";
-import { resetPasswordRoute } from "./routes/auth/reset-password-route.ts";
-import { createSaleRoute } from "./routes/sales/create-sale-route.ts";
-import { updateSaleRoute } from "./routes/sales/update-sale-route.ts";
-import { readAllSalesRoute } from "./routes/sales/read-all-sales-route.ts";
-import { deleteSaleRoute } from "./routes/sales/delete-sale-route.ts";
-import { readFilteredSalesRoute } from "./routes/sales/read-filtered-sales-route.ts";
-import { readDateFilteredSalesRoute } from "./routes/sales/read-date-filtered-sales-route.ts";
-import { getSalesChartsDataRoute } from "./routes/sales/get-sales-charts-data-route.ts";
-import { getSalesKPIsRoute } from "./routes/sales/get-sales-kpis-data-route.ts";
-import { createExpenseRoute } from "./routes/expenses/create-expense-route.ts";
-import { readFilteredExpensesRoute } from "./routes/expenses/read-filtered-expenses-route.ts";
-import { deleteExpenseRoute } from "./routes/expenses/delete-expense-route.ts";
-import { updateExpenseRoute } from "./routes/expenses/update-expense-route.ts";
-import { getExpensesChartsDataRoute } from "./routes/expenses/get-expenses-charts-route.ts";
-import { getExpensesKPIsRoute } from "./routes/expenses/get-expenses-kpis-data-route.ts";
-import { getOverviewKPIsRoute } from "./routes/overview/get-overview-kpis-data-route.ts";
-import { getOverviewChartsDataRoute } from "./routes/overview/get-overview-charts-data-route.ts";
-import { authLinkDiscordRoute } from "./routes/auth/auth-link-discord-route.ts";
-import { AuthCallbackDiscordRoute } from "./routes/auth/auth-callback-discord-route.ts";
-import { authUnlinkDiscordRoute } from "./routes/auth/auth-unlink-discord-route.ts";
-import { getDiscordLinkedRoute } from "./routes/auth/get-discord-linked-route.ts";
-import { getAuthStateFunction } from "./functions/auth/get-auth-state-function.ts";
+import { updateUserTwoFactorAuthRoute } from "./routes/users/update-user-two-factor-auth-route";
+import { resendTwoFactor } from "./routes/auth/resend-two-factor-route";
+import { verifyPasswordRoute } from "./routes/auth/verify-password-route";
+import { updateUserPasswordRoute } from "./routes/users/update-user-password-route";
+import { verifyEmailRoute } from "./routes/auth/verify-email-route";
+import { resetPasswordRoute } from "./routes/auth/reset-password-route";
+import { createSaleRoute } from "./routes/sales/create-sale-route";
+import { updateSaleRoute } from "./routes/sales/update-sale-route";
+import { readAllSalesRoute } from "./routes/sales/read-all-sales-route";
+import { deleteSaleRoute } from "./routes/sales/delete-sale-route";
+import { readFilteredSalesRoute } from "./routes/sales/read-filtered-sales-route";
+import { readDateFilteredSalesRoute } from "./routes/sales/read-date-filtered-sales-route";
+import { getSalesChartsDataRoute } from "./routes/sales/get-sales-charts-data-route";
+import { getSalesKPIsRoute } from "./routes/sales/get-sales-kpis-data-route";
+import { createExpenseRoute } from "./routes/expenses/create-expense-route";
+import { readFilteredExpensesRoute } from "./routes/expenses/read-filtered-expenses-route";
+import { deleteExpenseRoute } from "./routes/expenses/delete-expense-route";
+import { updateExpenseRoute } from "./routes/expenses/update-expense-route";
+import { getExpensesChartsDataRoute } from "./routes/expenses/get-expenses-charts-route";
+import { getExpensesKPIsRoute } from "./routes/expenses/get-expenses-kpis-data-route";
+import { getOverviewKPIsRoute } from "./routes/overview/get-overview-kpis-data-route";
+import { getOverviewChartsDataRoute } from "./routes/overview/get-overview-charts-data-route";
+import { authLinkDiscordRoute } from "./routes/auth/auth-link-discord-route";
+import { AuthCallbackDiscordRoute } from "./routes/auth/auth-callback-discord-route";
+import { authUnlinkDiscordRoute } from "./routes/auth/auth-unlink-discord-route";
+import { getDiscordLinkedRoute } from "./routes/auth/get-discord-linked-route";
+import { getAuthStateFunction } from "./functions/auth/get-auth-state-function";
 import type { FastifyInstance } from "fastify";
 
 export async function createApp(): Promise<FastifyInstance> {
@@ -58,9 +58,9 @@ export async function createApp(): Promise<FastifyInstance> {
     allowedHeaders: ["Content-Type", "Authorization"],
     credentials: true,
   });
-  app.register(fastifyJwt, { secret: env.JWT_SECRET });
+  app.register(fastifyJwt, { secret: ENV.JWT_SECRET });
   app.register(cookie, {
-    secret: env.COOKIE_SECRET, // opcional, caso queira cookies assinados
+    secret: ENV.COOKIE_SECRET, // opcional, caso queira cookies assinados
     // outras opções
   });
 
@@ -71,7 +71,7 @@ export async function createApp(): Promise<FastifyInstance> {
         id: process.env.DISCORD_CLIENT_ID!,
         secret: process.env.DISCORD_CLIENT_SECRET!,
       }, // usar a configuração pronta para Discord
-      auth: fastifyOauth2.fastifyOauth2.DISCORD_CONFIGURATION,
+      auth: fastifyOauth2.DISCORD_CONFIGURATION,
     },
     startRedirectPath: "/auth/discord/redirect-automatico",
     scope: ["identify", "email", "guilds.join"],

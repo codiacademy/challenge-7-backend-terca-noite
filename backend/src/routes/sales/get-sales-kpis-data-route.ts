@@ -1,6 +1,6 @@
 import z from "zod";
 import type { FastifyInstance } from "fastify";
-import { readDateFilteredSalesFunction } from "../../functions/sales/read-date-filtered-sales-function.ts";
+import { readDateFilteredSalesFunction } from "../../functions/sales/read-date-filtered-sales-function";
 const querySchema = z.object({
   from: z.coerce.date().optional(),
   to: z.coerce.date().optional(),

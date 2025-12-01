@@ -1,11 +1,10 @@
 import type { FastifyInstance } from "fastify";
 import { z } from "zod";
-import { AppError } from "../../utils/app-error.ts";
-import { verify2faCodeFunction } from "../../functions/auth/verify-2fa-code-function.ts";
-import { updateUserPasswordFunction } from "../../functions/users/update-user-password-function.ts";
+import { AppError } from "../../utils/app-error";
+import { verify2faCodeFunction } from "../../functions/auth/verify-2fa-code-function";
+import { updateUserPasswordFunction } from "../../functions/users/update-user-password-function";
 
 import type { Payload } from "../../types/auth/refresh-token-types.ts";
-import { compareOtp } from "../../utils/otp-service.ts";
 
 const bodySchema = z.object({
   code: z.string().min(6).max(6, "O código deve ter 6 dígitos"),

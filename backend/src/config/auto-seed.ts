@@ -1,9 +1,9 @@
-import { prisma } from "../lib/prisma.ts";
+import { prisma } from "../lib/prisma";
 import { subMonths } from "date-fns";
-import { AppError } from "../utils/app-error.ts";
-import { createTestUser } from "../functions/users/create-test-user-function.ts";
-import { createTestSaleFunction } from "../functions/sales/create-test-sale-function.ts";
-import { createTestExpenseFunction } from "../functions/expenses/create-test-expense-function.ts";
+import { AppError } from "../utils/app-error";
+import { createTestUser } from "../functions/users/create-test-user-function";
+import { createTestSaleFunction } from "../functions/sales/create-test-sale-function";
+import { createTestExpenseFunction } from "../functions/expenses/create-test-expense-function";
 
 async function main() {
   try {

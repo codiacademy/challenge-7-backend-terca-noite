@@ -1,9 +1,9 @@
 import type { FastifyInstance } from "fastify";
-import { AppError } from "../../utils/app-error.ts";
-import { authLoginFunction } from "../../functions/auth/auth-login-function.ts";
+import { AppError } from "../../utils/app-error";
+import { authLoginFunction } from "../../functions/auth/auth-login-function";
 import { z } from "zod";
-import { twoFactorSendFunction } from "../../functions/auth/two-factor-send-function.ts";
-import { generateTwoFactorTempToken } from "../../utils/tokens-service.ts";
+import { twoFactorSendFunction } from "../../functions/auth/two-factor-send-function";
+import { generateTwoFactorTempToken } from "../../utils/tokens-service";
 
 const bodySchema = z.object({
   email: z.email(),

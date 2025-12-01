@@ -1,6 +1,3 @@
-import { prisma } from "../../lib/prisma.ts";
-import { subMonths } from "date-fns";
-import { AppError } from "../../utils/app-error.ts";
 import { CourseType } from "@prisma/client";
 
 const CLIENT_NAMES = [

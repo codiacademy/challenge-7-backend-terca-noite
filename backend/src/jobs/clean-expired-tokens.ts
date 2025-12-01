@@ -1,5 +1,5 @@
 import cron from "node-cron";
-import { prisma } from "../lib/prisma.ts";
+import { prisma } from "../lib/prisma";
 
 export async function cleanExpiredTokens() {
   console.log("[CRON] Limpando refresh tokens expirados...");

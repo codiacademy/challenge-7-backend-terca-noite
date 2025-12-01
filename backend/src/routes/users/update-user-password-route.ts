@@ -1,7 +1,7 @@
 import type { FastifyInstance } from "fastify";
 import { z } from "zod";
-import { AppError } from "../../utils/app-error.ts";
-import { updateUserPasswordFunction } from "../../functions/users/update-user-password-function.ts";
+import { AppError } from "../../utils/app-error";
+import { updateUserPasswordFunction } from "../../functions/users/update-user-password-function";
 const bodySchema = z.object({
   password: z.string().min(8, "A nova senha deve ter pelo menos 8 caracteres"),
 });

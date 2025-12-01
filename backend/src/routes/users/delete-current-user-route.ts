@@ -1,7 +1,7 @@
 import { z } from "zod";
 import type { FastifyInstance } from "fastify";
-import { AppError } from "../../utils/app-error.ts";
-import { deleteUserFunction } from "../../functions/users/delete-user-function.ts";
+import { AppError } from "../../utils/app-error";
+import { deleteUserFunction } from "../../functions/users/delete-user-function";
 
 const userIdSchema = z.uuid();
 

@@ -1,10 +1,10 @@
 import type { CheckRefreshTokenType } from "../../types/auth/refresh-token-types.ts";
-import { AppError } from "../../utils/app-error.ts";
+import { AppError } from "../../utils/app-error";
 import {
   isRefreshTokenValid,
   revokeRefreshToken,
   generateTokens,
-} from "../../utils/tokens-service.ts";
+} from "../../utils/tokens-service";
 import type { FastifyInstance } from "fastify";
 export async function authRefreshFunction(
   app: FastifyInstance,

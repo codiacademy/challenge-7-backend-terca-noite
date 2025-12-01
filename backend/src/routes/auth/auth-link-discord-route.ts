@@ -1,6 +1,6 @@
 import type { FastifyInstance } from "fastify";
-import { AppError } from "../../utils/app-error.ts";
-import { createAuthStateFunction } from "../../functions/auth/create-auth-state-function.ts";
+import { AppError } from "../../utils/app-error";
+import { createAuthStateFunction } from "../../functions/auth/create-auth-state-function";
 import { randomUUID } from "crypto";
 
 export async function authLinkDiscordRoute(app: FastifyInstance) {

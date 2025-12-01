@@ -1,8 +1,8 @@
-import { prisma } from "../../lib/prisma.ts";
-import { readOverviewData } from "./read-overview-data-function.ts";
-import { generateOverviewEmailHtml } from "./generate-overview-email-html.ts";
-import { sendOverviewEmail } from "../../utils/mail-service.ts";
-import { AppError } from "../../utils/app-error.ts";
+import { prisma } from "../../lib/prisma";
+import { readOverviewData } from "./read-overview-data-function";
+import { generateOverviewEmailHtml } from "./generate-overview-email-html";
+import { sendOverviewEmail } from "../../utils/mail-service";
+import { AppError } from "../../utils/app-error";
 
 export async function sendOverviewEmailtoUser(userId: string) {
   try {

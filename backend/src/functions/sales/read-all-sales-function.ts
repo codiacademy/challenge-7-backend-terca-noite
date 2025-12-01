@@ -1,4 +1,4 @@
-import { prisma } from "../../lib/prisma.ts";
+import { prisma } from "../../lib/prisma";
 import { format } from "date-fns";
 export async function readAllSalesFunction(userId: string) {
   try {

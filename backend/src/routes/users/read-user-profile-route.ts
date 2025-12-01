@@ -1,7 +1,7 @@
 import type { FastifyInstance } from "fastify";
 import { z } from "zod";
-import { readUserProfileFunction } from "../../functions/users/read-user-profile-function.ts";
-import { AppError } from "../../utils/app-error.ts";
+import { readUserProfileFunction } from "../../functions/users/read-user-profile-function";
+import { AppError } from "../../utils/app-error";
 
 const userIdSchema = z.uuid();
 

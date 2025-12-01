@@ -1,6 +1,6 @@
-import { prisma } from "../../lib/prisma.ts";
+import { prisma } from "../../lib/prisma";
 import type { CreateUserType } from "../../types/users/user-types.ts";
-import { AppError } from "../../utils/app-error.ts";
+import { AppError } from "../../utils/app-error";
 import bcrypt from "bcrypt";
 
 export async function createUserFunction({ fullName, email, telephone, password }: CreateUserType) {

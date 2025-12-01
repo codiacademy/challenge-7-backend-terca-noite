@@ -1,262 +1,189 @@
-# Codi Cash - Sistema de Gestão Financeira
+# 💸 Codi Cash — Sistema de Gestão Financeira (Frontend + API)
 
-Sistema completo de gestão financeira para unidades da Codi Academy, composto por frontend (React + Vite) e backend (Node.js + Fastify).
+Sistema completo de controle financeiro desenvolvido para as unidades da **Codi Academy**, composto por:
 
-## 📁 Estrutura do Projeto
+- **Frontend Web** (React + Vite)
+- **API Backend** (Fastify + Prisma + PostgreSQL)
 
-```
-challenge-7-backend-terca-noite/
-├── backend/          # API REST em TypeScript
-│   ├── src/          # Código fonte
-│   ├── prisma/       # Schema e migrations do Prisma
-│   ├── Dockerfile    # Container para backend
-│   └── package.json
-├── frontend/         # Aplicação React
-│   ├── src/          # Código fonte
-│   ├── public/       # Assets estáticos
-│   ├── Dockerfile    # Container para frontend
-│   └── package.json
-├── docker-compose.yml  # Orquestração dos serviços
-└── README.md
-```
+O sistema permite cadastro e gestão de vendas, despesas, usuários, indicadores financeiros e integrações (Discord OAuth).
 
-## 🚀 Tecnologias
+# 🧩 Estrutura do Projeto
 
-### Backend
-- **Runtime:** Node.js 20
-- **Framework:** Fastify
-- **Linguagem:** TypeScript
-- **Banco de Dados:** MySQL 8.0
-- **ORM:** Prisma
-- **Autenticação:** JWT
-- **Documentação:** Swagger/OpenAPI
+Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`  challenge-7-backend-terca-noite/  │── backend/      → API Fastify + Prisma + PostgreSQL  │── frontend/     → Interface Web React + Vite  `
 
-### Frontend
-- **Framework:** React 19
-- **Build Tool:** Vite
-- **Estilização:** Tailwind CSS
-- **Estado:** React Hooks
-- **Formulários:** React Hook Form + Yup
-- **Gráficos:** Recharts
+# ⚙️ Tecnologias do Backend (API)
 
-## 📋 Pré-requisitos
+- **Fastify** (servidor HTTP rápido e tipado)
+- **TypeScript**
+- **Prisma ORM**
+- **PostgreSQL**
+- **Zod** (validação do schema de ambiente e inputs)
+- **Vitest** (testes)
+- **Supertest** (testes HTTP)
+- **bcrypt** (hash de senha)
+- **jsonwebtoken** (sessions e refresh tokens)
+- **dotenv** (gestão de variáveis de ambiente)
+- **nodemailer** (envio de emails — recuperação de senha)
+- **tsx** (execução TS sem build)
+- **Docker Compose** (banco de dados)
+- **ESLint + Prettier**
 
-- [Node.js](https://nodejs.org/) 20 ou superior
-- [MySQL](https://www.mysql.com/downloads/) 8.0+ (ou Docker para o banco)
-- npm ou yarn
+# 💻 Tecnologias do Frontend
 
-## 🔧 Instalação e Execução
+(Conteúdo mantido exatamente como seu README original)
 
-### Opção 1: Desenvolvimento Local (Sem Docker) ⚡
+- **ReactJS**
+- **TypeScript**
+- **TailwindCSS**
+- **Formik** + **Yup**
+- **Framer Motion**
+- **Lucide React**
+- **React Router DOM**
+- **Recharts**
+- **React Toastify**
+- **SweetAlert2**
+- **Shadcn**
+- **Vite**
 
-**Rápido e recomendado para desenvolvimento:**
+# 📋 Funcionalidades Principais
 
-1. Clone o repositório:
-```bash
-git clone <repository-url>
-cd challenge-7-backend-terca-noite
-```
+### 🔹 **Frontend**
 
-2. Configure o MySQL:
-   - Instale MySQL localmente OU
-   - Use Docker apenas para o banco: `docker-compose up db` (se Docker estiver disponível)
+- Dashboard com KPIs, gráficos e resumo mensal
+- CRUD de vendas
+- CRUD de despesas
+- Filtros avançados
+- Modais, animações e UX aprimorada
 
-3. Configure as variáveis de ambiente no backend:
-```bash
-cd backend
-copy ../.env.example .env
-# Edite o .env e ajuste DATABASE_URL para: mysql://codi_user:codi_password@localhost:3306/codi_db
-```
+### 🔹 **Backend**
 
-4. Instale dependências do backend:
-```bash
-npm install
-```
+- Autenticação JWT + Refresh Tokens
+- Login via **Discord OAuth**
+- CRUD de usuários
+- CRUD de vendas
+- CRUD de despesas
+- Validação rigorosa com Zod
+- Envio de emails (Nodemailer)
+- Seed automático de dados
+- Testes automatizados (Vitest + Supertest)
+- Migrations e schema garantidos pelo Prisma
 
-5. Execute migrations:
-```bash
-npm run prisma:migrate
-npm run prisma:generate
-```
+# 🧪 Testes (Backend)
 
-6. Inicie o backend:
-```bash
-npm run dev
-```
+Para rodar todos os testes do backend:
 
-7. Em outro terminal, configure o frontend:
-```bash
-cd frontend
-npm install
-npm run dev
-```
+Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`  npm run test  `
 
-8. Acesse:
-- **Frontend:** http://localhost:5173
-- **Backend API:** http://localhost:3000
-- **Swagger Docs:** http://localhost:3000/docs
+Os testes utilizam:
 
-### Opção 2: Usando Docker (Produção/CI)
+- Vitest
+- Supertest
+- Ambiente .env.test carregado automaticamente
 
-1. Clone o repositório:
-```bash
-git clone <repository-url>
-cd challenge-7-backend-terca-noite
-```
+# 📦 Como Rodar o Projeto Localmente
 
-2. Crie um arquivo `.env` na raiz do projeto:
-```env
-JWT_SECRET=your-secret-key-here
-DATABASE_URL=mysql://codi_user:codi_password@db:3306/codi_db
-```
+## 1️⃣ Clonar o repositório
 
-3. Suba os containers:
-```bash
-docker-compose up -d --build
-```
+Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`  git clone https://github.com/codiacademy/challenge-7-backend-terca-noite.git  cd challenge-7-backend-terca-noite  `
 
-4. Execute as migrations do Prisma:
-```bash
-docker-compose exec backend npm run prisma:migrate
-```
+# 🖥️ Rodando o FRONTEND
 
-5. Gere o cliente Prisma:
-```bash
-docker-compose exec backend npm run prisma:generate
-```
+Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`  cd frontend  npm install  npm run dev  `
 
-6. Acesse:
-- **Frontend:** http://localhost:5173
-- **Backend API:** http://localhost:3000
-- **Swagger Docs:** http://localhost:3000/docs
-- **MySQL:** localhost:3306
+Acesse em:
 
-### Desenvolvimento Local (Sem Docker)
+👉 [http://localhost:5173](http://localhost:5173)
 
-#### Backend
+# 🛠️ Rodando o BACKEND
 
-1. Navegue até a pasta backend:
-```bash
-cd backend
-```
+### 1\. Entre na pasta backend
 
-2. Instale as dependências:
-```bash
-npm install
-```
+Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`  cd backend  `
 
-3. Crie um arquivo `.env`:
-```env
-DATABASE_URL=mysql://codi_user:codi_password@localhost:3306/codi_db
-JWT_SECRET=your-secret-key-here
-NODE_ENV=development
-```
+## 2\. Criar arquivos .env e .env.local
 
-4. Execute as migrations:
-```bash
-npm run prisma:migrate
-npm run prisma:generate
-```
+Copie **o conteúdo inteiro de .env.example** para **ambos**:
 
-5. Inicie o servidor:
-```bash
-npm run dev
-```
+- .env
+- .env.local
 
-#### Frontend
+### No .env (modo Docker / servidor)
 
-1. Navegue até a pasta frontend:
-```bash
-cd frontend
-```
+Não altere nada.
 
-2. Instale as dependências:
-```bash
-npm install
-```
+Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`  DATABASE_URL="postgresql://codi_user:codi_password@db:5432/codi_db"  `
 
-3. Inicie o servidor de desenvolvimento:
-```bash
-npm run dev
-```
+### No .env.local (modo desenvolvimento local)
 
-## 🧪 Testes
+Troque db por localhost:
 
-### Backend
-```bash
-cd backend
-npm test
-```
+Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`  DATABASE_URL="postgresql://codi_user:codi_password@localhost:5432/codi_db"  `
 
-### Frontend
-```bash
-cd frontend
-npm test
-```
+O resto permanece igual.
 
-## 📚 Endpoints da API
+## 3\. Subir o banco (Docker)
 
-### Autenticação
-- `POST /auth/login` - Login de usuário
-- `POST /auth/refresh` - Renovar token
-- `POST /auth/logout` - Logout
+Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`  docker compose up -d db  `
 
-### Usuários
-- `GET /users` - Listar usuários
-- `POST /users` - Criar usuário
-- `GET /users/:id` - Buscar usuário
-- `PUT /users/:id` - Atualizar usuário
-- `DELETE /users/:id` - Deletar usuário
+Certifique-se que o container está rodando:
 
-### Unidades
-- `GET /units` - Listar unidades
-- `POST /units` - Criar unidade
-- `GET /units/:id` - Buscar unidade
-- `PUT /units/:id` - Atualizar unidade
-- `DELETE /units/:id` - Deletar unidade
+Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`  docker ps  `
 
-### Vendas
-- `GET /sales` - Listar vendas (com filtros)
-- `POST /sales` - Criar venda
-- `GET /sales/:id` - Buscar venda
-- `PUT /sales/:id` - Atualizar venda
-- `DELETE /sales/:id` - Deletar venda
+## 4\. Gerar Prisma Client
 
-### Despesas
-- `GET /expenses` - Listar despesas (com filtros)
-- `POST /expenses` - Criar despesa
-- `GET /expenses/:id` - Buscar despesa
-- `PUT /expenses/:id` - Atualizar despesa
-- `DELETE /expenses/:id` - Deletar despesa
+Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`  npx prisma generate  `
 
-### Relatórios
-- `GET /reports/summary` - Resumo financeiro
-- `GET /reports/series` - Séries temporais
-- `GET /reports/expenses-distribution` - Distribuição de despesas
+## 5\. Aplicar migrations
 
-## 🔒 Segurança
+Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`  npx prisma migrate dev  `
 
-- Autenticação via JWT
-- Criptografia de senhas com bcrypt
-- Validação de dados com Zod
-- CORS configurado
-- Proteção contra SQL Injection (via Prisma)
+Isso criará as tabelas e deixará o schema sincronizado.
 
-## 🤝 Contribuindo
+## 6\. Rodar a API
 
-1. Crie uma branch para sua feature
-2. Faça commit das suas mudanças
-3. Push para a branch
-4. Abra um Pull Request
+Modo local:
 
-## 📝 Licença
+Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`  npm run dev  `
 
-Este projeto é parte do Challenge da Codi Academy.
+A rota base será:
 
-## 👥 Autores
+👉 [http://localhost:3000](http://localhost:3000)
 
-- Desenvolvido durante o Challenge da Codi Academy
+## 7\. Rodar testes (opcional)
 
-## 📞 Suporte
+Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`  npm run test  `
 
-Para questões e suporte, abra uma issue no repositório.
+# 🗄️ Estrutura do Backend
+
+Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`  backend/  │── prisma/  │   ├── schema.prisma  │   ├── migrations/  │  │── src/  │   ├── server.ts  │   ├── env.ts  │   ├── routes/  │   ├── functions/  │   ├── utils/  │   ├── tests/  │  │── .env  │── .env.local  │── .env.example  `
+
+# 📑 Requisitos Atendidos
+
+- CRUD completo de despesas e vendas
+- Autenticação JWT segura
+- Compatível com frontend Codi Cash
+- Banco sincronizado com Prisma
+- Testes automatizados
+- Integração com Discord OAuth
+- Validação forte com Zod
+- Documentação e organização
+
+# 📝 Licença
+
+Projeto desenvolvido para fins educacionais no **Challenge VII — Codi Academy**.
+
+# 👨‍💻 Autoria
+
+Time original do frontend:
+
+- [Cauan Lagrotta](https://www.linkedin.com/in/cauan-silva-lagrotta/)
+- [Mariana Carminate](https://www.linkedin.com/in/mariana-santos-carminate-0a0893133/)
+- [Fabiano Andrade](https://www.linkedin.com/in/fabiano-andrade-13118475/)
+- [Pedro Claret](https://www.linkedin.com/in/pedroclaret/)
+
+Time original do backend:
+
+- [Bernardo Gará Perona](linkedin.com/in/bernardogaraperona?originalSubdomain=br)
+- [Mariana Carminate](https://www.linkedin.com/in/mariana-santos-carminate-0a0893133/)
+- [Fabiano Andrade](https://www.linkedin.com/in/fabiano-andrade-13118475/)
+- [Pedro Claret](https://www.linkedin.com/in/pedroclaret/)

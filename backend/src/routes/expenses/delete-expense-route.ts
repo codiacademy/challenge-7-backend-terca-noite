@@ -1,7 +1,7 @@
 import { z } from "zod";
 import type { FastifyInstance } from "fastify";
-import { AppError } from "../../utils/app-error.ts";
-import { deleteExpenseFunction } from "../../functions/expenses/delete-expense-function.ts";
+import { AppError } from "../../utils/app-error";
+import { deleteExpenseFunction } from "../../functions/expenses/delete-expense-function";
 const saleIdSchema = z.uuid();
 export async function deleteExpenseRoute(app: FastifyInstance) {
   app.delete("/:id", { preHandler: [app.authenticate] }, async (request, reply) => {

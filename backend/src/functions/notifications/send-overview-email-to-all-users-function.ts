@@ -1,7 +1,7 @@
-import { prisma } from "../../lib/prisma.ts";
-import { readOverviewData } from "./read-overview-data-function.ts";
-import { generateOverviewEmailHtml } from "./generate-overview-email-html.ts";
-import { sendOverviewEmail } from "../../utils/mail-service.ts";
+import { prisma } from "../../lib/prisma";
+import { readOverviewData } from "./read-overview-data-function";
+import { generateOverviewEmailHtml } from "./generate-overview-email-html";
+import { sendOverviewEmail } from "../../utils/mail-service";
 
 export async function sendOverviewEmailtoAllUsers() {
   console.log(`Iniciando  envio de emails de overview. Tempo: ${new Date().toISOString()}`);

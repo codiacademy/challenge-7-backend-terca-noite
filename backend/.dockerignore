@@ -2,7 +2,6 @@
 node_modules
 
 # Exclui pastas de cache/build
-dist
 .env
 
 # Exclui ferramentas de desenvolvimento

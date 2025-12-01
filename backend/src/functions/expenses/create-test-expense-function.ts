@@ -1,6 +1,3 @@
-import { prisma } from "../../lib/prisma.ts";
-import { subMonths } from "date-fns";
-import { AppError } from "../../utils/app-error.ts";
 import { ExpenseCategory, ExpenseStatus } from "@prisma/client";
 
 const EXPENSE_DESCRIPTIONS = [

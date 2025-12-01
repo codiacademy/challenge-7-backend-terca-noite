@@ -1,7 +1,7 @@
 import type { ChangeSaleData } from "../../types/sales/sale-types.ts";
-import { prisma } from "../../lib/prisma.ts";
+import { prisma } from "../../lib/prisma";
 import { CourseType } from "@prisma/client";
-import { AppError } from "../../utils/app-error.ts";
+import { AppError } from "../../utils/app-error";
 export async function updateSaleFunction({
   id,
   userId,

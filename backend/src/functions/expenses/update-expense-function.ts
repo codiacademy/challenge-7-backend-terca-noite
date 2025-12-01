@@ -1,7 +1,7 @@
 import type { ChangeExpenseData } from "../../types/expenses/expense-types.ts";
-import { prisma } from "../../lib/prisma.ts";
+import { prisma } from "../../lib/prisma";
 import { ExpenseCategory, ExpenseStatus } from "@prisma/client";
-import { AppError } from "../../utils/app-error.ts";
+import { AppError } from "../../utils/app-error";
 import { parse } from "date-fns";
 
 export async function updateExpenseFunction({

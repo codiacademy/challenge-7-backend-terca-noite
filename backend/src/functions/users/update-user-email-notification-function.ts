@@ -1,6 +1,6 @@
 import { email } from "zod";
-import { prisma } from "../../lib/prisma.ts";
-import { AppError } from "../../utils/app-error.ts";
+import { prisma } from "../../lib/prisma";
+import { AppError } from "../../utils/app-error";
 
 export async function updateUserEmailNotificationFunction({ userId }: { userId: string }) {
   try {

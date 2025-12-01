@@ -1,7 +1,7 @@
 import { z } from "zod";
 import type { FastifyInstance } from "fastify";
-import { AppError } from "../../utils/app-error.ts";
-import { createSaleFunction } from "../../functions/sales/create-sale-function.ts";
+import { AppError } from "../../utils/app-error";
+import { createSaleFunction } from "../../functions/sales/create-sale-function";
 export const bodySchema = z.object({
   customer: z.object({
     name: z

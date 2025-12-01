@@ -1,7 +1,7 @@
 import fp from "fastify-plugin";
-import { AppError } from "../utils/app-error.ts";
-import { isRefreshTokenValid } from "../utils/tokens-service.ts";
-import type { Payload } from "../types/auth/refresh-token-types.ts";
+import { AppError } from "../utils/app-error";
+import { isRefreshTokenValid } from "../utils/tokens-service";
+import type { Payload } from "../types/auth/refresh-token-types";
 export default fp(async (app) => {
   app.decorate("verifyRefreshToken", async (request: any, reply: any) => {
     try {

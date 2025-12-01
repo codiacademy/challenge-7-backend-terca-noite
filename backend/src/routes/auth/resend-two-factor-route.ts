@@ -1,9 +1,8 @@
 import type { FastifyInstance } from "fastify";
-import { AppError } from "../../utils/app-error.ts";
-import { authLoginFunction } from "../../functions/auth/auth-login-function.ts";
+import { AppError } from "../../utils/app-error";
 import { z } from "zod";
-import { twoFactorSendFunction } from "../../functions/auth/two-factor-send-function.ts";
-import { generateTwoFactorTempToken } from "../../utils/tokens-service.ts";
+import { twoFactorSendFunction } from "../../functions/auth/two-factor-send-function";
+import { generateTwoFactorTempToken } from "../../utils/tokens-service";
 import type { Payload } from "../../types/auth/refresh-token-types.ts";
 
 export async function resendTwoFactor(app: FastifyInstance) {

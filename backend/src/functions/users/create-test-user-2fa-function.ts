@@ -1,6 +1,5 @@
-import { prisma } from "../../lib/prisma.ts";
+import { prisma } from "../../lib/prisma";
 import bcrypt from "bcrypt";
-import { AppError } from "../../utils/app-error.ts";
 import type { CreateUserType } from "../../types/users/user-types.ts";
 
 type OptionalCreateUserType = Partial<CreateUserType>;

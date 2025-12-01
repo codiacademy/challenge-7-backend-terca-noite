@@ -1,10 +1,6 @@
-import { prisma } from "../../lib/prisma.ts";
-import { AppError } from "../../utils/app-error.ts";
-import {
-  isRefreshTokenValid,
-  revokeRefreshToken,
-  generateTokens,
-} from "../../utils/tokens-service.ts";
+import { prisma } from "../../lib/prisma";
+import { AppError } from "../../utils/app-error";
+
 import type { FastifyInstance } from "fastify";
 export async function getUserIdFromAuthStateFunction(state: string) {
   try {

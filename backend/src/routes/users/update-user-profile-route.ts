@@ -1,6 +1,6 @@
 import type { FastifyInstance } from "fastify";
-import { AppError } from "../../utils/app-error.ts";
-import { updateUserProfileFunction } from "../../functions/users/update-user-profile-function.ts";
+import { AppError } from "../../utils/app-error";
+import { updateUserProfileFunction } from "../../functions/users/update-user-profile-function";
 import { z } from "zod";
 
 const bodySchema = z.object({

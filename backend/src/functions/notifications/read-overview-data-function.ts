@@ -1,7 +1,7 @@
-import { prisma } from "../../lib/prisma.ts";
+import { prisma } from "../../lib/prisma";
 import { subMonths } from "date-fns";
-import { readDateFilteredExpensesFunction } from "../expenses/read-date-filtered-expenses-function.ts";
-import { readDateFilteredSalesFunction } from "../sales/read-date-filtered-sales-function.ts";
+import { readDateFilteredExpensesFunction } from "../expenses/read-date-filtered-expenses-function";
+import { readDateFilteredSalesFunction } from "../sales/read-date-filtered-sales-function";
 type BalanceStats = {
   totalExpenses: number;
   totalSales: number;

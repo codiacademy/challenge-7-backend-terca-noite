@@ -1,13 +1,10 @@
 import type { FastifyInstance } from "fastify";
-import { prisma } from "../../lib/prisma.ts";
-import { compareOtp } from "../../utils/otp-service.ts";
-import { AppError } from "../../utils/app-error.ts";
+import { AppError } from "../../utils/app-error";
 import { z } from "zod";
-import { authRefreshFunction } from "../../functions/auth/auth-refresh-function.ts";
 import bcrypt from "bcrypt";
 import type { Payload } from "../../types/auth/refresh-token-types.ts";
-import { verify2faCodeFunction } from "../../functions/auth/verify-2fa-code-function.ts";
-import { generateTokens } from "../../utils/tokens-service.ts";
+import { verify2faCodeFunction } from "../../functions/auth/verify-2fa-code-function";
+import { generateTokens } from "../../utils/tokens-service";
 
 const userIdSchema = z.uuid();
 

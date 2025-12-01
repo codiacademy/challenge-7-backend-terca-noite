@@ -1,8 +1,8 @@
 import { z } from "zod";
 import type { FastifyInstance } from "fastify";
-import { AppError } from "../../utils/app-error.ts";
-import { updateUserDiscordNotificationFunction } from "../../functions/users/update-user-discord-notification-function.ts";
-import { sendDiscordNotificationToUserFunction } from "../../functions/notifications/send-discord-notification-to-user-function.ts";
+import { AppError } from "../../utils/app-error";
+import { updateUserDiscordNotificationFunction } from "../../functions/users/update-user-discord-notification-function";
+import { sendDiscordNotificationToUserFunction } from "../../functions/notifications/send-discord-notification-to-user-function";
 const idSchema = z.uuid();
 export async function updateUserDiscordNotificationRoute(app: FastifyInstance) {
   app.patch(

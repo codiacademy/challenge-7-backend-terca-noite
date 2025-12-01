@@ -1,5 +1,5 @@
 import type { FastifyInstance } from "fastify";
-import { readAllSalesFunction } from "../../functions/sales/read-all-sales-function.ts";
+import { readAllSalesFunction } from "../../functions/sales/read-all-sales-function";
 import { z } from "zod";
 const userIdSchema = z.uuid();
 

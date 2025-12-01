@@ -1,6 +1,6 @@
 import z from "zod";
 import type { FastifyInstance } from "fastify";
-import { readFilteredExpensesFunction } from "../../functions/expenses/read-filtered-expenses-function.ts";
+import { readFilteredExpensesFunction } from "../../functions/expenses/read-filtered-expenses-function";
 const querySchema = z.object({
   category: z.string().optional(),
   status: z.string().optional(),

@@ -1,8 +1,8 @@
 import type { FastifyInstance } from "fastify";
 import type { SaveRefreshTokenType } from "../types/auth/refresh-token-types.ts";
-import { env } from "../config/env.ts";
-import { prisma } from "../lib/prisma.ts";
-import { AppError } from "./app-error.ts";
+import { env } from "../config/env";
+import { prisma } from "../lib/prisma";
+import { AppError } from "./app-error";
 import bcrypt from "bcrypt";
 import { randomUUID } from "crypto"; // Certifique-se que esta importação está presente!
 import ms from "ms";

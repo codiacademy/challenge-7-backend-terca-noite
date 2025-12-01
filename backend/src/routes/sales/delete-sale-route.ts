@@ -1,7 +1,7 @@
 import { z } from "zod";
 import type { FastifyInstance } from "fastify";
-import { AppError } from "../../utils/app-error.ts";
-import { deleteSaleFunction } from "../../functions/sales/delete-sale-function.ts";
+import { AppError } from "../../utils/app-error";
+import { deleteSaleFunction } from "../../functions/sales/delete-sale-function";
 
 const saleIdSchema = z.uuid();
 export async function deleteSaleRoute(app: FastifyInstance) {

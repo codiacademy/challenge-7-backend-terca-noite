@@ -1,7 +1,7 @@
 import { z } from "zod";
 import type { FastifyInstance } from "fastify";
-import { createUserFunction } from "../../functions/users/create-user-function.ts";
-import { AppError } from "../../utils/app-error.ts";
+import { createUserFunction } from "../../functions/users/create-user-function";
+import { AppError } from "../../utils/app-error";
 
 const createUserSchema = {
   tags: ["Usuários"], // Grupo na documentação
