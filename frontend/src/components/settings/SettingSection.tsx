@@ -8,11 +8,7 @@ interface SettingSectionProps {
   children: React.ReactNode;
 }
 
-export const SettingSection = ({
-  icon: Icon,
-  title,
-  children,
-}: SettingSectionProps) => {
+export const SettingSection = ({ icon: Icon, title, children }: SettingSectionProps) => {
   return (
     <motion.div
       className="bg-gray-800 bg-opacity-50 backdrop-filter backdrop-blur-lg shadow-lg rounded-xl p-6 border border-gray-700 mb-8"
@@ -21,7 +17,7 @@ export const SettingSection = ({
       transition={{ duration: 0.5 }}
     >
       <div className="flex items-center mb-4">
-        <Icon className="text-indigo-400 mr-4" size="24" />
+        <Icon className="text-[#da974e] mr-4" size="24" />
 
         <h2 className="text-xl font-semibold text-gray-100">{title}</h2>
       </div>

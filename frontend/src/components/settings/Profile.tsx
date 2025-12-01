@@ -100,8 +100,6 @@ export const Profile = ({ user, isLoading }: { user: ProfileConfigsType; isLoadi
   return (
     <SettingSection icon={User} title="Perfil">
       <div className="flex flex-col sm:flex-row items-center gap-5 mb-6">
-        <div className="h-15 w-15 rounded-full bg-gradient-to-r from-purple-400 to-blue-500 flex items-center justify-center text-white font-semibold"></div>
-
         <div>
           <h3 className="text-lg font-semibold text-gray-100">{user.name}</h3>
           <p className="text-gray-400">{user.email}</p>
@@ -238,7 +236,7 @@ export const Profile = ({ user, isLoading }: { user: ProfileConfigsType; isLoadi
 
                 <button
                   type="submit"
-                  className="w-full cursor-pointer py-2 mt-3 bg-green-700 text-white rounded-md hover:bg-green-900 transition duration-200"
+                  className="w-full cursor-pointer py-2 mt-3 bg-[#429f8d] hover:bg-[#33746f] text-white rounded-md transition duration-200"
                 >
                   Salvar Alterações
                 </button>
@@ -250,7 +248,7 @@ export const Profile = ({ user, isLoading }: { user: ProfileConfigsType; isLoadi
 
       <button
         onClick={() => enableProfileInput()}
-        className="cursor-pointer bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded transition duration-200 w-full sm:w-auto"
+        className="cursor-pointer bg-[#da974e] hover:bg-[#D9A94E] text-white font-bold py-2 px-4 rounded transition duration-200 w-full sm:w-auto"
       >
         Editar Perfil
       </button>

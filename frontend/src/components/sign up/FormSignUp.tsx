@@ -96,7 +96,7 @@ export const SignUpForm = () => {
       >
         {({ errors, touched }) => (
           <Form className="flex flex-col justify-center items-center min-w-full max-w-[50vw] space-y-4 rounded-lg bg-gray-950 px-[15px] py-5">
-            <h2 className="text-green-600 mb-5 text-2xl font-bold">Criar Conta</h2>
+            <h2 className="text-[#da974e] mb-5 text-2xl font-bold">Criar Conta</h2>
 
             <div className="flex flex-col justify-center items-start w-full">
               <div className="flex justify-center items-start gap-[5px] md:gap-[20px] w-full flex-col md:flex-row">
@@ -279,7 +279,7 @@ export const SignUpForm = () => {
 
             <button
               type="submit"
-              className="w-full cursor-pointer py-2  bg-green-700 text-white rounded-md hover:bg-green-900 transition duration-200"
+              className="w-full cursor-pointer py-2  bg-[#429f8d] hover:bg-[#33746f] text-black rounded-md transition duration-200"
             >
               Criar Conta
             </button>
@@ -287,7 +287,7 @@ export const SignUpForm = () => {
             <p className="mt-1">
               Já possui conta?{" "}
               <span
-                className="text-green-500 cursor-pointer underline"
+                className="text-[#da974e] cursor-pointer underline"
                 onClick={() => navigate("/signin")}
               >
                 Faça login aqui

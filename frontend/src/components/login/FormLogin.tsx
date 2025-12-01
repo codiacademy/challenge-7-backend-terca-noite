@@ -74,7 +74,7 @@ export const LoginForm = () => {
         {({ errors, touched }) => (
           <Form className="min-w-full max-w-md space-y-4 rounded-lg bg-gray-950 px-15 py-5">
             <div>
-              <h2 className="text-green-600 mb-10 text-2xl font-bold text-center">Login</h2>
+              <h2 className="text-[#da974e] mb-10 text-2xl font-bold text-center">Login</h2>
 
               <div className="relative">
                 <div className="relative">
@@ -143,9 +143,7 @@ export const LoginForm = () => {
               </div>
             </div>
 
-            <div className="flex justify-between items-center">
-              <CheckboxLoginRegister titleChecked="Memorizar senha" />
-
+            <div className="flex justify-end items-center">
               <button
                 type="button"
                 onClick={() => navigate("/forgotpassword")}
@@ -157,7 +155,7 @@ export const LoginForm = () => {
 
             <button
               type="submit"
-              className="w-full cursor-pointer py-2 mt-3 bg-green-700 text-white rounded-md hover:bg-green-900 transition duration-200"
+              className="w-full cursor-pointer py-2 mt-3 bg-[#429f8d] hover:bg-[#33746f] text-white rounded-md transition duration-200"
             >
               Entrar
             </button>
@@ -165,7 +163,7 @@ export const LoginForm = () => {
             <p>
               Ainda não possui uma conta?{" "}
               <span
-                className="text-green-500 cursor-pointer underline"
+                className="text-[#da974e] cursor-pointer underline"
                 onClick={() => navigate("/signup")}
               >
                 Clique aqui
