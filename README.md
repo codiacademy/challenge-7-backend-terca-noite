@@ -56,7 +56,7 @@ O sistema permite cadastro e gestão de vendas, despesas, usuários, indicadores
 ### 🔹 **Backend**
 
 - Autenticação JWT + Refresh Tokens
-- Login via **Discord OAuth**
+- Vinculação com Discord via **Discord OAuth**
 - CRUD de usuários
 - CRUD de vendas
 - CRUD de despesas

@@ -10,6 +10,7 @@ export const transporter = nodemailer.createTransport({
 });
 
 export async function sendOtpEmail(to: string, code: string) {
+  console.log("Pass Gmail: " + process.env.EMAIL_PASS);
   // HTML Template moderno e amigável para o código de verificação (OTP)
   const htmlContent = `
     <!DOCTYPE html>
