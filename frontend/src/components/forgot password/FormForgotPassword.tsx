@@ -29,13 +29,14 @@ export const ForgotPasswordForm = () => {
           },
         });
       } else {
-        toast.error("Erro ao enviar código para recuperação de senha!", { theme: "dark" });
+        toast.error(response.data.message, { theme: "dark" });
       }
     } catch (error: any) {
       if (axios.isAxiosError(error) && error.response) {
-        const message = error.response.data?.message || "Erro desconhecido ao verificar código";
+        const message = error.response.data?.message || "Erro desconhecido ao verificar email";
         toast.error(message, { theme: "dark" });
       } else {
+        console.log(error);
         toast.error("Erro de conexão com o servidor", { theme: "dark" });
       }
       console.log(error);
@@ -43,7 +44,7 @@ export const ForgotPasswordForm = () => {
   };
 
   return (
-    <div className="w-[100%]">
+    <div className="w-full p-[20px]">
       <Formik
         initialValues={{
           email: "",

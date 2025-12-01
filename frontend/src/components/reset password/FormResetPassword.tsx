@@ -69,7 +69,7 @@ export const ResetPasswordForm = () => {
   };
 
   return (
-    <div className="w-[100%]">
+    <div className="w-[100%] p-[20px]">
       <Formik
         initialValues={{
           code: "",

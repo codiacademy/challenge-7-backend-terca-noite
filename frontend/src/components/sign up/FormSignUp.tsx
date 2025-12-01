@@ -82,7 +82,7 @@ export const SignUpForm = () => {
   };
 
   return (
-    <div className="w-[100%]">
+    <div className="w-[100%] p-[20px]">
       <Formik
         initialValues={{
           fullName: "",
@@ -99,9 +99,8 @@ export const SignUpForm = () => {
             <h2 className="text-green-600 mb-5 text-2xl font-bold">Criar Conta</h2>
 
             <div className="flex flex-col justify-center items-start w-full">
-              <div className="flex justify-center items-start gap-[20px] w-full">
-                {/* Wrapper do Nome */}
-                <div className="flex flex-col flex-1 items-start">
+              <div className="flex justify-center items-start gap-[5px] md:gap-[20px] w-full flex-col md:flex-row">
+                <div className="w-full flex flex-col flex-1 items-start">
                   <div className="relative h-12 w-full">
                     <Field
                       type="text"
@@ -131,7 +130,7 @@ export const SignUpForm = () => {
                 </div>
 
                 {/* Wrapper do E-mail */}
-                <div className="flex flex-col flex-1 items-start">
+                <div className="w-full flex flex-col flex-1 items-start">
                   <div className="relative h-12 w-full">
                     <Field
                       type="email"
@@ -161,7 +160,7 @@ export const SignUpForm = () => {
                 </div>
               </div>
 
-              <div className="w-full flex justify-center items-start gap-[20px]">
+              <div className=" w-full flex justify-center items-start gap-[20px] ">
                 {/* Wrapper do Telefone */}
                 <div className="flex flex-col flex-1 items-start w-full">
                   <Field name="telephone">
@@ -205,9 +204,9 @@ export const SignUpForm = () => {
                 </div>
               </div>
 
-              <div className="flex justify-center items-start gap-[20px] w-full">
+              <div className="flex justify-center items-start gap-[5px] md:gap-[20px] w-full flex-col md:flex-row">
                 {/* Wrapper da Senha */}
-                <div className="flex flex-col flex-1 items-start">
+                <div className=" w-full flex flex-col flex-1 items-start">
                   <div className="relative h-12 w-full">
                     <Field
                       type={showPassword ? "text" : "password"}
@@ -243,7 +242,7 @@ export const SignUpForm = () => {
                 </div>
 
                 {/* Wrapper Confirmar Senha */}
-                <div className="flex flex-col flex-1 items-start">
+                <div className=" w-full flex flex-col flex-1 items-start">
                   <div className="relative h-12 w-full">
                     <Field
                       type={showPassword ? "text" : "password"}

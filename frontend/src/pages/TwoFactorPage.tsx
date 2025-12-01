@@ -6,11 +6,7 @@ export function TwoFactorPage() {
   return (
     <div className=" w-full flex flex-row justify-center z-10 items-center px-[100px]">
       <div className="hidden sm:block flex sm:items-center sm:justify-center sm:my-auto sm:w-[40vw]">
-        <img
-          src={signinImg}
-          alt="Financial Control Illustration "
-          className="sm:flex sm:w-[80%] "
-        />
+        <img src={signinImg} alt="Financial Control Illustration " className="sm:flex w-[50%] " />
       </div>
 
       <div className=" w-[60vw] flex flex-col justify-center my-auto sm:flex-2">
