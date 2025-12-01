@@ -5,6 +5,7 @@ const querySchema = z.object({
   from: z.coerce.date().optional(),
   to: z.coerce.date().optional(),
 });
+import type { Expense } from "@prisma/client";
 
 export async function getExpensesKPIsRoute(app: FastifyInstance) {
   app.get("/get_kpis", { preHandler: [app.authenticate] }, async (request, reply) => {
@@ -14,9 +15,12 @@ export async function getExpensesKPIsRoute(app: FastifyInstance) {
       const filters = querySchema.parse(request.query);
 
       const result = await readDateFilteredExpensesFunction(userId, filters);
-      const filteredExpenses = result.expenses;
+      const filteredExpenses: Expense[] = result.expenses;
       const expensesStats = {
-        totalExpenses: filteredExpenses.reduce((sum, expense) => sum + Number(expense.value), 0),
+        totalExpenses: filteredExpenses.reduce(
+          (sum: number, expense: Expense) => sum + Number(expense.value),
+          0,
+        ),
         fixedExpenses: filteredExpenses
           .filter((expense) => expense.category === "fixa")
           .reduce((sum, expense) => sum + Number(expense.value), 0),

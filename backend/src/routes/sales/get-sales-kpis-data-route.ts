@@ -1,6 +1,7 @@
 import z from "zod";
 import type { FastifyInstance } from "fastify";
 import { readDateFilteredSalesFunction } from "../../functions/sales/read-date-filtered-sales-function";
+import type { Sale } from "@prisma/client";
 const querySchema = z.object({
   from: z.coerce.date().optional(),
   to: z.coerce.date().optional(),
@@ -14,7 +15,7 @@ export async function getSalesKPIsRoute(app: FastifyInstance) {
       const filters = querySchema.parse(request.query);
 
       const result = await readDateFilteredSalesFunction(userId, filters);
-      const filteredSales = result.sales;
+      const filteredSales: Sale[] = result.sales;
       const salesStats = {
         totalCourses: filteredSales.length,
         avarageSales:

@@ -2,6 +2,8 @@ import z from "zod";
 import type { FastifyInstance } from "fastify";
 import { readDateFilteredSalesFunction } from "../../functions/sales/read-date-filtered-sales-function";
 import { readDateFilteredExpensesFunction } from "../../functions/expenses/read-date-filtered-expenses-function";
+import type { Sale, Expense } from "@prisma/client";
+
 const querySchema = z.object({
   from: z.coerce.date().optional(),
   to: z.coerce.date().optional(),
@@ -16,8 +18,8 @@ export async function getOverviewKPIsRoute(app: FastifyInstance) {
 
       const salesResult = await readDateFilteredSalesFunction(userId, filters);
       const expensesResult = await readDateFilteredExpensesFunction(userId, filters);
-      const filteredSales = salesResult.sales;
-      const filteredExpenses = expensesResult.expenses;
+      const filteredSales: Sale[] = salesResult.sales;
+      const filteredExpenses: Expense[] = expensesResult.expenses;
 
       const balanceStats = {
         totalExpenses: filteredExpenses.reduce((sum, expense) => sum + Number(expense.value), 0), // total de despesas

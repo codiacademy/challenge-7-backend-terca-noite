@@ -9,7 +9,7 @@ O sistema permite cadastro e gestão de vendas, despesas, usuários, indicadores
 
 # 🧩 Estrutura do Projeto
 
-` challenge-7-backend-terca-noite/  │── backend/      → API Fastify + Prisma + PostgreSQL  │── frontend/     → Interface Web React + Vite `
+`challenge-7-backend-terca-noite/  │── backend/      → API Fastify + Prisma + PostgreSQL  │── frontend/     → Interface Web React + Vite`
 
 # ⚙️ Tecnologias do Backend (API)
 
@@ -29,8 +29,6 @@ O sistema permite cadastro e gestão de vendas, despesas, usuários, indicadores
 - **ESLint + Prettier**
 
 # 💻 Tecnologias do Frontend
-
-(Conteúdo mantido exatamente como seu README original)
 
 - **ReactJS**
 - **TypeScript**
@@ -72,7 +70,7 @@ O sistema permite cadastro e gestão de vendas, despesas, usuários, indicadores
 
 Para rodar todos os testes do backend:
 
-` npm run test `
+`npm run test`
 
 Os testes utilizam:
 
@@ -84,11 +82,11 @@ Os testes utilizam:
 
 ## 1️⃣ Clonar o repositório
 
-` git clone https://github.com/codiacademy/challenge-7-backend-terca-noite.git  cd challenge-7-backend-terca-noite `
+`git clone https://github.com/codiacademy/challenge-7-backend-terca-noite.git  cd challenge-7-backend-terca-noite`
 
 # 🖥️ Rodando o FRONTEND
 
-` cd frontend  npm install  npm run dev `
+`cd frontend  npm install  npm run dev`
 
 Acesse em:
 
@@ -98,7 +96,7 @@ Acesse em:
 
 ### 1\. Entre na pasta backend
 
-` cd backend `
+`cd backend`
 
 ## 2\. Criar arquivos .env e .env.local
 
@@ -111,31 +109,31 @@ Copie **o conteúdo inteiro de .env.example** para **ambos**:
 
 Não altere nada.
 
-` DATABASE_URL="postgresql://codi_user:codi_password@db:5432/codi_db" `
+`DATABASE_URL="postgresql://codi_user:codi_password@db:5432/codi_db"`
 
 ### No .env.local (modo desenvolvimento local)
 
 Troque db por localhost:
 
-` DATABASE_URL="postgresql://codi_user:codi_password@localhost:5432/codi_db" `
+`DATABASE_URL="postgresql://codi_user:codi_password@localhost:5432/codi_db"`
 
 O resto permanece igual.
 
 ## 3\. Subir o banco (Docker)
 
-` docker compose up -d db `
+`docker compose up -d db`
 
 Certifique-se que o container está rodando:
 
-` docker ps `
+`docker ps`
 
 ## 4\. Gerar Prisma Client
 
-` npx prisma generate `
+`npx prisma generate`
 
 ## 5\. Aplicar migrations
 
-` npx prisma migrate dev `
+`npx prisma migrate dev`
 
 Isso criará as tabelas e deixará o schema sincronizado.
 
@@ -143,7 +141,7 @@ Isso criará as tabelas e deixará o schema sincronizado.
 
 Modo local:
 
-` npm run dev `
+`npm run dev`
 
 A rota base será:
 
@@ -151,11 +149,11 @@ A rota base será:
 
 ## 7\. Rodar testes (opcional)
 
-` npm run test `
+`npm run test`
 
 # 🗄️ Estrutura do Backend
 
-` backend/  │── prisma/  │   ├── schema.prisma  │   ├── migrations/  │  │── src/  │   ├── server.ts  │   ├── env.ts  │   ├── routes/  │   ├── functions/  │   ├── utils/  │   ├── tests/  │  │── .env  │── .env.local  │── .env.example `
+`backend/  │── prisma/  │   ├── schema.prisma  │   ├── migrations/  │  │── src/  │   ├── server.ts  │   ├── env.ts  │   ├── routes/  │   ├── functions/  │   ├── utils/  │   ├── tests/  │  │── .env  │── .env.local  │── .env.example`
 
 # 📑 Requisitos Atendidos
 

@@ -1,83 +1,59 @@
 # -----------------------------------------------------------
-# FASE 1: BUILDER (Desenvolvimento e Compilação)
+# FASE 1: BUILDER
 # -----------------------------------------------------------
 FROM node:20-alpine AS builder
 
-# Define o diretório de trabalho principal
 WORKDIR /app
 
 RUN apk add --no-cache dos2unix
 
-# 1. Variáveis de Ambiente (ARG/ENV)
-# Usadas para que o Prisma/Build/Testes possam rodar
-ARG DATABASE_URL
-
-
-ENV DATABASE_URL=${DATABASE_URL}
-
-
-# 2. Instalação de Dependências e Utilidades
-# Instala wait-for-it, essencial para o entrypoint.sh aguardar o DB
 ADD https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh /usr/local/bin/wait-for-it
 RUN chmod +x /usr/local/bin/wait-for-it
 
-# Copia arquivos de dependência
-COPY package.json package-lock.json ./
+# Instalar deps
+ARG DATABASE_URL
+# Converte o ARG em variável de ambiente
+ENV DATABASE_URL=$DATABASE_URL
 
-# Instala todas as dependências (incluindo devDependencies)
+RUN echo "Database variable: $DATABASE_URL"
+
+COPY package*.json .
+
 RUN npm install
 
-# 3. Cópia do Código-Fonte
-# Esta cópia deve ser feita APÓS o npm install para garantir a ordem correta
+# Copia tudo
 COPY . .
 
-# Copia e configura o script de inicialização do runtime
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN dos2unix /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
+RUN rm -f .env .env.local
 
-# 4. Geração de Arquivos Estáticos e Compilação
-# Gera o Prisma Client (usa os arquivos de dependência)
-RUN npm run prisma:generate
+RUN npx prisma generate
 
-RUN mkdir -p dist # Cria a pasta se não existir
-
+# Build final
 RUN npm run build
 
 # -----------------------------------------------------------
-# FASE 2: PRODUCTION (Imagem Final Leve)
+# FASE 2: PRODUCTION
 # -----------------------------------------------------------
 FROM node:20-alpine AS production
 
-# Define o diretório de trabalho
 WORKDIR /app
 
-# 1. Cópia e Instalação de Dependências de Produção
 COPY package.json package-lock.json ./
-# Instala APENAS as dependências de produção
-RUN npm install --only=production --ignore-scripts
+RUN npm ci --omit=dev --ignore-scripts
 
-
-# O Docker só consegue copiar se o diretório existir. 
-COPY --from=builder /app/node_modules ./node_modules
-
-# 2. Cópia de Assets Compilados (RESOLVENDO O ERRO DO 'dist')
-RUN mkdir -p dist
-COPY --from=builder /app/dist/ ./dist/
-
-# Copia a pasta prisma (essencial para o ENTRYPOINT.SH rodar a migração)
-COPY prisma ./prisma 
-
-# Copia o script de entrada que fará a migração/teste
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /usr/local/bin/entrypoint.sh /usr/local/bin/entrypoint.sh
 
+# Precisamos do DATABASE_URL no container final!!
+ARG DATABASE_URL
+ENV DATABASE_URL=${DATABASE_URL}
 
-# 3. Configuração de Runtime
-# Define o ENTRYPOINT: Chamará o script que roda a migração, o teste e, por fim, a API.
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 
-# CMD de fallback (será executado pelo entrypoint.sh)
-CMD [ "npm", "run", "start:prod" ]
+CMD ["npm", "run", "start:prod"]
 
-# Porta que o Fastify deve expor
 EXPOSE 3000

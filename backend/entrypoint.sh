@@ -6,8 +6,9 @@ echo "Aguardando o PostgreSQL..."
 /usr/local/bin/wait-for-it db:5432 --timeout=30 echo "PostgreSQL está pronto!"
 
 # 2. Aplica as migrações (Cria o esquema no DB)
-# O "migrate deploy" é o ideal para produção/CI, pois aplica as migrações existentes.
 echo "Aplicando migrações do Prisma..."
+npx prisma generate 
+# O "migrate deploy" é o ideal para produção/CI, pois aplica as migrações existentes.
 npx prisma migrate deploy --preview-feature
 
 # entrypoint.sh (Linha Final)
