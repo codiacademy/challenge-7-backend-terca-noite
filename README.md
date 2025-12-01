@@ -129,11 +129,11 @@ Certifique-se que o container está rodando:
 
 ## 4\. Gerar Prisma Client
 
-`npx prisma generate`
+`npm run prisma:generate`
 
 ## 5\. Aplicar migrations
 
-`npx prisma migrate dev`
+`npm run prisma:migrate`
 
 Isso criará as tabelas e deixará o schema sincronizado.
 
