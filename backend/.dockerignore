@@ -3,6 +3,7 @@ node_modules
 
 # Exclui pastas de cache/build
 .env
+.env.local
 
 # Exclui ferramentas de desenvolvimento
 .git

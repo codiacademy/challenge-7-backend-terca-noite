@@ -9,7 +9,7 @@ O sistema permite cadastro e gestão de vendas, despesas, usuários, indicadores
 
 # 🧩 Estrutura do Projeto
 
-Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`  challenge-7-backend-terca-noite/  │── backend/      → API Fastify + Prisma + PostgreSQL  │── frontend/     → Interface Web React + Vite  `
+` challenge-7-backend-terca-noite/  │── backend/      → API Fastify + Prisma + PostgreSQL  │── frontend/     → Interface Web React + Vite `
 
 # ⚙️ Tecnologias do Backend (API)
 
@@ -72,7 +72,7 @@ Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQL
 
 Para rodar todos os testes do backend:
 
-Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`  npm run test  `
+` npm run test `
 
 Os testes utilizam:
 
@@ -84,11 +84,11 @@ Os testes utilizam:
 
 ## 1️⃣ Clonar o repositório
 
-Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`  git clone https://github.com/codiacademy/challenge-7-backend-terca-noite.git  cd challenge-7-backend-terca-noite  `
+` git clone https://github.com/codiacademy/challenge-7-backend-terca-noite.git  cd challenge-7-backend-terca-noite `
 
 # 🖥️ Rodando o FRONTEND
 
-Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`  cd frontend  npm install  npm run dev  `
+` cd frontend  npm install  npm run dev `
 
 Acesse em:
 
@@ -98,7 +98,7 @@ Acesse em:
 
 ### 1\. Entre na pasta backend
 
-Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`  cd backend  `
+` cd backend `
 
 ## 2\. Criar arquivos .env e .env.local
 
@@ -111,31 +111,31 @@ Copie **o conteúdo inteiro de .env.example** para **ambos**:
 
 Não altere nada.
 
-Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`  DATABASE_URL="postgresql://codi_user:codi_password@db:5432/codi_db"  `
+` DATABASE_URL="postgresql://codi_user:codi_password@db:5432/codi_db" `
 
 ### No .env.local (modo desenvolvimento local)
 
 Troque db por localhost:
 
-Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`  DATABASE_URL="postgresql://codi_user:codi_password@localhost:5432/codi_db"  `
+` DATABASE_URL="postgresql://codi_user:codi_password@localhost:5432/codi_db" `
 
 O resto permanece igual.
 
 ## 3\. Subir o banco (Docker)
 
-Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`  docker compose up -d db  `
+` docker compose up -d db `
 
 Certifique-se que o container está rodando:
 
-Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`  docker ps  `
+` docker ps `
 
 ## 4\. Gerar Prisma Client
 
-Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`  npx prisma generate  `
+` npx prisma generate `
 
 ## 5\. Aplicar migrations
 
-Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`  npx prisma migrate dev  `
+` npx prisma migrate dev `
 
 Isso criará as tabelas e deixará o schema sincronizado.
 
@@ -143,7 +143,7 @@ Isso criará as tabelas e deixará o schema sincronizado.
 
 Modo local:
 
-Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`  npm run dev  `
+` npm run dev `
 
 A rota base será:
 
@@ -151,11 +151,11 @@ A rota base será:
 
 ## 7\. Rodar testes (opcional)
 
-Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`  npm run test  `
+` npm run test `
 
 # 🗄️ Estrutura do Backend
 
-Plain textANTLR4BashCC#CSSCoffeeScriptCMakeDartDjangoDockerEJSErlangGitGoGraphQLGroovyHTMLJavaJavaScriptJSONJSXKotlinLaTeXLessLuaMakefileMarkdownMATLABMarkupObjective-CPerlPHPPowerShell.propertiesProtocol BuffersPythonRRubySass (Sass)Sass (Scss)SchemeSQLShellSwiftSVGTSXTypeScriptWebAssemblyYAMLXML`  backend/  │── prisma/  │   ├── schema.prisma  │   ├── migrations/  │  │── src/  │   ├── server.ts  │   ├── env.ts  │   ├── routes/  │   ├── functions/  │   ├── utils/  │   ├── tests/  │  │── .env  │── .env.local  │── .env.example  `
+` backend/  │── prisma/  │   ├── schema.prisma  │   ├── migrations/  │  │── src/  │   ├── server.ts  │   ├── env.ts  │   ├── routes/  │   ├── functions/  │   ├── utils/  │   ├── tests/  │  │── .env  │── .env.local  │── .env.example `
 
 # 📑 Requisitos Atendidos
 
@@ -184,6 +184,6 @@ Time original do frontend:
 Time original do backend:
 
 - [Bernardo Gará Perona](linkedin.com/in/bernardogaraperona?originalSubdomain=br)
-- [Mariana Carminate](https://www.linkedin.com/in/mariana-santos-carminate-0a0893133/)
-- [Fabiano Andrade](https://www.linkedin.com/in/fabiano-andrade-13118475/)
+- [Gabriel](https://www.linkedin.com/in/mariana-santos-carminate-0a0893133/)
+- [Artur](https://www.linkedin.com/in/fabiano-andrade-13118475/)
 - [Pedro Claret](https://www.linkedin.com/in/pedroclaret/)

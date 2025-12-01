@@ -2,7 +2,6 @@ import { z } from "zod";
 
 import dotenv from "dotenv";
 
-console.log("DEBUG: NODE_ENV BRUTO ANTES DO DOTENV:", process.env.NODE_ENV); // <-- Adicione isso
 const envFile =
   process.env.NODE_ENV === "test"
     ? ".env.test"

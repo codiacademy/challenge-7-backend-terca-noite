@@ -1,6 +1,6 @@
 import type { FastifyInstance } from "fastify";
 import type { SaveRefreshTokenType } from "../types/auth/refresh-token-types.ts";
-import { env } from "../config/env";
+import { ENV } from "../config/env";
 import { prisma } from "../lib/prisma";
 import { AppError } from "./app-error";
 import bcrypt from "bcrypt";
@@ -146,7 +146,7 @@ export async function generateTokens(
       name: payload.name,
       type: "access",
     },
-    { expiresIn: env.JWT_EXPIRES_IN },
+    { expiresIn: ENV.JWT_EXPIRES_IN },
   );
 
   // Payload do Refresh Token com jti para garantir unicidade
@@ -160,10 +160,10 @@ export async function generateTokens(
 
   const refreshToken = await fastify.jwt.sign(
     refreshPayload, // Usando o payload tipado
-    { expiresIn: env.JWT_REFRESH_EXPIRES_IN },
+    { expiresIn: ENV.JWT_REFRESH_EXPIRES_IN },
   );
 
-  const expiresIn = env.JWT_REFRESH_EXPIRES_IN;
+  const expiresIn = ENV.JWT_REFRESH_EXPIRES_IN;
   const expiresAt = new Date(Date.now() + ms(expiresIn as ms.StringValue));
   const savedRefreshToken = await saveRefreshToken({
     userId: payload.userId,

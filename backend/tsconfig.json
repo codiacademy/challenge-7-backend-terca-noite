@@ -8,5 +8,6 @@
     "strict": true,
     "outDir": "dist"
   },
-  "include": ["src", "prisma", "src/**/*.ts", "src/@types/**/*.d.ts", "src/scripts"]
+  "include": ["src", "prisma", "src/**/*.ts", "src/@types/**/*.d.ts", "src/scripts"],
+  "exclude": ["node_modules", "src/tests"]
 }
