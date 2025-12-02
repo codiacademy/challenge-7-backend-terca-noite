@@ -8,7 +8,7 @@ import { prisma } from "../../lib/prisma.ts";
 import { extractRefreshTokenFromHeader } from "../../functions/auth/extract-refresh-token-from-header.ts";
 import { extractTokenValue } from "../../functions/auth/extract-token-value.ts";
 import bcrypt from "bcrypt";
-
+import type { refreshtokens } from "@prisma/client";
 // Dados do Usuário Padrão
 const MOCKED_USER = {
   fullName: "Refresh Test User",
@@ -22,6 +22,37 @@ let testUserId: string;
 let initialRefreshTokenCookie: string;
 let appInstance: FastifyInstance;
 // Função auxiliar para extrair o valor do token da string do cookie
+
+async function waitForTokenRevocation(
+  userId: string,
+  tokenValue: string | undefined,
+  timeout = 5000, // Tempo máximo de espera em ms
+  interval = 20, // Intervalo de polling em ms
+): Promise<refreshtokens> {
+  const startTime = Date.now();
+
+  while (Date.now() - startTime < timeout) {
+    const refreshTokens = await prisma.refreshtokens.findMany({
+      where: { userId: userId },
+    });
+
+    for (const tokenRecord of refreshTokens) {
+      const isMatch = await bcrypt.compare(tokenValue as string, tokenRecord.tokenHash);
+      if (isMatch) {
+        // Encontrou o registro do token. Verifica se foi revogado.
+        if (tokenRecord.is_revoked) {
+          return tokenRecord; // Sucesso: Token revogado!
+        }
+      }
+    } // Se não revogou, espera e tenta novamente
+
+    await new Promise((resolve) => setTimeout(resolve, interval));
+  }
+
+  throw new Error(
+    `Timeout atingido (${timeout}ms). O token com valor ${tokenValue} não foi revogado.`,
+  );
+}
 
 describe("POST /refresh - Renovação de Token", () => {
   beforeAll(async () => {
@@ -71,34 +102,37 @@ describe("POST /refresh - Renovação de Token", () => {
     // O novo token deve ser diferente do antigo
     expect(newRefreshTokenValue).not.toBe(oldTokenValue);
 
-    // 4. Verifica a Revogação do Token Antigo no DB
-    if (oldTokenValue) {
-      const refreshTokens = await prisma.refreshtokens.findMany({
-        where: { userId: testUserId },
-      });
-
-      let foundOldTokenRecord = null;
-
-      for (const tokenRecord of refreshTokens) {
-        const isMatch = await bcrypt.compare(oldTokenValue, tokenRecord.tokenHash);
-
-        if (isMatch) {
-          foundOldTokenRecord = tokenRecord;
-          break;
-        }
-      }
-
-      // O token antigo deve estar marcado como revogado
+    try {
+      const foundOldTokenRecord = await waitForTokenRevocation(testUserId, oldTokenValue); // O token antigo deve estar marcado como revogado
       expect(foundOldTokenRecord).toBeDefined();
-      expect(foundOldTokenRecord?.is_revoked).toBe(true);
+      expect(foundOldTokenRecord.is_revoked).toBe(true);
+    } catch (error) {
+      // Se der timeout, o teste falha
+      console.error("Falha ao verificar revogação no DB:", error);
+      throw error;
     }
   });
 
   // --- TESTE 2: Falha (Token Antigo e Revogado) ---
   it("2. Não deve permitir o refresh com o token antigo (revogado no teste anterior)", async () => {
-    // O token initialRefreshTokenCookie foi revogado no Teste 1
-    const response = await requestClient.post("/refresh").set("Cookie", initialRefreshTokenCookie);
+    const rawRevokedToken = "revoked-token-for-test-2";
 
+    // 2. Criar o hash correspondente
+    const hashedRevokedToken = await bcrypt.hash(rawRevokedToken, 10);
+
+    // 3. Criar o refresh token no banco já revogado
+    const revokedRefreshToken = await prisma.refreshtokens.create({
+      data: {
+        userId: testUserId,
+        tokenHash: hashedRevokedToken,
+        is_revoked: true,
+        expiresAt: String(new Date(Date.now() + 1000 * 60 * 60)), // +1h
+      },
+    });
+
+    const revokedCookie = `refreshToken=${rawRevokedToken}; Path=/; HttpOnly`;
+
+    const response = await requestClient.post("/refresh").set("Cookie", revokedCookie);
     // Espera-se 403 (Forbidden) ou 401 (Unauthorized) do isRefreshTokenValid
     expect(response.statusCode).toBeOneOf([401, 403]);
     expect(response.body).toHaveProperty("message");

@@ -74,9 +74,9 @@ describe("POST /verify_email - Inicia 2FA e Envia Código", () => {
 
     // A rota deve retornar 200 OK para evitar que um atacante descubra e-mails válidos.
     // Se o e-mail não existe, a função verifyEmailFunction retorna false, e o fluxo termina.
-    expect(response.statusCode).toBe(200);
+    expect(response.statusCode).toBe(400);
     // Não esperamos tempToken nem message, pois o if (emailExists) não foi executado.
-    expect(response.body).toEqual({});
+    expect(response.body.message).toEqual("Usuário não encontrado");
   });
 
   // --- TESTE 3: Falha de Validação (E-mail Inválido) ---

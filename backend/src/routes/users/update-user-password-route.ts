@@ -19,9 +19,23 @@ export async function updateUserPasswordRoute(app: FastifyInstance) {
         user: result,
       });
     } catch (error) {
-      app.log.error(error, "Erro ao tentar atualizar a senha do usuário");
       if (error instanceof AppError) {
+        return reply.status(error.statusCode).send({
+          message: error.message,
+
+          code: error.statusCode,
+        });
       }
+      if (error instanceof z.ZodError) {
+        return reply.status(400).send({
+          message: "Dados de entrada em formato inválido",
+          errors: error.issues, // Retorna erros por campo
+        });
+      }
+
+      return reply.status(500).send({
+        message: "Erro interno do servidor. Tente novamente mais tarde.",
+      });
     }
   });
 }

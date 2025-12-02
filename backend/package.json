@@ -4,7 +4,7 @@
   "description": "Back",
   "main": "index.js",
   "scripts": {
-    "test": "vitest",
+    "test": "dotenv -e .env.local -- vitest",
     "test:watch": "vitest --watch",
     "dev": "dotenv -e .env.local -- tsx watch src/server.ts",
     "build": "tsc",

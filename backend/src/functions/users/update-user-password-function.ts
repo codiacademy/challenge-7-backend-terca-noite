@@ -18,10 +18,13 @@ export async function updateUserPasswordFunction({
     }
 
     const updatedHashPassword = await hash(password, 10);
-    const updatedUser = await prisma.user.update({
+    const userToUpdate = await prisma.user.update({
       where: { id: userId },
       data: { password_hash: updatedHashPassword },
     });
+
+    const { password_hash, ...updatedUser } = userToUpdate;
+
     return updatedUser;
   } catch (error) {}
 }

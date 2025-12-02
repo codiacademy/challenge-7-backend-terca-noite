@@ -6,8 +6,6 @@ import { AppError } from "./app-error";
 import bcrypt from "bcrypt";
 import { randomUUID } from "crypto"; // Certifique-se que esta importação está presente!
 import ms from "ms";
-import type { Payload } from "@prisma/client/runtime/library";
-
 // Interface que define o payload esperado para o Refresh Token, incluindo o 'jti'
 interface RefreshPayload {
   id: string;
@@ -91,11 +89,14 @@ export async function revokeRefreshToken(userId: string, refreshToken: string) {
       // Este bloco é apenas um fallback, pois getValidToken já deveria ter lançado o erro.
       throw new AppError("Token não encontrado ou já revogado", 401);
     }
+    console.log("Prestes a revogar!");
 
-    return await prisma.refreshtokens.update({
+    const revokedRefreshToken = await prisma.refreshtokens.update({
       where: { id: retrievedToken.id },
       data: { is_revoked: true, last_used_at: new Date() },
     });
+    console.log("Revogado!: " + revokedRefreshToken.is_revoked);
+    return revokedRefreshToken;
   } catch (error) {
     if (error instanceof AppError) {
       throw error;
