@@ -32,7 +32,7 @@ export const SignUpForm = () => {
   const navigate = useNavigate();
 
   // formata número enquanto o usuário digita: (xx) xxxx xxxx  ou (xx) xxxxx xxxx
-  const formatPhone = (value: string) => {
+  /*const formatPhone = (value: string) => {
     const digits = (value || "").replace(/\D/g, "").slice(0, 11);
     if (!digits) return "";
     if (digits.length <= 2) return `(${digits}`;
@@ -172,7 +172,7 @@ export const SignUpForm = () => {
                           inputMode="numeric"
                           value={field.value || ""}
                           onChange={(e) => {
-                            const formatted = formatPhone(e.target.value);
+                            const formatted = e.target.value;
                             form.setFieldValue("telephone", formatted);
                           }}
                           placeholder=""
