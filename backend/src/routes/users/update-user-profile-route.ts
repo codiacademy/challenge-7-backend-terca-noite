@@ -17,9 +17,7 @@ const userIdSchema = z.uuid();
 export async function updateUserProfileRoute(app: FastifyInstance) {
   app.patch("/update_profile", { preHandler: [app.authenticate] }, async (request: any, reply) => {
     try {
-      const rawBody = request.body;
-      const body = Object.fromEntries(Object.entries(rawBody).filter(([_, value]) => value !== ""));
-      const { fullName, email, telephone } = bodySchema.parse(body);
+      const { fullName, email, telephone } = bodySchema.parse(request.body);
       const userId = userIdSchema.parse((request.user as any).id);
       const result = await updateUserProfileFunction({ userId, fullName, email, telephone });
 

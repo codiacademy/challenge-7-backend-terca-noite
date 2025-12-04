@@ -132,7 +132,7 @@ export async function createApp(): Promise<FastifyInstance> {
   app.register(updateUserEmailNotificationRoute, { prefix: "/users" });
   app.register(updateUserDiscordNotificationRoute, { prefix: "/users" });
   app.register(updateUserPasswordRoute, { prefix: "/users" });
-  app.register(updateUserTwoFactorAuthRoute, { prefix: "/2fa" });
+  app.register(updateUserTwoFactorAuthRoute, { prefix: "/users" });
   app.register(twoFactorVerifyRoute, { prefix: "/2fa" });
   app.register(resendTwoFactor, { prefix: "/2fa" });
   app.register(verifyPasswordRoute, { prefix: "/auth" });

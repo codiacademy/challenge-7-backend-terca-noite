@@ -101,7 +101,7 @@ export const Security = ({ user, isLoading }: { user: ProfileConfigsType; isLoad
       }
       console.log("Token:", token);
       const response = await axios.patch(
-        "http://localhost:3000/2fa/update_two_factor_auth",
+        "http://localhost:3000/users/update_two_factor_auth",
         {},
         {
           headers: {
@@ -134,7 +134,7 @@ export const Security = ({ user, isLoading }: { user: ProfileConfigsType; isLoad
         <div className="mt-4">
           <button
             onClick={() => beginResetPassword()}
-            className="cursor-pointer bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded transition duration-200"
+            className=" cursor-pointer bg-[#da974e] hover:bg-[#D9A94E] text-[#101828] font-bold py-2 px-4 rounded transition duration-200"
           >
             Alterar Senha
           </button>
@@ -150,9 +150,11 @@ export const Security = ({ user, isLoading }: { user: ProfileConfigsType; isLoad
           onSubmit={handleSubmitPreviousPassword}
         >
           {({ errors, touched }) => (
-            <Form className="flex flex-col justify-center items-center min-w-full max-w-[50vw] space-y-4 rounded-lg px-[15px] py-5">
-              <div>
-                <h2 className="text-green-600 mb-10 text-2xl font-bold">Confirmar Senha</h2>
+            <Form className="flex flex-col justify-center items-start min-w-full max-w-[50vw] space-y-4 rounded-lg px-[15px] py-5">
+              <div className="w-full">
+                <h2 className="text-[#429f8d] hover:bg-[#33746f] mb-10 text-2xl font-bold">
+                  Confirmar Senha
+                </h2>
                 <div className="flex justify-center items-start gap-[20px] w-full">
                   {/* Wrapper da Senha */}
                   <div className="flex flex-col flex-1 items-start">
@@ -161,7 +163,7 @@ export const Security = ({ user, isLoading }: { user: ProfileConfigsType; isLoad
                         type={showPassword ? "text" : "password"}
                         name="password"
                         placeholder=" "
-                        className={`peer w-full py-3 px-10 border rounded-md bg-transparent focus:outline-none ${
+                        className={`text-[12px] lg:text-lg peer w-full py-3 px-10 border rounded-md bg-transparent focus:outline-none ${
                           errors.password && touched.password ? "border-red-500" : "border-gray-100"
                         }`}
                       />
@@ -170,7 +172,7 @@ export const Security = ({ user, isLoading }: { user: ProfileConfigsType; isLoad
                       </div>
                       <label
                         htmlFor="password"
-                        className={`absolute left-4 -top-2 sm:text-[10px] lg:text-sm font-medium transition-all duration-200 ease-in-out ${
+                        className={` lg:text-lg text-[12px] absolute left-4 -top-2 sm:text-[10px] lg:text-sm font-medium transition-all duration-200 ease-in-out ${
                           errors.password && touched.password ? "text-red-500" : "text-gray-100"
                         } bg-gray-800 px-1`}
                       >
@@ -194,7 +196,7 @@ export const Security = ({ user, isLoading }: { user: ProfileConfigsType; isLoad
 
               <button
                 type="submit"
-                className="w-full cursor-pointer py-2 mt-3 bg-green-700 text-white rounded-md hover:bg-green-900 transition duration-200"
+                className="w-full cursor-pointer py-2 mt-3 bg-[#429f8d] hover:bg-[#33746f] text-white rounded-md transition duration-200"
               >
                 Verifique Aqui!
               </button>
@@ -212,18 +214,18 @@ export const Security = ({ user, isLoading }: { user: ProfileConfigsType; isLoad
           onSubmit={handleSubmitNewPassword}
         >
           {({ errors, touched }) => (
-            <Form className="flex flex-col justify-center items-center min-w-full max-w-[50vw] space-y-4 rounded-lg px-[15px] py-5">
-              <div>
-                <h2 className="text-green-600 mb-10 text-2xl font-bold">Alterar Senha</h2>
-                <div className="flex justify-center items-start gap-[20px] w-full">
+            <Form className="flex flex-col justify-center items-center min-w-full max-w-[50vw] space-y-4 rounded-lg py-1">
+              <div className="w-full">
+                <h2 className="text-[#429f8d] mb-10 text-2xl font-bold">Alterar Senha</h2>
+                <div className=" flex-col lg:flex-row flex justify-center items-start gap-[20px] w-full">
                   {/* Wrapper da Senha */}
-                  <div className="flex flex-col flex-1 items-start">
+                  <div className=" flex flex-col flex-1 items-start w-full">
                     <div className="relative h-12 w-full">
                       <Field
                         type={showPassword ? "text" : "password"}
                         name="password"
                         placeholder=" "
-                        className={`peer w-full py-3 px-10 border rounded-md bg-transparent focus:outline-none ${
+                        className={`text-[12px] lg:text-lg peer w-full py-3 px-10 border rounded-md bg-transparent focus:outline-none ${
                           errors.password && touched.password ? "border-red-500" : "border-gray-100"
                         }`}
                       />
@@ -232,7 +234,7 @@ export const Security = ({ user, isLoading }: { user: ProfileConfigsType; isLoad
                       </div>
                       <label
                         htmlFor="password"
-                        className={`absolute left-4 -top-2 sm:text-[10px] lg:text-sm font-medium transition-all duration-200 ease-in-out ${
+                        className={`lg:text-lg text-[12px] absolute left-4 -top-2 sm:text-[10px] lg:text-sm font-medium transition-all duration-200 ease-in-out ${
                           errors.password && touched.password ? "text-red-500" : "text-gray-100"
                         } bg-gray-800 px-1`}
                       >
@@ -253,13 +255,13 @@ export const Security = ({ user, isLoading }: { user: ProfileConfigsType; isLoad
                   </div>
 
                   {/* Wrapper Confirmar Senha */}
-                  <div className="flex flex-col flex-1 items-start">
+                  <div className="flex flex-col flex-1 items-start w-full">
                     <div className="relative h-12 w-full">
                       <Field
                         type={showPassword ? "text" : "password"}
                         name="confirmPassword"
                         placeholder=" "
-                        className={`peer w-full py-3 px-10 border rounded-md bg-transparent focus:outline-none ${
+                        className={`text-[12px] lg:text-lg peer w-full py-3 px-10 border rounded-md bg-transparent focus:outline-none ${
                           errors.confirmPassword && touched.confirmPassword
                             ? "border-red-500"
                             : "border-gray-100"
@@ -270,7 +272,7 @@ export const Security = ({ user, isLoading }: { user: ProfileConfigsType; isLoad
                       </div>
                       <label
                         htmlFor="confirmPassword"
-                        className={`absolute left-4 -top-2 sm:text-[10px] lg:text-sm font-medium transition-all duration-200 ease-in-out ${
+                        className={`lg:text-lg text-[12px] absolute left-4 -top-2 sm:text-[10px] lg:text-sm font-medium transition-all duration-200 ease-in-out ${
                           errors.confirmPassword && touched.confirmPassword
                             ? "text-red-500"
                             : "text-gray-100"
@@ -290,7 +292,7 @@ export const Security = ({ user, isLoading }: { user: ProfileConfigsType; isLoad
 
               <button
                 type="submit"
-                className="w-full cursor-pointer py-2 mt-3 bg-green-700 text-white rounded-md hover:bg-green-900 transition duration-200"
+                className="w-full cursor-pointer py-2 mt-3 bg-[#429f8d] hover:bg-[#33746f] text-white rounded-md transition duration-200"
               >
                 Atualizar Senha
               </button>

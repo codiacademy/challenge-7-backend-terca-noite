@@ -88,7 +88,7 @@ export const TwoFactorForm = () => {
   }
 
   return (
-    <div className="w-[100%]">
+    <div className="w-[100%] px-[20px]">
       <Formik
         initialValues={{
           code: "",
@@ -98,7 +98,7 @@ export const TwoFactorForm = () => {
       >
         {({ errors, touched }) => (
           <Form className="flex flex-col justify-center items-center min-w-full max-w-[50vw] space-y-4 rounded-lg bg-gray-950 px-[15px] py-5">
-            <h2 className="text-[#da974e] mb-10 text-2xl font-bold">
+            <h2 className="text-[#da974e] mb-10 text-2xl font-bold text-center">
               Insira o Código de Verificação
             </h2>
             <h3 className="text-[#da974e] mb-10 text-sm">
