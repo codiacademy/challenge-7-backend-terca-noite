@@ -1,13 +1,12 @@
 import z from "zod";
 import type { FastifyInstance } from "fastify";
-import { AppError } from "../../utils/app-error.ts";
-import { isPasswordCorrectFunction } from "../../functions/auth/is-password-correct-function.ts";
-import { verifyEmailFunction } from "../../functions/auth/verify-email-function.ts";
-import { getIdFromEmailFunction } from "../../functions/users/get-id-from-email-function.ts";
-import { getNameFromEmailFunction } from "../../functions/users/get-name-from-email-function.ts";
+import { AppError } from "../../utils/app-error";
+import { verifyEmailFunction } from "../../functions/auth/verify-email-function";
+import { getIdFromEmailFunction } from "../../functions/users/get-id-from-email-function";
+import { getNameFromEmailFunction } from "../../functions/users/get-name-from-email-function";
 
-import { twoFactorSendFunction } from "../../functions/auth/two-factor-send-function.ts";
-import { generateTwoFactorTempToken } from "../../utils/tokens-service.ts";
+import { twoFactorSendFunction } from "../../functions/auth/two-factor-send-function";
+import { generateTwoFactorTempToken } from "../../utils/tokens-service";
 
 const emailSchema = z.object({
   email: z.email(),

@@ -100,8 +100,6 @@ export const Profile = ({ user, isLoading }: { user: ProfileConfigsType; isLoadi
   return (
     <SettingSection icon={User} title="Perfil">
       <div className="flex flex-col sm:flex-row items-center gap-5 mb-6">
-        <div className="h-15 w-15 rounded-full bg-gradient-to-r from-purple-400 to-blue-500 flex items-center justify-center text-white font-semibold"></div>
-
         <div>
           <h3 className="text-lg font-semibold text-gray-100">{user.name}</h3>
           <p className="text-gray-400">{user.email}</p>
@@ -120,12 +118,12 @@ export const Profile = ({ user, isLoading }: { user: ProfileConfigsType; isLoadi
             onSubmit={handleSubmitUpdateProfile}
           >
             {({ errors, touched }) => (
-              <Form className="flex flex-col justify-center items-center min-w-full max-w-[50vw] space-y-4 rounded-lg px-[15px] py-5">
-                <h2 className="text-green-600 mb-10 text-2xl font-bold">Atualizar Dados</h2>
+              <Form className="flex flex-col justify-center items-start min-w-full max-w-[50vw] space-y-4 rounded-lg py-1">
+                <h2 className="text-[#429f8d] mb-10 text-2xl font-bold">Atualizar Dados</h2>
 
                 {/* Nome completo */}
                 <div className="flex flex-col justify-center gap-[20px] items-start w-full">
-                  <div className="flex justify-center items-start gap-[20px] w-full">
+                  <div className="flex flex-col justify-center items-start gap-[20px] w-full">
                     {/* Wrapper do Nome */}
                     <div className="flex flex-col flex-1 items-start">
                       <div className="relative h-12 w-full">
@@ -133,7 +131,7 @@ export const Profile = ({ user, isLoading }: { user: ProfileConfigsType; isLoadi
                           type="text"
                           name="fullName"
                           placeholder=""
-                          className={`peer w-full py-3 px-10 border rounded-md bg-transparent focus:outline-none ${
+                          className={`lg:text-lg text-[12px] peer text-[12px] w-full py-3 px-10 border rounded-md bg-transparent focus:outline-none ${
                             errors.fullName && touched.fullName
                               ? "border-red-500"
                               : "border-gray-100"
@@ -144,7 +142,7 @@ export const Profile = ({ user, isLoading }: { user: ProfileConfigsType; isLoadi
                         </div>
                         <label
                           htmlFor="fullName"
-                          className={`absolute left-4 -top-2 sm:text-[10px] lg:text-sm font-medium transition-all duration-200 ease-in-out ${
+                          className={`text-[12px] lg:text-lg absolute left-4 -top-2 sm:text-[10px] lg:text-sm font-medium transition-all duration-200 ease-in-out ${
                             errors.fullName && touched.fullName ? "text-red-500" : "text-gray-100"
                           } bg-gray-800 px-1`}
                         >
@@ -165,7 +163,7 @@ export const Profile = ({ user, isLoading }: { user: ProfileConfigsType; isLoadi
                           type="email"
                           name="email"
                           placeholder=""
-                          className={`peer w-full py-3 px-10 border rounded-md bg-transparent focus:outline-none ${
+                          className={`lg:text-lg text-[12px] peer w-full py-3 px-10 border rounded-md bg-transparent focus:outline-none ${
                             errors.email && touched.email ? "border-red-500" : "border-gray-100"
                           }`}
                         />
@@ -174,7 +172,7 @@ export const Profile = ({ user, isLoading }: { user: ProfileConfigsType; isLoadi
                         </div>
                         <label
                           htmlFor="email"
-                          className={`absolute left-4 -top-2 sm:text-[10px] lg:text-sm font-medium transition-all duration-200 ease-in-out ${
+                          className={`text-[12px] lg:text-lg absolute left-4 -top-2 sm:text-[10px] lg:text-sm font-medium transition-all duration-200 ease-in-out ${
                             errors.email && touched.email ? "text-red-500" : "text-gray-100"
                           } bg-gray-800 px-1`}
                         >
@@ -205,7 +203,7 @@ export const Profile = ({ user, isLoading }: { user: ProfileConfigsType; isLoadi
                                 form.setFieldValue("telephone", formatted);
                               }}
                               placeholder=""
-                              className={`peer w-full py-3 px-10 border rounded-md bg-transparent focus:outline-none ${
+                              className={`lg:text-lg text-[12px] peer w-full py-3 px-10 border rounded-md bg-transparent focus:outline-none ${
                                 errors.telephone && touched.telephone
                                   ? "border-red-500"
                                   : "border-gray-100"
@@ -216,7 +214,7 @@ export const Profile = ({ user, isLoading }: { user: ProfileConfigsType; isLoadi
                             </div>
                             <label
                               htmlFor="telephone"
-                              className={`absolute left-4 -top-2 sm:text-[10px] lg:text-sm font-medium transition-all duration-200 ease-in-out ${
+                              className={`text-[12px] lg:text-lg absolute left-4 -top-2 sm:text-[10px] lg:text-sm font-medium transition-all duration-200 ease-in-out ${
                                 errors.telephone && touched.telephone
                                   ? "text-red-500"
                                   : "text-gray-100"
@@ -238,7 +236,7 @@ export const Profile = ({ user, isLoading }: { user: ProfileConfigsType; isLoadi
 
                 <button
                   type="submit"
-                  className="w-full cursor-pointer py-2 mt-3 bg-green-700 text-white rounded-md hover:bg-green-900 transition duration-200"
+                  className="w-full cursor-pointer py-2 mt-3 bg-[#429f8d] hover:bg-[#33746f] text-white rounded-md transition duration-200"
                 >
                   Salvar Alterações
                 </button>
@@ -247,13 +245,14 @@ export const Profile = ({ user, isLoading }: { user: ProfileConfigsType; isLoadi
           </Formik>
         </div>
       )}
-
-      <button
-        onClick={() => enableProfileInput()}
-        className="cursor-pointer bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded transition duration-200 w-full sm:w-auto"
-      >
-        Editar Perfil
-      </button>
+      {!isEnabledProfileInput && (
+        <button
+          onClick={() => enableProfileInput()}
+          className="cursor-pointer bg-[#da974e] hover:bg-[#D9A94E] text-[#101828] font-bold py-2 px-4 rounded transition duration-200 w-full sm:w-auto"
+        >
+          Editar Perfil
+        </button>
+      )}
     </SettingSection>
   );
 };

@@ -1,8 +1,8 @@
 import type { LoginUserType } from "../../types/users/user-types.ts";
-import { prisma } from "../../lib/prisma.ts";
-import { AppError } from "../../utils/app-error.ts";
+import { prisma } from "../../lib/prisma";
+import { AppError } from "../../utils/app-error";
 import type { FastifyInstance } from "fastify";
-import { revokeRefreshToken } from "../../utils/tokens-service.ts";
+import { revokeRefreshToken } from "../../utils/tokens-service";
 
 export async function authLogoutFunction(
   app: FastifyInstance,

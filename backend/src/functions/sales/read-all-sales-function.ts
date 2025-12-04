@@ -1,5 +1,6 @@
-import { prisma } from "../../lib/prisma.ts";
+import { prisma } from "../../lib/prisma";
 import { format } from "date-fns";
+import { AppError } from "../../utils/app-error";
 export async function readAllSalesFunction(userId: string) {
   try {
     const sales = await prisma.sale.findMany({
@@ -28,5 +29,11 @@ export async function readAllSalesFunction(userId: string) {
       finalPrice: Number(sale.total_value),
     }));
     return formattedSales;
-  } catch (error: any) {}
+  } catch (error: any) {
+    if (error instanceof AppError) {
+      throw error;
+    }
+    console.error("Erro operacional ao deletar venda ", error);
+    throw new AppError("Ocorreu um erro interno ao processar sua solicitação", 500);
+  }
 }

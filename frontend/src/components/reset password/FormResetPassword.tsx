@@ -69,7 +69,7 @@ export const ResetPasswordForm = () => {
   };
 
   return (
-    <div className="w-[100%]">
+    <div className="w-[100%] p-[20px]">
       <Formik
         initialValues={{
           code: "",
@@ -81,8 +81,8 @@ export const ResetPasswordForm = () => {
       >
         {({ errors, touched }) => (
           <Form className="flex flex-col justify-center items-center min-w-full max-w-[50vw] space-y-4 rounded-lg bg-gray-950 px-[15px] py-5">
-            <h2 className="text-green-600 mb-2 text-2xl font-bold">Redefina sua Senha</h2>
-            <h3 className="text-green-600 mb-5 text-sm">
+            <h2 className="text-[#da974e] mb-2 text-2xl font-bold">Redefina sua Senha</h2>
+            <h3 className="text-[#da974e] mb-5 text-sm">
               Digite o código enviado para seu email e redefina sua senha!
             </h3>
             <div className="flex flex-col justify-center items-start w-full h-[200px]">
@@ -188,14 +188,14 @@ export const ResetPasswordForm = () => {
 
             <button
               type="submit"
-              className="w-full cursor-pointer py-2 mt-1 bg-green-700 text-white rounded-md hover:bg-green-900 transition duration-200"
+              className="w-full cursor-pointer py-2 mt-1 bg-[#429f8d] hover:bg-[#33746f] text-white rounded-md transition duration-200"
             >
               Redefinir Senha
             </button>
 
             <p>
               Lembrou a senha?{" "}
-              <span className="text-green-500 cursor-pointer underline">
+              <span className="text-[#da974e] cursor-pointer underline">
                 <Link to="/signin">Tente logar novamente aqui!</Link>
               </span>
             </p>

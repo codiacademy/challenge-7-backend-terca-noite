@@ -1,10 +1,10 @@
 import type { LoginUserType } from "../../types/users/user-types.ts";
 import type { FastifyInstance } from "fastify";
 import type { FastifyReply } from "fastify";
-import { prisma } from "../../lib/prisma.ts";
-import { AppError } from "../../utils/app-error.ts";
+import { prisma } from "../../lib/prisma";
+import { AppError } from "../../utils/app-error";
 import bcrypt from "bcrypt";
-import { generateTokens } from "../../utils/tokens-service.ts";
+import { generateTokens } from "../../utils/tokens-service";
 import { access } from "fs";
 import { REPL_MODE_SLOPPY } from "repl";
 

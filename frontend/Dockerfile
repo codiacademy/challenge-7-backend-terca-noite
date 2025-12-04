@@ -1,22 +1,23 @@
-FROM node:20-alpine as builder
+# 1. Fase de Build (usa Node para compilar o React/Vite)
+FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-COPY package*.json ./
-
-RUN npm ci
+COPY package.json package-lock.json ./
+RUN npm install
 
 COPY . .
 
+# Comando de Build para o Vite
 RUN npm run build
 
-FROM nginx:alpine
+# --- FIM DA FASE BUILD ---
 
+# 2. Fase de Produção (Servir arquivos estáticos com Nginx)
+FROM nginx:alpine AS production
+
+# Copia os arquivos estáticos gerados (dist) para o diretório padrão do Nginx
 COPY --from=builder /app/dist /usr/share/nginx/html
 
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-
+# A porta padrão do Nginx é 80
 EXPOSE 80
-
-CMD ["nginx", "-g", "daemon off;"]
-

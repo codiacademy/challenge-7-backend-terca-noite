@@ -1,5 +1,5 @@
-import { prisma } from "../../lib/prisma.ts";
-import { AppError } from "../../utils/app-error.ts";
+import { prisma } from "../../lib/prisma";
+import { AppError } from "../../utils/app-error";
 
 export async function isDiscordLinkedFunction(userId: string) {
   try {

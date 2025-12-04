@@ -23,7 +23,10 @@ export const DangerZone = () => {
         console.log("Data");
       } else {
         toast.success("Conta deletada com sucesso!", {
-          onClose: () => navigate("/signin"),
+          onClose: () => {
+            localStorage.removeItem("accessToken");
+            navigate("/signin");
+          },
         });
       }
     } catch (error: any) {

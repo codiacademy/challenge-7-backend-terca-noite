@@ -1,262 +1,187 @@
-# Codi Cash - Sistema de Gestão Financeira
+# 💸 Codi Cash — Sistema de Gestão Financeira (Frontend + API)
 
-Sistema completo de gestão financeira para unidades da Codi Academy, composto por frontend (React + Vite) e backend (Node.js + Fastify).
+Sistema completo de controle financeiro desenvolvido para as unidades da **Codi Academy**, composto por:
 
-## 📁 Estrutura do Projeto
+- **Frontend Web** (React + Vite)
+- **API Backend** (Fastify + Prisma + PostgreSQL)
 
-```
-challenge-7-backend-terca-noite/
-├── backend/          # API REST em TypeScript
-│   ├── src/          # Código fonte
-│   ├── prisma/       # Schema e migrations do Prisma
-│   ├── Dockerfile    # Container para backend
-│   └── package.json
-├── frontend/         # Aplicação React
-│   ├── src/          # Código fonte
-│   ├── public/       # Assets estáticos
-│   ├── Dockerfile    # Container para frontend
-│   └── package.json
-├── docker-compose.yml  # Orquestração dos serviços
-└── README.md
-```
+O sistema permite cadastro e gestão de vendas, despesas, usuários, indicadores financeiros e integrações (Discord OAuth).
 
-## 🚀 Tecnologias
+# 🧩 Estrutura do Projeto
 
-### Backend
-- **Runtime:** Node.js 20
-- **Framework:** Fastify
-- **Linguagem:** TypeScript
-- **Banco de Dados:** MySQL 8.0
-- **ORM:** Prisma
-- **Autenticação:** JWT
-- **Documentação:** Swagger/OpenAPI
+`challenge-7-backend-terca-noite/  │── backend/      → API Fastify + Prisma + PostgreSQL  │── frontend/     → Interface Web React + Vite`
 
-### Frontend
-- **Framework:** React 19
-- **Build Tool:** Vite
-- **Estilização:** Tailwind CSS
-- **Estado:** React Hooks
-- **Formulários:** React Hook Form + Yup
-- **Gráficos:** Recharts
+# ⚙️ Tecnologias do Backend (API)
 
-## 📋 Pré-requisitos
+- **Fastify** (servidor HTTP rápido e tipado)
+- **TypeScript**
+- **Prisma ORM**
+- **PostgreSQL**
+- **Zod** (validação do schema de ambiente e inputs)
+- **Vitest** (testes)
+- **Supertest** (testes HTTP)
+- **bcrypt** (hash de senha)
+- **jsonwebtoken** (sessions e refresh tokens)
+- **dotenv** (gestão de variáveis de ambiente)
+- **nodemailer** (envio de emails — recuperação de senha)
+- **tsx** (execução TS sem build)
+- **Docker Compose** (banco de dados)
+- **ESLint + Prettier**
 
-- [Node.js](https://nodejs.org/) 20 ou superior
-- [MySQL](https://www.mysql.com/downloads/) 8.0+ (ou Docker para o banco)
-- npm ou yarn
+# 💻 Tecnologias do Frontend
 
-## 🔧 Instalação e Execução
+- **ReactJS**
+- **TypeScript**
+- **TailwindCSS**
+- **Formik** + **Yup**
+- **Framer Motion**
+- **Lucide React**
+- **React Router DOM**
+- **Recharts**
+- **React Toastify**
+- **SweetAlert2**
+- **Shadcn**
+- **Vite**
 
-### Opção 1: Desenvolvimento Local (Sem Docker) ⚡
+# 📋 Funcionalidades Principais
 
-**Rápido e recomendado para desenvolvimento:**
+### 🔹 **Frontend**
 
-1. Clone o repositório:
-```bash
-git clone <repository-url>
-cd challenge-7-backend-terca-noite
-```
+- Dashboard com KPIs, gráficos e resumo mensal
+- CRUD de vendas
+- CRUD de despesas
+- Filtros avançados
+- Modais, animações e UX aprimorada
 
-2. Configure o MySQL:
-   - Instale MySQL localmente OU
-   - Use Docker apenas para o banco: `docker-compose up db` (se Docker estiver disponível)
+### 🔹 **Backend**
 
-3. Configure as variáveis de ambiente no backend:
-```bash
-cd backend
-copy ../.env.example .env
-# Edite o .env e ajuste DATABASE_URL para: mysql://codi_user:codi_password@localhost:3306/codi_db
-```
+- Autenticação JWT + Refresh Tokens
+- Vinculação com Discord via **Discord OAuth**
+- CRUD de usuários
+- CRUD de vendas
+- CRUD de despesas
+- Validação rigorosa com Zod
+- Envio de emails (Nodemailer)
+- Seed automático de dados
+- Testes automatizados (Vitest + Supertest)
+- Migrations e schema garantidos pelo Prisma
 
-4. Instale dependências do backend:
-```bash
-npm install
-```
+# 🧪 Testes (Backend)
 
-5. Execute migrations:
-```bash
-npm run prisma:migrate
-npm run prisma:generate
-```
+Para rodar todos os testes do backend:
 
-6. Inicie o backend:
-```bash
-npm run dev
-```
+`npm run test`
 
-7. Em outro terminal, configure o frontend:
-```bash
-cd frontend
-npm install
-npm run dev
-```
+Os testes utilizam:
 
-8. Acesse:
-- **Frontend:** http://localhost:5173
-- **Backend API:** http://localhost:3000
-- **Swagger Docs:** http://localhost:3000/docs
+- Vitest
+- Supertest
+- Ambiente .env.test carregado automaticamente
 
-### Opção 2: Usando Docker (Produção/CI)
+# 📦 Como Rodar o Projeto Localmente
 
-1. Clone o repositório:
-```bash
-git clone <repository-url>
-cd challenge-7-backend-terca-noite
-```
+## 1️⃣ Clonar o repositório
 
-2. Crie um arquivo `.env` na raiz do projeto:
-```env
-JWT_SECRET=your-secret-key-here
-DATABASE_URL=mysql://codi_user:codi_password@db:3306/codi_db
-```
+`git clone https://github.com/codiacademy/challenge-7-backend-terca-noite.git  cd challenge-7-backend-terca-noite`
 
-3. Suba os containers:
-```bash
-docker-compose up -d --build
-```
+# 🖥️ Rodando o FRONTEND
 
-4. Execute as migrations do Prisma:
-```bash
-docker-compose exec backend npm run prisma:migrate
-```
+`cd frontend  npm install  npm run dev`
 
-5. Gere o cliente Prisma:
-```bash
-docker-compose exec backend npm run prisma:generate
-```
+Acesse em:
 
-6. Acesse:
-- **Frontend:** http://localhost:5173
-- **Backend API:** http://localhost:3000
-- **Swagger Docs:** http://localhost:3000/docs
-- **MySQL:** localhost:3306
+👉 [http://localhost:5173](http://localhost:5173)
 
-### Desenvolvimento Local (Sem Docker)
+# 🛠️ Rodando o BACKEND
 
-#### Backend
+### 1\. Entre na pasta backend
 
-1. Navegue até a pasta backend:
-```bash
-cd backend
-```
+`cd backend`
 
-2. Instale as dependências:
-```bash
-npm install
-```
+## 2\. Criar arquivos .env e .env.local
 
-3. Crie um arquivo `.env`:
-```env
-DATABASE_URL=mysql://codi_user:codi_password@localhost:3306/codi_db
-JWT_SECRET=your-secret-key-here
-NODE_ENV=development
-```
+Copie **o conteúdo inteiro de .env.example** para **ambos**:
 
-4. Execute as migrations:
-```bash
-npm run prisma:migrate
-npm run prisma:generate
-```
+- .env
+- .env.local
 
-5. Inicie o servidor:
-```bash
-npm run dev
-```
+### No .env (modo Docker / servidor)
 
-#### Frontend
+Não altere nada.
 
-1. Navegue até a pasta frontend:
-```bash
-cd frontend
-```
+`DATABASE_URL="postgresql://codi_user:codi_password@db:5432/codi_db"`
 
-2. Instale as dependências:
-```bash
-npm install
-```
+### No .env.local (modo desenvolvimento local)
 
-3. Inicie o servidor de desenvolvimento:
-```bash
-npm run dev
-```
+Troque db por localhost:
 
-## 🧪 Testes
+`DATABASE_URL="postgresql://codi_user:codi_password@localhost:5432/codi_db"`
 
-### Backend
-```bash
-cd backend
-npm test
-```
+O resto permanece igual.
 
-### Frontend
-```bash
-cd frontend
-npm test
-```
+## 3\. Subir o banco (Docker)
 
-## 📚 Endpoints da API
+`docker compose up -d db`
 
-### Autenticação
-- `POST /auth/login` - Login de usuário
-- `POST /auth/refresh` - Renovar token
-- `POST /auth/logout` - Logout
+Certifique-se que o container está rodando:
 
-### Usuários
-- `GET /users` - Listar usuários
-- `POST /users` - Criar usuário
-- `GET /users/:id` - Buscar usuário
-- `PUT /users/:id` - Atualizar usuário
-- `DELETE /users/:id` - Deletar usuário
+`docker ps`
 
-### Unidades
-- `GET /units` - Listar unidades
-- `POST /units` - Criar unidade
-- `GET /units/:id` - Buscar unidade
-- `PUT /units/:id` - Atualizar unidade
-- `DELETE /units/:id` - Deletar unidade
+## 4\. Gerar Prisma Client
 
-### Vendas
-- `GET /sales` - Listar vendas (com filtros)
-- `POST /sales` - Criar venda
-- `GET /sales/:id` - Buscar venda
-- `PUT /sales/:id` - Atualizar venda
-- `DELETE /sales/:id` - Deletar venda
+`npm run prisma:generate`
 
-### Despesas
-- `GET /expenses` - Listar despesas (com filtros)
-- `POST /expenses` - Criar despesa
-- `GET /expenses/:id` - Buscar despesa
-- `PUT /expenses/:id` - Atualizar despesa
-- `DELETE /expenses/:id` - Deletar despesa
+## 5\. Aplicar migrations
 
-### Relatórios
-- `GET /reports/summary` - Resumo financeiro
-- `GET /reports/series` - Séries temporais
-- `GET /reports/expenses-distribution` - Distribuição de despesas
+`npm run prisma:migrate`
 
-## 🔒 Segurança
+Isso criará as tabelas e deixará o schema sincronizado.
 
-- Autenticação via JWT
-- Criptografia de senhas com bcrypt
-- Validação de dados com Zod
-- CORS configurado
-- Proteção contra SQL Injection (via Prisma)
+## 6\. Rodar a API
 
-## 🤝 Contribuindo
+Modo local:
 
-1. Crie uma branch para sua feature
-2. Faça commit das suas mudanças
-3. Push para a branch
-4. Abra um Pull Request
+`npm run dev`
 
-## 📝 Licença
+A rota base será:
 
-Este projeto é parte do Challenge da Codi Academy.
+👉 [http://localhost:3000](http://localhost:3000)
 
-## 👥 Autores
+## 7\. Rodar testes (opcional)
 
-- Desenvolvido durante o Challenge da Codi Academy
+`npm run test`
 
-## 📞 Suporte
+# 🗄️ Estrutura do Backend
 
-Para questões e suporte, abra uma issue no repositório.
+`backend/  │── prisma/  │   ├── schema.prisma  │   ├── migrations/  │  │── src/  │   ├── server.ts  │   ├── env.ts  │   ├── routes/  │   ├── functions/  │   ├── utils/  │   ├── tests/  │  │── .env  │── .env.local  │── .env.example`
+
+# 📑 Requisitos Atendidos
+
+- CRUD completo de despesas e vendas
+- Autenticação JWT segura
+- Compatível com frontend Codi Cash
+- Banco sincronizado com Prisma
+- Testes automatizados
+- Integração com Discord OAuth
+- Validação forte com Zod
+- Documentação e organização
+
+# 📝 Licença
+
+Projeto desenvolvido para fins educacionais no **Challenge VII — Codi Academy**.
+
+# 👨‍💻 Autoria
+
+Time original do frontend:
+
+- [Cauan Lagrotta](https://www.linkedin.com/in/cauan-silva-lagrotta/)
+- [Mariana Carminate](https://www.linkedin.com/in/mariana-santos-carminate-0a0893133/)
+- [Fabiano Andrade](https://www.linkedin.com/in/fabiano-andrade-13118475/)
+- [Pedro Claret](https://www.linkedin.com/in/pedroclaret/)
+
+Time original do backend:
+
+- [Bernardo Gará Perona](linkedin.com/in/bernardogaraperona?originalSubdomain=br)
+- [Gabriel](https://www.linkedin.com/in/mariana-santos-carminate-0a0893133/)
+- [Artur](https://www.linkedin.com/in/fabiano-andrade-13118475/)
+- [Pedro Claret](https://www.linkedin.com/in/pedroclaret/)

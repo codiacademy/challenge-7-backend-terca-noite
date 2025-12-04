@@ -1,7 +1,6 @@
 import type { FastifyInstance } from "fastify";
-import { AppError } from "../../utils/app-error.ts";
-import { authLogoutFunction } from "../../functions/auth/auth-logout-function.ts";
-import type { Payload } from "../../types/auth/refresh-token-types.ts";
+import { AppError } from "../../utils/app-error";
+import { authLogoutFunction } from "../../functions/auth/auth-logout-function";
 
 import { z } from "zod";
 

@@ -1,4 +1,4 @@
-import { prisma } from "../../lib/prisma.ts";
+import { prisma } from "../../lib/prisma";
 
 export async function readFilteredExpensesFunction(userId: string, filters: any) {
   const { status, category, search, from, to, page, limit } = filters;

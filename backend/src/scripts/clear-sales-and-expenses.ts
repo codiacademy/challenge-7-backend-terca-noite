@@ -1,4 +1,4 @@
-import { prisma } from "../lib/prisma.ts";
+import { prisma } from "../lib/prisma";
 
 async function clearSalesAndExpenses() {
   // Deleta todas as sales

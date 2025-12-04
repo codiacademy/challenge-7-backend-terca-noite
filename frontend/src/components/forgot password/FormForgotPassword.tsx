@@ -29,13 +29,14 @@ export const ForgotPasswordForm = () => {
           },
         });
       } else {
-        toast.error("Erro ao enviar código para recuperação de senha!", { theme: "dark" });
+        toast.error(response.data.message, { theme: "dark" });
       }
     } catch (error: any) {
       if (axios.isAxiosError(error) && error.response) {
-        const message = error.response.data?.message || "Erro desconhecido ao verificar código";
+        const message = error.response.data?.message || "Erro desconhecido ao verificar email";
         toast.error(message, { theme: "dark" });
       } else {
+        console.log(error);
         toast.error("Erro de conexão com o servidor", { theme: "dark" });
       }
       console.log(error);
@@ -43,7 +44,7 @@ export const ForgotPasswordForm = () => {
   };
 
   return (
-    <div className="w-[100%]">
+    <div className="w-full p-[20px]">
       <Formik
         initialValues={{
           email: "",
@@ -53,8 +54,8 @@ export const ForgotPasswordForm = () => {
       >
         {({ errors, touched }) => (
           <Form className="flex flex-col justify-center items-center min-w-full max-w-[50vw] space-y-4 rounded-lg bg-gray-950 px-[15px] py-5">
-            <h2 className="text-green-600 mb-10 text-2xl font-bold">Insira seu Email</h2>
-            <h3 className="text-green-600 mb-10 text-sm">
+            <h2 className="text-[#da974e] mb-10 text-2xl font-bold">Insira seu Email</h2>
+            <h3 className="text-[#da974e] mb-10 text-sm">
               Digite seu email para enviarmos o código de recuperação!
             </h3>
 
@@ -94,14 +95,14 @@ export const ForgotPasswordForm = () => {
             </div>
             <button
               type="submit"
-              className="w-full cursor-pointer py-2 mt-3 bg-green-700 text-white rounded-md hover:bg-green-900 transition duration-200"
+              className="w-full cursor-pointer py-2 mt-3 bg-[#429f8d] hover:bg-[#33746f] text-white rounded-md  transition duration-200"
             >
               Enviar Código
             </button>
 
             <p>
               Lembrou a senha?{" "}
-              <span className="text-green-500 cursor-pointer underline">
+              <span className="text-[#da974e] cursor-pointer underline">
                 <Link to="/signin">Tente logar novamente aqui!</Link>
               </span>
             </p>

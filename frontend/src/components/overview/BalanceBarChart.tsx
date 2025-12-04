@@ -1,12 +1,8 @@
 import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, XAxis, YAxis } from "recharts";
 import { motion } from "framer-motion";
-import { expensesData } from "../../data/ExpensesData";
-import { salesData } from "../../data/SalesData";
-import { TimeRange } from "../../types/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChartConfig, ChartContainer } from "@/components/ui/chart";
 import { Tooltip } from "recharts";
-import { getBalanceData } from "@/utils/balanceAggregations";
 
 const chartConfig = {
   receitas: {

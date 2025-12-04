@@ -11,7 +11,7 @@ export const ToggleSwitch = ({ label, isOn, onToggle }: ToggleSwitchProps) => {
 
       <button
         className={`cursor-pointer relative inline-flex items-center h-6 rounded-full w-11 transition-colors focus:outline-none ${
-          isOn ? "bg-indigo-600" : "bg-gray-600"
+          isOn ? "bg-[#429f8d]" : "bg-gray-600"
         }`}
         onClick={onToggle}
       >

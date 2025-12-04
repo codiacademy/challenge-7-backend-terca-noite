@@ -1,0 +1,56 @@
+version: "3.9"
+
+services:
+  test-db:
+    image: postgres:16-alpine
+    container_name: fastify_test_db
+    environment:
+      POSTGRES_USER: test_user
+      POSTGRES_PASSWORD: test_pass
+      POSTGRES_DB: test_db
+    ports:
+      - "5555:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U test_user -d test_db"]
+      interval: 5s
+      retries: 5
+    volumes:
+      - test_pg_data:/var/lib/postgresql/data
+
+  tests:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: fastify_test_runner
+    depends_on:
+      test-db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: "postgresql://test_user:test_pass@test-db:5432/test_db"
+
+      # Variáveis obrigatórias para rodar app + testes
+      PORT: 3000
+      JWT_SECRET: test_jwt_secret
+      JWT_EXPIRES_IN: 15m
+      JWT_REFRESH_SECRET: test_refresh_secret
+      JWT_REFRESH_EXPIRES_IN: 1d
+      COOKIE_SECRET: test_cookie_secret
+      NODE_ENV: test
+
+      EMAIL_USER: codicashtest@gmail.com
+      EMAIL_PASS: fsbzeivswhxzmnfj
+
+      DISCORD_CLIENT_ID: dummy_client_id
+      DISCORD_CLIENT_SECRET: dummy_client_secret
+      DISCORD_REDIRECT_URI: http://localhost:3000/auth/discord/callback
+
+      DISCORD_BOT_TOKEN: dummy_token
+      DISCORD_TARGET_GUILD_ID: dummy_guild
+
+      BOT_REQUIRED_PERMISSIONS_INT: 3073
+
+    # Comando que RODA OS TESTES
+    command: ["npm", "run", "test"]
+
+volumes:
+  test_pg_data:

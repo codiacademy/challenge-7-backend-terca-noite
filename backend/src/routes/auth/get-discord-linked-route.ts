@@ -1,6 +1,6 @@
 import type { FastifyInstance } from "fastify";
-import { AppError } from "../../utils/app-error.ts";
-import { isDiscordLinkedFunction } from "../../functions/users/is-discord-linked-function.ts";
+import { AppError } from "../../utils/app-error";
+import { isDiscordLinkedFunction } from "../../functions/users/is-discord-linked-function";
 
 export async function getDiscordLinkedRoute(app: FastifyInstance) {
   app.get("/get_discord_linked", { preHandler: [app.authenticate] }, async (request, reply) => {

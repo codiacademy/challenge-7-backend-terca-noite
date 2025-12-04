@@ -88,7 +88,7 @@ export const TwoFactorForm = () => {
   }
 
   return (
-    <div className="w-[100%]">
+    <div className="w-[100%] px-[20px]">
       <Formik
         initialValues={{
           code: "",
@@ -98,10 +98,10 @@ export const TwoFactorForm = () => {
       >
         {({ errors, touched }) => (
           <Form className="flex flex-col justify-center items-center min-w-full max-w-[50vw] space-y-4 rounded-lg bg-gray-950 px-[15px] py-5">
-            <h2 className="text-green-600 mb-10 text-2xl font-bold">
+            <h2 className="text-[#da974e] mb-10 text-2xl font-bold text-center">
               Insira o Código de Verificação
             </h2>
-            <h3 className="text-green-600 mb-10 text-sm">
+            <h3 className="text-[#da974e] mb-10 text-sm">
               Enviamos seu código por email, cheque sua caixa de spam!
             </h3>
 
@@ -141,7 +141,7 @@ export const TwoFactorForm = () => {
             </div>
             <button
               type="submit"
-              className="w-full cursor-pointer py-2 mt-3 bg-green-700 text-white rounded-md hover:bg-green-900 transition duration-200"
+              className="w-full cursor-pointer py-2 mt-3 bg-[#429f8d] hover:bg-[#33746f] text-black rounded-md  transition duration-200"
             >
               Submeter Código
             </button>
@@ -149,7 +149,7 @@ export const TwoFactorForm = () => {
             <p>
               Código Expirado?{" "}
               <span
-                className="text-green-500 cursor-pointer underline"
+                className="text-[#da974e] cursor-pointer underline"
                 onClick={async () => await resendCode()}
               >
                 Gere um novo código clicando aqui!

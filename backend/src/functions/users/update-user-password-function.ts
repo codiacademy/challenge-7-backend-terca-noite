@@ -1,5 +1,5 @@
-import { prisma } from "../../lib/prisma.ts";
-import { AppError } from "../../utils/app-error.ts";
+import { prisma } from "../../lib/prisma";
+import { AppError } from "../../utils/app-error";
 import { hash } from "bcrypt";
 
 export async function updateUserPasswordFunction({
@@ -18,10 +18,13 @@ export async function updateUserPasswordFunction({
     }
 
     const updatedHashPassword = await hash(password, 10);
-    const updatedUser = await prisma.user.update({
+    const userToUpdate = await prisma.user.update({
       where: { id: userId },
       data: { password_hash: updatedHashPassword },
     });
+
+    const { password_hash, ...updatedUser } = userToUpdate;
+
     return updatedUser;
   } catch (error) {}
 }

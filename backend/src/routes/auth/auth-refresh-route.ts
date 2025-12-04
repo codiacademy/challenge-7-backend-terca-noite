@@ -1,9 +1,9 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
-import { env } from "../../config/env.ts";
-import { AppError } from "../../utils/app-error.ts";
+import { env } from "../../config/env";
+import { AppError } from "../../utils/app-error";
 import z, { any } from "zod";
 import type { FastifyJWT } from "@fastify/jwt";
-import { authRefreshFunction } from "../../functions/auth/auth-refresh-function.ts";
+import { authRefreshFunction } from "../../functions/auth/auth-refresh-function";
 import type { Payload } from "../../types/auth/refresh-token-types.ts";
 
 export async function authRefreshRoute(app: FastifyInstance) {

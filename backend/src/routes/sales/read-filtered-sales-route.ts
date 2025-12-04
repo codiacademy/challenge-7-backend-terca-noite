@@ -1,6 +1,6 @@
 import z from "zod";
 import type { FastifyInstance } from "fastify";
-import { readFilteredSalesFunction } from "../../functions/sales/read-filtered-sales-function.ts";
+import { readFilteredSalesFunction } from "../../functions/sales/read-filtered-sales-function";
 
 const querySchema = z.object({
   courseType: z.string().optional(),

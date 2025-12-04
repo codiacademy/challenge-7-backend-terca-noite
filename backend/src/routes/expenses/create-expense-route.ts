@@ -1,7 +1,7 @@
 import { z } from "zod";
 import type { FastifyInstance } from "fastify";
-import { AppError } from "../../utils/app-error.ts";
-import { createExpenseFunction } from "../../functions/expenses/create-expense-function.ts";
+import { AppError } from "../../utils/app-error";
+import { createExpenseFunction } from "../../functions/expenses/create-expense-function";
 import { zhCN } from "zod/locales";
 import { parse, isValid } from "date-fns";
 export const bodySchema = z.object({

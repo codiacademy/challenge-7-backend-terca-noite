@@ -1,4 +1,4 @@
-import { prisma } from "../lib/prisma.ts";
+import { prisma } from "../lib/prisma";
 
 async function clearAllTokens() {
   const deleted = await prisma.refreshtokens.deleteMany({});

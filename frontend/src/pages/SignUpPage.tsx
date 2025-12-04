@@ -1,24 +1,18 @@
 import { SignUpForm } from "@/components/sign up/FormSignUp";
-import signinImg from "../assets/imgLogin.png";
-import codicash from "../assets/codicash.png";
+import signinImg from "../assets/Hero.png";
+import codicash from "../assets/Logo Codi Cash.svg";
 
 export function SignUp() {
   return (
-    <div className=" w-full flex flex-row justify-center z-10 items-center px-[100px]">
-      <div className="hidden sm:block flex sm:items-center sm:justify-center sm:my-auto sm:w-[40vw]">
-        <img
-          src={signinImg}
-          alt="Financial Control Illustration "
-          className="sm:flex sm:w-[80%] "
-        />
-      </div>
+    <div className="flex justify-center items-center flex-row w-full z-10 flex sm:gap-25">
+      <img src={signinImg} alt="" className="w-[40%] hidden min-[1400px]:block" />
 
-      <div className=" w-[60vw] flex flex-col justify-center my-auto sm:flex-2">
-        <div className=" w-[100%] flex flex-col items-center justify-center mx-auto">
-          <img src={codicash} alt="codicash logo" className="h-30 w-40 mx-auto" />
-          <h2 className="text-4xl text-green-600  mt-5">CODICASH</h2>
-          <SignUpForm />
+      <div className="h-full flex justify-center items-center flex-col w-[100%] min-[1400px]:w-[30%] gap-[20px]">
+        <div className="flex justify-center items-center flex-col">
+          <img src={codicash} alt="" className="h-[300px] mx-auto" />
         </div>
+
+        <SignUpForm />
       </div>
     </div>
   );

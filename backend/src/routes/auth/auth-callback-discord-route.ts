@@ -1,9 +1,9 @@
 import type { FastifyInstance } from "fastify";
 
-import { AppError } from "../../utils/app-error.ts";
-import { getDiscordUserFunction } from "../../functions/users/get-discord-user-function.ts";
-import { updateDiscordUserInfos } from "../../functions/users/update-discord-user-infos-function.ts";
-import { getUserIdFromAuthStateFunction } from "../../functions/auth/get-userId-from-auth-state-function.ts";
+import { AppError } from "../../utils/app-error";
+import { getDiscordUserFunction } from "../../functions/users/get-discord-user-function";
+import { updateDiscordUserInfos } from "../../functions/users/update-discord-user-infos-function";
+import { getUserIdFromAuthStateFunction } from "../../functions/auth/get-userId-from-auth-state-function";
 import axios from "axios";
 
 export async function AuthCallbackDiscordRoute(app: FastifyInstance) {

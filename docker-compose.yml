@@ -1,32 +1,35 @@
 services:
   db:
-    image: mysql:8.0
-    container_name: codi_db
+    image: postgres:16-alpine
+    container_name: fastify_db_pg
     environment:
-      MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: codi_db
-      MYSQL_USER: codi_user
-      MYSQL_PASSWORD: codi_password
+      # 2. Novas variáveis para configuração do Postgres
+      POSTGRES_USER: codi_user
+      POSTGRES_PASSWORD: codi_password
+      POSTGRES_DB: codi_db
     ports:
-      - "3306:3306"
-    volumes:
-      - db_data:/var/lib/mysql
+      - "5432:5432" # 3. Porta padrão do Postgres
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 10s
+      test: ["CMD-SHELL", "pg_isready -U codi_user -d codi_db"]
+      interval: 5s
       timeout: 5s
       retries: 5
+    volumes:
+      - pg_data:/var/lib/postgresql/data # Mude o nome do volume se necessário
+    restart: unless-stopped
 
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
+      args:
+        DATABASE_URL: postgresql://codi_user:codi_password@db:5432/codi_db
     container_name: codi_backend
     command: npm run dev
     ports:
       - "3000:3000"
     environment:
-      - DATABASE_URL=mysql://codi_user:codi_password@db:3306/codi_db
+      - DATABASE_URL=postgresql://codi_user:codi_password@db:5432/codi_db
       - JWT_SECRET=${JWT_SECRET:-change-this-secret-in-production}
       - NODE_ENV=development
       - CHOKIDAR_USEPOLLING=true
@@ -42,7 +45,6 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     container_name: codi_frontend
-    command: npm run dev -- --host
     ports:
       - "5173:5173"
     depends_on:
@@ -52,6 +54,6 @@ services:
       - frontend_node_modules:/app/node_modules
 
 volumes:
-  db_data:
+  pg_data: #
   backend_node_modules:
   frontend_node_modules:

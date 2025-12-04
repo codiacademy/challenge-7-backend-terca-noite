@@ -1,26 +1,13 @@
 {
   "compilerOptions": {
-    "forceConsistentCasingInFileNames": true,
-    "moduleResolution": "NodeNext", // ou "node" ou "nodenext"
-    "target": "ES2022",
-    "module": "NodeNext",
-    "rootDir": "./src",
-    "outDir": "./dist",
-    "strict": true,
-    "esModuleInterop": true,
+    "target": "ES2020",
+    "module": "ES2020",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
-    "skipLibCheck": true,
-    "sourceMap": true,
-    "declaration": true,
-    "declarationMap": true,
-    "exactOptionalPropertyTypes": true,
-    "noUncheckedIndexedAccess": true,
-    "isolatedModules": true,
-    "verbatimModuleSyntax": true,
-    "noUncheckedSideEffectImports": true,
-    "moduleDetection": "force",
-    "noEmit": true,
-    "allowImportingTsExtensions": true
+    "esModuleInterop": true,
+    "strict": true,
+    "outDir": "dist"
   },
-  "include": ["src", "prisma", "src/**/*.ts", "src/@types/**/*.d.ts", "src/scripts"]
+  "include": ["src", "prisma", "src/**/*.ts", "src/@types/**/*.d.ts", "src/scripts"],
+  "exclude": ["node_modules", "src/tests"]
 }

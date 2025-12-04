@@ -1,7 +1,7 @@
 import z from "zod";
 import type { FastifyInstance } from "fastify";
-import { AppError } from "../../utils/app-error.ts";
-import { isPasswordCorrectFunction } from "../../functions/auth/is-password-correct-function.ts";
+import { AppError } from "../../utils/app-error";
+import { isPasswordCorrectFunction } from "../../functions/auth/is-password-correct-function";
 
 const bodySchema = z.object({
   userId: z.uuid(),

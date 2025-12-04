@@ -1,6 +1,6 @@
 import type { FastifyInstance } from "fastify";
-import { AppError } from "../../utils/app-error.ts";
-import { updateUserTwoFactorAuthFunction } from "../../functions/users/update-user-two-factor-auth-function.ts";
+import { AppError } from "../../utils/app-error";
+import { updateUserTwoFactorAuthFunction } from "../../functions/users/update-user-two-factor-auth-function";
 import { z } from "zod";
 
 const userIdSchema = z.string().uuid();

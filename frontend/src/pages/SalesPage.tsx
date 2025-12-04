@@ -45,7 +45,9 @@ export function SalesPage() {
 
   const [selectedSale, setSelectedSale] = useState<Sales | null>(null); // Venda selecionada para edição
   const [loadingProfile, setLoadingProfile] = useState<boolean>(true);
-
+  if (loadingProfile) {
+    console.log("Carregando!");
+  }
   async function loadKPIs(params?: {
     timeRange?: TimeRange;
     courseType?: string;
@@ -267,6 +269,8 @@ export function SalesPage() {
       console.log("Dados de Deleção:" + response.data);
       await loadFilteredSales();
       await loadDateFilteredSales({ timeRange });
+      await loadKPIs();
+      await loadSalesCharts({ timeRange });
     } catch (error: any) {}
   };
 

@@ -1,8 +1,7 @@
 import type { CreateExpenseData } from "../../types/expenses/expense-types.ts";
 import { ExpenseCategory, ExpenseStatus } from "@prisma/client";
-import { prisma } from "../../lib/prisma.ts";
-import { CourseType, type Expense } from "@prisma/client";
-import { AppError } from "../../utils/app-error.ts";
+import { prisma } from "../../lib/prisma";
+import { AppError } from "../../utils/app-error";
 import { parse } from "date-fns";
 export async function createExpenseFunction({
   userId,

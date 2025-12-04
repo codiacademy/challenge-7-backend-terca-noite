@@ -1,10 +1,11 @@
 generator client {
   provider = "prisma-client-js"
+  binaryTargets   = ["native", "linux-musl-openssl-3.0.x", "windows"]
   output   = "../node_modules/.prisma/client"
 }
 
 datasource db {
-  provider = "mysql"
+  provider = "postgresql"
   url = env("DATABASE_URL")
 }
 
@@ -49,7 +50,7 @@ model Sale {
   created_by  String     @db.Char(36)
   createdBy  User     @relation("CreatedSales", fields: [created_by], references: [id])
 
-  @@index([created_by], map: "sales_created_by_fkey")
+  @@index([created_by], map: "idx_sales_created_by") // MUDANÇA AQUI!
   @@map("sales")
 }
 
@@ -65,7 +66,7 @@ model Expense {
   updated_at  DateTime      @updatedAt
   createdBy   User          @relation("CreatedExpenses", fields: [created_by], references: [id])
 
-  @@index([created_by], map: "expenses_created_by_fkey")
+  @@index([created_by], map: "idx_expenses_created_by")
   @@map("expenses")
 }
 
@@ -77,9 +78,9 @@ model refreshtokens {
   created_at   DateTime @default(now())
   last_used_at DateTime @default(now())
   is_revoked   Boolean  @default(false)
-  users        User     @relation(fields: [userId], references: [id], map: "refreshTokens_userId_fkey")
+users       User    @relation(fields: [userId], references: [id], map: "fk_refresh_token_user") 
 
-  @@index([userId], map: "refreshTokens_userId_fkey")
+  @@index([userId], map: "idx_refresh_token_user") 
 }
 
 
@@ -119,6 +120,6 @@ model TwoFactorRequest {
   ip        String?
   users     User     @relation(fields: [userId], references: [id], map: "TwoFactorRequest_userId_fkey")
 
-  @@index([userId], map: "TwoFactorRequest_userId_fkey")
+  @@index([userId], map: "idx_two_factor_user") // MUDANÇA AQUI!
   @@map("two_factor_requests")
 }

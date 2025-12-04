@@ -1,9 +1,8 @@
 import type { FastifyInstance } from "fastify";
-import { AppError } from "../../utils/app-error.ts";
-import { authLoginFunction } from "../../functions/auth/auth-login-function.ts";
+import { AppError } from "../../utils/app-error";
 import { z } from "zod";
-import { twoFactorSendFunction } from "../../functions/auth/two-factor-send-function.ts";
-import { generateTwoFactorTempToken } from "../../utils/tokens-service.ts";
+import { twoFactorSendFunction } from "../../functions/auth/two-factor-send-function";
+import { generateTwoFactorTempToken } from "../../utils/tokens-service";
 import type { Payload } from "../../types/auth/refresh-token-types.ts";
 
 export async function resendTwoFactor(app: FastifyInstance) {
@@ -20,7 +19,7 @@ export async function resendTwoFactor(app: FastifyInstance) {
       if (decoded.type != "2fa_pending") {
         throw new AppError("Token inválido para 2FA", 401);
       }
-
+      console.log("Chegou no send!");
       await twoFactorSendFunction(decoded.id);
 
       const newTempToken = await generateTwoFactorTempToken(
@@ -47,8 +46,9 @@ export async function resendTwoFactor(app: FastifyInstance) {
           code: error.statusCode,
         });
       }
+      console.log("Erro aconteceu:" + error);
       return reply.status(500).send({
-        message: "Erro interno do servidor. Tente novamente mais tarde.",
+        message: "Erro interno do servidor: " + (error.message || String(error)),
       });
     }
   });

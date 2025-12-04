@@ -1,24 +1,27 @@
-import { prisma } from "../../lib/prisma.ts";
+import { prisma } from "../../lib/prisma";
 import bcrypt from "bcrypt";
-import { AppError } from "../../utils/app-error.ts";
+import { AppError } from "../../utils/app-error";
+import type { CreateUserType } from "../../types/users/user-types";
 
-export async function createTestUser() {
-  const testEmail = "john.doe@gmail.com";
-  const testPassword = "1234";
-  const testName = "John Doe";
-  const testPhone = "32997667943";
+type OptionalCreateUserType = Partial<CreateUserType>;
+export async function createTestUser({
+  fullName = "John Doe",
+  email = "john.doe@gmail.com",
+  telephone = "32997667943",
+  password = "12345678",
+}: OptionalCreateUserType = {}) {
   const existingUser = await prisma.user.findUnique({
-    where: { email: testEmail },
+    where: { email: email },
   });
   if (existingUser) {
     return existingUser;
   }
-  const passwordHash = await bcrypt.hash(testPassword, 10);
+  const passwordHash = await bcrypt.hash(password, 10);
   const createdUser = await prisma.user.create({
     data: {
-      name: testName,
-      email: testEmail,
-      telephone: testPhone,
+      name: fullName,
+      email,
+      telephone,
       password_hash: passwordHash,
     },
     // Adiciona a seleção para garantir que o hash da senha NUNCA saia

@@ -9,7 +9,6 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-import { TimeRange } from "@/types/types";
 
 interface BalanceLineChartProps {
   revenueData: any;

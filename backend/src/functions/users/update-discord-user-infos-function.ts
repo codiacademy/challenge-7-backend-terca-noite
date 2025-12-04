@@ -4,8 +4,8 @@ type DiscordInfo = {
   username: string;
   discriminator: string;
 };
-import { prisma } from "../../lib/prisma.ts";
-import { AppError } from "../../utils/app-error.ts";
+import { prisma } from "../../lib/prisma";
+import { AppError } from "../../utils/app-error";
 export async function updateDiscordUserInfos({
   userId,
   discordId,

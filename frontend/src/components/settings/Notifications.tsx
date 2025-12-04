@@ -177,7 +177,7 @@ export const Notifications = ({
         onToggle={() => updateEmailNotificationSettings()}
       />
       {isDiscordConnected ? (
-        <>
+        <div className="w-full">
           <ToggleSwitch
             label="Notificações por Discord"
             isOn={notifications.discord}
@@ -185,23 +185,23 @@ export const Notifications = ({
           />
           <button
             onClick={unlinkDiscordAccount}
-            className="relative flex flex-row w-[350px] justify-start items-center bg-red-900 px-[20px] py-[15px] rounded-xl cursor-pointer hover:bg-gray-600 transition-colors duration-700"
+            className="flex flex-col lg:flex-row gap-[10px] w-[100%] lg:w-[42%] justify-start items-center bg-red-900 px-[20px] py-[15px] rounded-xl cursor-pointer hover:bg-gray-600 transition-colors duration-700"
           >
-            <span>Desvincule sua conta do Discord</span>
-            <img className="h-[36px] absolute right-[6%]" src={discordIcon}></img>
+            <span className="text-left ">Desvincule sua conta do Discord</span>
+            <img className="h-[24px] lg:h-[30px]  right-[6%]" src={discordIcon}></img>
           </button>
-        </>
+        </div>
       ) : (
-        <>
+        <div className="w-full ">
           <h2 className="text-gray-300 mb-[20px]">Notificações por Discord</h2>
           <button
             onClick={linkDiscordAccount}
-            className="relative flex flex-row w-[350px] justify-start items-center bg-gray-900 px-[20px] py-[15px] rounded-xl cursor-pointer hover:bg-gray-600 transition-colors duration-700"
+            className="gap-[10px] flex flex-col lg:flex-row w-[100%] lg:w-[38%] justify-start items-center bg-gray-900 px-[20px] py-[15px] rounded-xl cursor-pointer hover:bg-gray-600 transition-colors duration-700"
           >
-            <span>Vincule sua conta do Discord</span>
-            <img className="h-[36px] absolute right-[6%]" src={discordIcon}></img>
+            <span className="max-w-[80%]">Vincule sua conta do Discord</span>
+            <img className="h-[24px] lg:h-[30px]" src={discordIcon}></img>
           </button>
-        </>
+        </div>
       )}
     </SettingSection>
   );

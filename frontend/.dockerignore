@@ -1,0 +1,7 @@
+# Exclui a pasta de dependencias Node.js
+node_modules
+
+# Exclui pastas de build do Vite
+dist
+.env
+.git

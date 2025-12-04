@@ -1,7 +1,7 @@
 import type { FastifyInstance } from "fastify";
 import { z } from "zod";
-import { AppError } from "../../utils/app-error.ts";
-import { updateUserPasswordFunction } from "../../functions/users/update-user-password-function.ts";
+import { AppError } from "../../utils/app-error";
+import { updateUserPasswordFunction } from "../../functions/users/update-user-password-function";
 const bodySchema = z.object({
   password: z.string().min(8, "A nova senha deve ter pelo menos 8 caracteres"),
 });
@@ -19,9 +19,23 @@ export async function updateUserPasswordRoute(app: FastifyInstance) {
         user: result,
       });
     } catch (error) {
-      app.log.error(error, "Erro ao tentar atualizar a senha do usuário");
       if (error instanceof AppError) {
+        return reply.status(error.statusCode).send({
+          message: error.message,
+
+          code: error.statusCode,
+        });
       }
+      if (error instanceof z.ZodError) {
+        return reply.status(400).send({
+          message: "Dados de entrada em formato inválido",
+          errors: error.issues, // Retorna erros por campo
+        });
+      }
+
+      return reply.status(500).send({
+        message: "Erro interno do servidor. Tente novamente mais tarde.",
+      });
     }
   });
 }
