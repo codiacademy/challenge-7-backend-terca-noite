@@ -98,7 +98,11 @@ Acesse em:
 
 `cd backend`
 
-## 2\. Criar arquivos .env e .env.local
+## 2\. Instale as dependência do Backend
+
+`npm install`
+
+## 3\. Criar arquivos .env e .env.local
 
 Copie **o conteúdo inteiro de .env.example** para **ambos**:
 
@@ -119,7 +123,7 @@ Troque db por localhost:
 
 O resto permanece igual.
 
-## 3\. Subir o banco (Docker)
+## 4\. Subir o banco (Docker)
 
 `docker compose up -d db`
 
@@ -127,17 +131,17 @@ Certifique-se que o container está rodando:
 
 `docker ps`
 
-## 4\. Gerar Prisma Client
+## 5\. Gerar Prisma Client
 
 `npm run prisma:generate`
 
-## 5\. Aplicar migrations
+## 6\. Aplicar migrations
 
 `npm run prisma:migrate`
 
 Isso criará as tabelas e deixará o schema sincronizado.
 
-## 6\. Rodar a API
+## 7\. Rodar a API
 
 Modo local:
 
@@ -147,7 +151,7 @@ A rota base será:
 
 👉 [http://localhost:3000](http://localhost:3000)
 
-## 7\. Rodar testes (opcional)
+## 8\. Rodar testes (opcional)
 
 `npm run test`
 
