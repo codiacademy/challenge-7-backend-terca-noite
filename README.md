@@ -162,11 +162,6 @@ A rota base será:
 - login: john.doe@gmail.com
 - senha: 12345678
 
-`npm run test`
-
-# 🗄️ Estrutura do Backend
-
-`backend/  │── prisma/  │   ├── schema.prisma  │   ├── migrations/  │  │── src/  │   ├── server.ts  │   ├── env.ts  │   ├── routes/  │   ├── functions/  │   ├── utils/  │   ├── tests/  │  │── .env  │── .env.local  │── .env.example`
 
 # 📑 Requisitos Atendidos
 
