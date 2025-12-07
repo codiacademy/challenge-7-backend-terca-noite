@@ -32,68 +32,68 @@ export const SaleDetailsModal = ({ sale, isOpen, onClose }: SaleDetailsModalProp
               day: "2-digit",
               month: "2-digit",
               year: "numeric",
-            }).format(new Date(sale.date))}
+            }).format(new Date(sale.created_at))}
           </p>
           <p>
-            <strong>Cliente:</strong> {sale.customer.name}
+            <strong>Cliente:</strong> {sale.client_name}
           </p>
           <p>
-            <strong>E-mail:</strong> {sale.customer.email}
+            <strong>E-mail:</strong> {sale.client_email}
           </p>
           <p>
-            <strong>Telefone:</strong> {sale.customer.phone}
+            <strong>Telefone:</strong> {sale.client_phone}
           </p>
           <p>
-            <strong>CPF:</strong> {sale.customer.cpf}
+            <strong>CPF:</strong> {sale.cpf}
           </p>
           <p>
-            <strong>Curso:</strong> {sale.course.name}
+            <strong>Curso:</strong> {sale.course}
           </p>
           <p>
             <strong>Tipo do Curso:</strong>{" "}
-            {sale.course.type.charAt(0).toUpperCase() + sale.course.type.slice(1)}
+            {sale.course_type.charAt(0).toUpperCase() + sale.course_type.slice(1)}
           </p>
           <p>
             <strong>Valor Bruto:</strong>{" "}
             {new Intl.NumberFormat("pt-BR", {
               style: "currency",
               currency: "BRL",
-            }).format(sale.course.price)}
+            }).format(sale.course_value)}
           </p>
           <p>
             <strong>Desconto:</strong>{" "}
             {new Intl.NumberFormat("pt-BR", {
               style: "currency",
               currency: "BRL",
-            }).format(sale.discount)}
+            }).format(sale.discount_value)}
           </p>
           <p>
             <strong>Taxas:</strong>{" "}
             {new Intl.NumberFormat("pt-BR", {
               style: "currency",
               currency: "BRL",
-            }).format(sale.taxes)}
+            }).format(sale.taxes_value)}
           </p>
           <p>
             <strong>Comissões:</strong>{" "}
             {new Intl.NumberFormat("pt-BR", {
               style: "currency",
               currency: "BRL",
-            }).format(sale.commissions)}
+            }).format(sale.commission_value)}
           </p>
           <p>
             <strong>Taxas de Cartão:</strong>{" "}
             {new Intl.NumberFormat("pt-BR", {
               style: "currency",
               currency: "BRL",
-            }).format(sale.cardFees)}
+            }).format(sale.card_fee_value)}
           </p>
           <p>
             <strong>Valor Final:</strong>{" "}
             {new Intl.NumberFormat("pt-BR", {
               style: "currency",
               currency: "BRL",
-            }).format(sale.finalPrice)}
+            }).format(sale.total_value)}
           </p>
           <button
             onClick={onClose}

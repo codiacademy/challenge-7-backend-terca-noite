@@ -78,7 +78,7 @@ describe("PATCH /update_email_notification - Atualização de Notificações por
 
     expect(response.statusCode).toBe(200);
     expect(response.body.message).toBe("Notificações por email atualizadas com sucesso");
-    expect(response.body.user.notification_email_enabled).toBe(true); // 4. Verificação no Banco de Dados (Confirma o toggle)
+    expect(response.body.user.emailNotificationEnabled).toBe(true); // 4. Verificação no Banco de Dados (Confirma o toggle)
 
     dbUser = await prisma.user.findUnique({
       where: { id: testUserId },
@@ -99,7 +99,7 @@ describe("PATCH /update_email_notification - Atualização de Notificações por
     }); // 2. Verificação da Resposta (200 OK)
 
     expect(response.statusCode).toBe(200);
-    expect(response.body.user.notification_email_enabled).toBe(false); // 3. Verificação no Banco de Dados (Confirma o toggle)
+    expect(response.body.user.emailNotificationEnabled).toBe(false); // 3. Verificação no Banco de Dados (Confirma o toggle)
 
     const dbUser = await prisma.user.findUnique({
       where: { id: testUserId },

@@ -2,16 +2,16 @@ import { prisma } from "../../lib/prisma";
 import { AppError } from "../../utils/app-error";
 export async function deleteExpenseFunction(expenseId: string) {
   try {
-    const existingSale = await prisma.expense.findUnique({
+    const existingExpense = await prisma.expense.findUnique({
       where: {
         id: expenseId,
       },
     });
 
-    if (!existingSale)
+    if (!existingExpense)
       throw new AppError("Despesa com id " + expenseId + " não existe no banco de dados");
 
-    await prisma.expense.delete({
+    return await prisma.expense.delete({
       where: { id: expenseId },
     });
   } catch (error: any) {

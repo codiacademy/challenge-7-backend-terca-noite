@@ -29,6 +29,22 @@ export async function createSaleFunction({
         total_value: finalPrice,
         created_by: userId,
       },
+      select: {
+        id: true,
+        client_name: true,
+        client_email: true,
+        cpf: true,
+        client_phone: true,
+        course: true,
+        course_type: true,
+        course_value: true,
+        discount_value: true,
+        taxes_value: true,
+        commission_value: true,
+        card_fee_value: true,
+        total_value: true,
+        created_by: true,
+      },
     });
 
     return createdSale;

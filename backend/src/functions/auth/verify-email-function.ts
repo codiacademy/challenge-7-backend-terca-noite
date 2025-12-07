@@ -6,6 +6,6 @@ export async function verifyEmailFunction(email: string) {
     where: { email },
   });
 
-  if (!existingUser) throw new AppError("Usuário não encontrado", 400);
+  if (!existingUser) throw new AppError("Usuário não encontrado", 404);
   return existingUser;
 }

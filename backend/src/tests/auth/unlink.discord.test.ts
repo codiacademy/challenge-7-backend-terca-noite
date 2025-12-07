@@ -67,8 +67,8 @@ describe("POST /discord/unlink - Desvinculação de conta Discord", () => {
     expect(response.statusCode).toBe(200);
     expect(response.body).toHaveProperty("success", true);
     expect(response.body).toHaveProperty("message", "Discord desvinculado com sucesso"); // Verifica a resposta da rota
-    expect(response.body.updatedUser.discordId).toBeNull();
-    expect(response.body.updatedUser.discordName).toBeNull(); // Confirma diretamente no banco de dados
+    expect(response.body.user.discordId).toBeNull();
+    expect(response.body.user.discordName).toBeNull(); // Confirma diretamente no banco de dados
 
     const userInDb = await prisma.user.findUnique({ where: { id: testUserId } });
     expect(userInDb?.discordId).toBeNull();

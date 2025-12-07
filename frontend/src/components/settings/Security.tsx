@@ -150,11 +150,9 @@ export const Security = ({ user, isLoading }: { user: ProfileConfigsType; isLoad
           onSubmit={handleSubmitPreviousPassword}
         >
           {({ errors, touched }) => (
-            <Form className="flex flex-col justify-center items-start min-w-full max-w-[50vw] space-y-4 rounded-lg px-[15px] py-5">
+            <Form className="flex flex-col justify-center items-start min-w-full max-w-[50vw] space-y-4 rounded-lg  py-5">
               <div className="w-full">
-                <h2 className="text-[#429f8d] hover:bg-[#33746f] mb-10 text-2xl font-bold">
-                  Confirmar Senha
-                </h2>
+                <h2 className="text-[#429f8d] mb-10 text-2xl font-bold">Confirmar Senha</h2>
                 <div className="flex justify-center items-start gap-[20px] w-full">
                   {/* Wrapper da Senha */}
                   <div className="flex flex-col flex-1 items-start">

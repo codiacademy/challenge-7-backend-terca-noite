@@ -32,7 +32,7 @@ export const SignUpForm = () => {
   const navigate = useNavigate();
 
   // formata número enquanto o usuário digita: (xx) xxxx xxxx  ou (xx) xxxxx xxxx
-  /*const formatPhone = (value: string) => {
+  const formatPhone = (value: string) => {
     const digits = (value || "").replace(/\D/g, "").slice(0, 11);
     if (!digits) return "";
     if (digits.length <= 2) return `(${digits}`;
@@ -128,8 +128,6 @@ export const SignUpForm = () => {
                     )}
                   </div>
                 </div>
-
-                {/* Wrapper do E-mail */}
                 <div className="w-full flex flex-col flex-1 items-start">
                   <div className="relative h-12 w-full">
                     <Field

@@ -24,12 +24,12 @@ cron.schedule("* * * * *", async () => {
   await cleanExpiredTokens();
 });
 
-cron.schedule("*0 8 1 * *", async () => {
+cron.schedule("0 8 1 * *", async () => {
   console.log("✉ Enviando Emails de Overview...");
   await sendOverviewEmailtoAllUsers();
 });
 
-cron.schedule("*0 8 1 * *", async () => {
+cron.schedule("0 8 1 * *", async () => {
   console.log("🤖 Enviando Mensagens do Discord de Overview...");
   await sendDiscordNotificationToAllUsersFunction();
 });

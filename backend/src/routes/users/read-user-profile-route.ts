@@ -12,8 +12,15 @@ const readUserProfileSchema = {
   description:
     "Retorna o nome, email e outros dados do perfil do usuário com base no JWT de autenticação.",
 
+  // 🔒 SEGURANÇA
+  // Indica que esta rota requer autenticação JWT (bearerAuth configurado no fastify-swagger)
   security: [{ bearerAuth: [] }],
 
+  // ➡️ INPUTS
+  // Esta rota não tem Body, Querystring ou Params, pois o ID vem do Token JWT.
+  // Se tivesse inputs (ex: /users/:id), usaria 'params' ou 'querystring'.
+
+  // ⬅️ OUTPUTS (RESPOSTAS)
   response: {
     // ✅ 200 OK - Sucesso
     200: {
@@ -46,7 +53,16 @@ const readUserProfileSchema = {
       type: "object",
       properties: {
         message: { type: "string", example: "ID em formato inválido" },
-        errors: { type: "array" },
+        errors: {
+          type: "array",
+          items: {
+            type: "object",
+            properties: {
+              path: { type: "array", items: { type: "string" } },
+              message: { type: "string" },
+            },
+          },
+        },
       },
     },
 
@@ -84,7 +100,7 @@ const readUserProfileSchema = {
 export async function readUserProfileRoute(app: FastifyInstance) {
   app.get(
     "/read_profile",
-    { schema: readUserProfileSchema, preHandler: [app.authenticate] },
+    { preHandler: [app.authenticate], schema: readUserProfileSchema },
     async (request: any, reply) => {
       try {
         console.log("Payload do usuário:", request.user);

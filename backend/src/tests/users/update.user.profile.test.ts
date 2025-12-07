@@ -72,7 +72,7 @@ describe("PATCH /update_profile - Atualização do Perfil do Usuário", () => {
     // 2. Verificação da Resposta (200 OK)
     expect(response.statusCode).toBe(200);
     expect(response.body.message).toBe("Perfil do usuário atualizado com sucesso");
-    expect(response.body.user).toHaveProperty("name", NEW_FULLNAME);
+    expect(response.body.user).toHaveProperty("fullName", NEW_FULLNAME);
     // Verifica se os outros campos não foram alterados
     expect(response.body.user).toHaveProperty("email", MOCKED_USER.email);
     expect(response.body.user).toHaveProperty("telephone", MOCKED_USER.telephone);
@@ -101,7 +101,7 @@ describe("PATCH /update_profile - Atualização do Perfil do Usuário", () => {
     expect(response.body.user).toHaveProperty("email", NEW_EMAIL);
     expect(response.body.user).toHaveProperty("telephone", NEW_TELEPHONE);
     // Verifica se o 'fullName' anterior (atualizado no Teste 1) não foi alterado
-    expect(response.body.user).toHaveProperty("name", NEW_FULLNAME);
+    expect(response.body.user).toHaveProperty("fullName", NEW_FULLNAME);
 
     // 3. Verifica no DB se as alterações foram persistidas
     const userInDb = await prisma.user.findUnique({ where: { id: testUserId } });

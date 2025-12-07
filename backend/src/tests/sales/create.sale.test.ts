@@ -89,9 +89,10 @@ describe("POST /create_sale - Criação de Venda", () => {
 
     const createdSale = response.body.createdSale;
     // 3. Verifica alguns campos essenciais da venda criada
-    expect(createdSale).toHaveProperty("client_name", VALID_SALE_DATA.customer.name);
-    expect(createdSale).toHaveProperty("course", VALID_SALE_DATA.course.name);
-    expect(createdSale).toHaveProperty("total_value", String(VALID_SALE_DATA.finalPrice));
+    expect(createdSale).toHaveProperty("customer.name", VALID_SALE_DATA.customer.name);
+    expect(createdSale).toHaveProperty("course.name", VALID_SALE_DATA.course.name);
+    expect(createdSale).toHaveProperty("finalPrice", VALID_SALE_DATA.finalPrice);
+    expect(createdSale).toHaveProperty("id");
     expect(createdSale).toHaveProperty("created_by", testUserId);
 
     // 4. Verifica no DB se a venda foi persistida corretamente (opcional, mas recomendado)

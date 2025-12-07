@@ -5,6 +5,7 @@ import type { FastifyInstance } from "fastify";
 import supertest from "supertest";
 import { deleteUserFunction } from "../../functions/users/delete-user-function.ts";
 import { createTestUser } from "../../functions/users/create-test-user-function.ts";
+
 // Variáveis para a instância da aplicação e o token de acesso
 let appInstance: FastifyInstance;
 let accessToken: string;

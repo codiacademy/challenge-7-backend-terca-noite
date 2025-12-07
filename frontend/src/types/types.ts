@@ -53,25 +53,40 @@ export type SaleFormValues = {
   cardFees: number;
   finalPrice: number;
 };
+export type CourseType = "" | "presencial" | "online";
+
 export interface Sales {
   id: string;
-  date: string;
-  customer: {
-    name: string;
-    email: string;
-    phone: string;
-    cpf: string;
-  };
-  course: {
-    type: "presencial" | "online";
-    name: CourseName;
-    price: number;
-  };
-  discount: number;
-  taxes: number;
-  commissions: number;
-  cardFees: number;
-  finalPrice: number;
+
+  client_name: string;
+
+  cpf: string;
+
+  client_phone: string;
+
+  client_email: string;
+
+  course: string;
+
+  course_type: CourseType;
+
+  course_value: number;
+
+  discount_value: number;
+
+  taxes_value: number;
+
+  commission_value: number;
+
+  card_fee_value: number;
+
+  total_value: number;
+
+  created_at: Date | string;
+
+  updated_at: Date | string;
+
+  created_by: string;
 }
 
 export interface SalesTableProps {

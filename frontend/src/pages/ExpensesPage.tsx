@@ -104,25 +104,36 @@ export function ExpensesPage() {
       const token = localStorage.getItem("accessToken") || null;
       const headers: Record<string, string> = { "Content-Type": "application/json" };
       if (token) headers["Authorization"] = `Bearer ${token}`;
-
+      console.log("Carregando despesas filtradas...");
+      console.log("Queries:", params);
       let from: string | undefined;
       let to: string | undefined;
 
       const tr = params?.timeRange;
       ({ from, to } = convertTimeRangeToParams(tr));
 
+      const queryParams: Record<string, string | number | undefined> = {
+        from,
+        to,
+        page: params?.page ?? 1,
+        limit: params?.limit ?? 10,
+      };
+
+      // Adiciona 'category', 'status' e 'search' APENAS se não estiverem vazios
+      if (params?.category) {
+        queryParams.category = params.category;
+      }
+      if (params?.status) {
+        queryParams.status = params.status;
+      }
+      if (params?.search) {
+        queryParams.search = params.search;
+      }
+
       const response = await api.get("http://localhost:3000/expenses/read_filtered_expenses", {
         headers,
         withCredentials: true,
-        params: {
-          category: params?.category,
-          status: params?.status,
-          search: params?.search,
-          from,
-          to,
-          page: params?.page ?? 1,
-          limit: params?.limit ?? 10,
-        },
+        params: queryParams,
       });
 
       if (!response.data) throw new Error(`HTTP ${response.status}`);
@@ -137,10 +148,10 @@ export function ExpensesPage() {
       }));
 
       setFilteredExpenses(mappedExpenses);
-      setCurrentPage(response.data.page);
-      setItemsPerPage(response.data.limit);
-      setTotalPages(response.data.totalPages);
-      setTotalItems(response.data.total);
+      setCurrentPage(response.data.pagination.currentPage);
+      setItemsPerPage(response.data.pagination.limit);
+      setTotalPages(response.data.pagination.totalPages);
+      setTotalItems(response.data.pagination.totalItems);
       console.log("Despesas no período carregadas!");
     } catch (error: any) {
       console.error("Erro ao carregar despesas por período:", error);
@@ -214,6 +225,7 @@ export function ExpensesPage() {
       console.error("Erro ao carregar Kpis:", error);
     }
   }
+
   useEffect(() => {
     loadFilteredExpenses({
       timeRange,
@@ -223,11 +235,26 @@ export function ExpensesPage() {
       page: currentPage,
       limit: itemsPerPage,
     });
+    // Não precisa recarregar gráficos e KPIs aqui, pois eles não dependem da paginação
+  }, [currentPage, itemsPerPage]); // ⬅️ Dependências mudadas
+
+  // 2. NOVO useEffect para carregar dados e redefinir a página quando um FILTRO mudar
+  useEffect(() => {
+    setCurrentPage(1);
+
+    if (currentPage === 1) {
+      loadFilteredExpenses({
+        timeRange,
+        category,
+        status,
+        search,
+        page: 1, // Usa a página atual (1)
+        limit: itemsPerPage,
+      });
+    }
     loadExpensesCharts({ timeRange });
-    loadKPIs({
-      timeRange,
-    });
-  }, [timeRange, category, status, search, currentPage, itemsPerPage]);
+    loadKPIs({ timeRange });
+  }, [timeRange, category, status, search]); // Dependências: apenas filtros (sem currentPage)
 
   return (
     <div className="flex-1 overflow-auto relative z-10">

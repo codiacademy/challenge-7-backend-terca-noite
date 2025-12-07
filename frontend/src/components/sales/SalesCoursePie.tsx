@@ -43,8 +43,8 @@ export const SalesCoursePie = ({ dateFilteredSalesData, salesPieData }: SalesCou
 
   // Função para obter o tipo do curso a partir do nome (usando salesData)
   const getCourseType = (courseName: string) => {
-    const sale = dateFilteredSalesData.find((sale: Sales) => sale.course.name === courseName);
-    return sale ? sale.course.type : "N/A";
+    const sale = dateFilteredSalesData.find((sale: Sales) => sale.course === courseName);
+    return sale ? sale.course_type : "N/A";
   };
 
   return (

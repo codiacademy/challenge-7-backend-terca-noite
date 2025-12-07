@@ -26,9 +26,7 @@ const SaleSchema = Yup.object().shape({
       }),
   }),
   course: Yup.object().shape({
-    type: Yup.string()
-      .oneOf(["presencial", "online"], "Tipo de curso inválido")
-      .required("Tipo de curso é obrigatório"),
+    type: Yup.string().required("Tipo de curso é obrigatório"),
     name: Yup.string().required("Curso é obrigatório"),
     price: Yup.number()
       .min(0, "Valor do curso deve ser maior ou igual a 0")
@@ -63,21 +61,21 @@ export default function Modal({ title, open, onClose, onSave, sale }: ModalProps
   const formik = useFormik<SaleFormValues>({
     initialValues: {
       customer: {
-        name: sale?.customer.name || "",
-        email: sale?.customer.email || "",
-        phone: sale?.customer.phone || "",
-        cpf: sale?.customer.cpf || "",
+        name: sale?.client_name || "",
+        email: sale?.client_email || "",
+        phone: sale?.client_phone || "",
+        cpf: sale?.cpf || "",
       },
       course: {
-        type: sale?.course.type || "",
-        name: sale?.course.name || "",
-        price: sale?.course.price || 0,
+        type: sale?.course_type || "",
+        name: sale?.course || "",
+        price: sale?.course_value || 0,
       },
-      discount: sale?.discount || 0,
-      taxes: sale?.taxes || 0,
-      commissions: sale?.commissions || 0,
-      cardFees: sale?.cardFees || 0,
-      finalPrice: sale?.finalPrice || 0,
+      discount: sale?.discount_value || 0,
+      taxes: sale?.taxes_value || 0,
+      commissions: sale?.commission_value || 0,
+      cardFees: sale?.card_fee_value || 0,
+      finalPrice: sale?.total_value || 0,
     },
     validationSchema: SaleSchema,
     enableReinitialize: true, // Permite reinicializar os valores quando a prop `sale` muda

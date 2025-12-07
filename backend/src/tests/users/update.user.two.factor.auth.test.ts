@@ -71,7 +71,7 @@ describe("PATCH /update_two_factor_auth - Toggle 2FA", () => {
     expect(response.body.message).toBe("Verificação por duas etapas atualizada com sucesso");
 
     // 3. Verifica se a propriedade foi ativada na resposta
-    expect(response.body.user).toHaveProperty("two_factor_enabled", true);
+    expect(response.body.user).toHaveProperty("twoFactorAuthEnabled", true);
 
     // 4. Verifica no DB se a alteração foi persistida
     const userInDb = await prisma.user.findUnique({ where: { id: testUserId } });
@@ -93,7 +93,7 @@ describe("PATCH /update_two_factor_auth - Toggle 2FA", () => {
     expect(response.body.message).toBe("Verificação por duas etapas atualizada com sucesso");
 
     // 3. Verifica se a propriedade foi desativada na resposta
-    expect(response.body.user).toHaveProperty("two_factor_enabled", false);
+    expect(response.body.user).toHaveProperty("twoFactorAuthEnabled", false);
 
     // 4. Verifica no DB se a alteração foi persistida
     const userInDb = await prisma.user.findUnique({ where: { id: testUserId } });

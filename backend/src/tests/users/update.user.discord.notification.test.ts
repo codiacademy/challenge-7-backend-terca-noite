@@ -79,7 +79,7 @@ describe("PATCH /update_discord_notification - Atualização de Notificações D
 
     expect(response.statusCode).toBe(200);
     expect(response.body.message).toBe("Notificações por discord atualizadas com sucesso");
-    expect(response.body.user.notification_discord_enabled).toBe(true); // 4. Verificação no Banco de Dados (Confirma o toggle)
+    expect(response.body.user.discordNotificationEnabled).toBe(true); // 4. Verificação no Banco de Dados (Confirma o toggle)
 
     dbUser = await prisma.user.findUnique({
       where: { id: testUserId },
@@ -100,7 +100,7 @@ describe("PATCH /update_discord_notification - Atualização de Notificações D
     }); // 2. Verificação da Resposta (200 OK)
 
     expect(response.statusCode).toBe(200);
-    expect(response.body.user.notification_discord_enabled).toBe(false); // 3. Verificação no Banco de Dados (Confirma o toggle)
+    expect(response.body.user.discordNotificationEnabled).toBe(false); // 3. Verificação no Banco de Dados (Confirma o toggle)
 
     const dbUser = await prisma.user.findUnique({
       where: { id: testUserId },

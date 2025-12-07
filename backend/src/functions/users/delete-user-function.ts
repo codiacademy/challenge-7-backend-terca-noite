@@ -16,6 +16,9 @@ export async function deleteUserFunction(userId: string) {
     await prisma.expense.deleteMany({
       where: { created_by: userId },
     });
+    await prisma.authState.deleteMany({
+      where: { userId },
+    });
     await prisma.refreshtokens.deleteMany({
       where: { userId },
     });

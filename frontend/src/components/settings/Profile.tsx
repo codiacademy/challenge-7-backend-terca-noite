@@ -27,14 +27,20 @@ const unformatPhone = (value: string) => (value || "").replace(/\D/g, "");
 const phoneRegex = /^\+?\d{10,15}$/;
 
 const validationSchema = Yup.object().shape({
-  fullName: Yup.string().min(2, "O nome deve ter pelo menos 2 caracteres"),
+  fullName: Yup.string().min(2, "O nome deve ter pelo menos 2 caracteres").optional(),
   telephone: Yup.string()
     .nullable()
-    .test(
-      "is-valid-phone",
-      "Número de telefone inválido",
-      (value) => !value || value.trim() === "" || phoneRegex.test(value),
-    ),
+    .test("is-valid-phone", "Número de telefone inválido", (value) => {
+      const unformatted = unformatPhone(value || ""); // <-- Aplica a desformatação aqui
+      // Se o campo estiver vazio, é válido (por causa do optional)
+      if (!value || value.trim() === "") return true;
+
+      // Testa a regex na string de dígitos.
+      // Ajustei o regex para o padrão nacional 10 ou 11 dígitos.
+      const nationalPhoneRegex = /^\d{10,11}$/; // Ex: 2133334444 ou 21999998888
+      return nationalPhoneRegex.test(unformatted);
+    })
+    .optional(),
   email: Yup.string().email("E-mail inválido").optional(),
 });
 export const Profile = ({ user, isLoading }: { user: ProfileConfigsType; isLoading: boolean }) => {
@@ -55,11 +61,20 @@ export const Profile = ({ user, isLoading }: { user: ProfileConfigsType; isLoadi
       // envia telefone sem formatação (apenas dígitos)
       const payload: any = {};
 
-      if (values.fullName.trim() !== "") payload.fullName = values.fullName;
-      if (values.email.trim() !== "") payload.email = values.email;
-
-      if (values.telephone.trim() !== "") {
-        payload.telephone = unformatPhone(values.telephone); // <-- CORRETO AQUI
+      if (values.fullName.trim() === "") {
+        payload.fullName = user.name;
+      } else {
+        payload.fullName = values.fullName;
+      }
+      if (values.email.trim() === "") {
+        payload.email = user.email;
+      } else {
+        payload.email = values.email;
+      }
+      if (values.telephone.trim() === "") {
+        payload.telephone = user.telephone;
+      } else {
+        payload.telephone = unformatPhone(values.telephone);
       }
       const token = localStorage.getItem("accessToken") || null;
       if (!token) {
@@ -125,7 +140,7 @@ export const Profile = ({ user, isLoading }: { user: ProfileConfigsType; isLoadi
                 <div className="flex flex-col justify-center gap-[20px] items-start w-full">
                   <div className="flex flex-col justify-center items-start gap-[20px] w-full">
                     {/* Wrapper do Nome */}
-                    <div className="flex flex-col flex-1 items-start">
+                    <div className="flex flex-col flex-1 items-start w-full">
                       <div className="relative h-12 w-full">
                         <Field
                           type="text"
@@ -157,7 +172,7 @@ export const Profile = ({ user, isLoading }: { user: ProfileConfigsType; isLoadi
                     </div>
 
                     {/* Wrapper do E-mail */}
-                    <div className="flex flex-col flex-1 items-start">
+                    <div className="flex flex-col flex-1 items-start w-full">
                       <div className="relative h-12 w-full">
                         <Field
                           type="email"

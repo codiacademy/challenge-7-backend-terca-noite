@@ -144,44 +144,54 @@ export const SalesTable = ({
                   transition={{ duration: 0.3 }}
                 >
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
-                    {new Intl.DateTimeFormat("pt-BR", {
-                      day: "2-digit",
-                      month: "2-digit",
-                      year: "numeric",
-                    }).format(new Date(item.date))}
+                    {
+                      item.created_at // 👈 Verifica se a data existe
+                        ? new Intl.DateTimeFormat("pt-BR", {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "numeric",
+                          }).format(new Date(item.created_at))
+                        : "N/A" // Exibe "N/A" ou outro placeholder se a data for inválida/ausente
+                    }
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap flex-col text-sm font-medium text-gray-100 flex gap-2">
-                    {item.customer.name}
-                    <p className="text-xs text-gray-400">{item.customer.email}</p>
+                    {item.client_name}
+                    <p className="text-xs text-gray-400">{item.client_email}</p>
                   </td>
                   <td className="px-6 py-4 text-sm">
-                    <span
-                      className={`px-2 py-1 rounded-full text-sm ${
-                        item.course.type === "online"
-                          ? "text-green-400 bg-green-950"
-                          : "text-sky-400 bg-blue-950"
-                      }`}
-                    >
-                      {item.course.type.charAt(0).toUpperCase() + item.course.type.slice(1)}
-                    </span>
+                    {item.course_type ? (
+                      <span
+                        className={`px-2 py-1 rounded-full text-sm ${
+                          item.course_type === "online"
+                            ? "text-green-400 bg-green-950"
+                            : "text-sky-400 bg-blue-950"
+                        }`}
+                      >
+                        {item.course_type.charAt(0).toUpperCase() + item.course_type.slice(1)}
+                      </span>
+                    ) : (
+                      <span className="text-gray-400 bg-gray-700 px-2 py-1 rounded-full text-sm">
+                        Não Definido
+                      </span>
+                    )}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
                     {new Intl.NumberFormat("pt-BR", {
                       style: "currency",
                       currency: "BRL",
-                    }).format(item.course.price)}
+                    }).format(item.course_value)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
                     {new Intl.NumberFormat("pt-BR", {
                       style: "currency",
                       currency: "BRL",
-                    }).format(item.discount)}
+                    }).format(item.discount_value)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
                     {new Intl.NumberFormat("pt-BR", {
                       style: "currency",
                       currency: "BRL",
-                    }).format(item.finalPrice)}
+                    }).format(item.total_value)}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300 text-center">
                     <button
@@ -275,8 +285,9 @@ export const SalesTable = ({
         </div>
       )}
 
-      {/* Uso do componente modal */}
-      <SaleDetailsModal sale={selectedSale} isOpen={isModalOpen} onClose={closeModal} />
+      {selectedSale && ( // 👈 RENDERIZA O MODAL APENAS SE selectedSale NÃO FOR NULL
+        <SaleDetailsModal sale={selectedSale} isOpen={isModalOpen} onClose={closeModal} />
+      )}
     </motion.div>
   );
 };

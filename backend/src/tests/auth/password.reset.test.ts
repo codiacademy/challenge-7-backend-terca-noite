@@ -4,17 +4,11 @@ import { createApp } from "../../app.ts"; // Importa a função fábrica
 import type { FastifyInstance } from "fastify"; // Importa o tipo FastifyInstance;
 import { createTestUser } from "../../functions/users/create-test-user-function.ts";
 import { deleteUserFunction } from "../../functions/users/delete-user-function.ts";
-import { prisma } from "../../lib/prisma.ts";
-
-// Mocks para isolar o teste
-import { verify2faCodeFunction } from "../../functions/auth/verify-2fa-code-function.ts";
-import { updateUserPasswordFunction } from "../../functions/users/update-user-password-function.ts";
 import { generateTwoFactorTempToken } from "../../utils/tokens-service.ts";
 import { createTwoFactorRequestFunction } from "../mocks/create-two-factor-request-function.ts";
 import { deleteTwoFactorRequestFunction } from "../mocks/delete-two-factor-request-function.ts";
 import { generateExpiredTempTokenFunction } from "../mocks/generate-expired-temp-token-function.ts";
 
-// Mocka a função que altera a senha.
 const MOCKED_USER = {
   fullName: "Reset Pass Test User",
   email: "reset.pass.test@codicash.com",
@@ -23,7 +17,6 @@ const MOCKED_USER = {
 };
 const NEW_PASSWORD = "NewStrongPassword456";
 type TwoFactorRequestData = {
-  // Propriedade 'createdTwoFactorRequest' que é um objeto
   createdTwoFactorRequest: {
     id: string;
     codeHash: string;
@@ -32,7 +25,7 @@ type TwoFactorRequestData = {
     createdAt: Date;
     ip: string | null;
     userId: string;
-  }; // <--- Fechamento do objeto
+  };
 
   // Propriedade 'code'
   code: string;

@@ -109,6 +109,8 @@ Copie **o conteúdo inteiro de .env.example** para **ambos**:
 - .env
 - .env.local
 
+Substitua todos os valores do .env e .env.local com os fornecidos externamente (Entrar em contato com bernardo.perona@gmail.com ou 11999030976)
+
 ### No .env (modo Docker / servidor)
 
 Não altere nada.
@@ -155,6 +157,13 @@ A rota base será:
 
 `npm run test`
 
+# 📃 Para Testar: Usuário de Teste
+
+- login: john.doe@gmail.com
+- senha: 12345678
+
+`npm run test`
+
 # 🗄️ Estrutura do Backend
 
 `backend/  │── prisma/  │   ├── schema.prisma  │   ├── migrations/  │  │── src/  │   ├── server.ts  │   ├── env.ts  │   ├── routes/  │   ├── functions/  │   ├── utils/  │   ├── tests/  │  │── .env  │── .env.local  │── .env.example`
@@ -186,6 +195,6 @@ Time original do frontend:
 Time original do backend:
 
 - [Bernardo Gará Perona](linkedin.com/in/bernardogaraperona?originalSubdomain=br)
-- [Gabriel](https://www.linkedin.com/in/mariana-santos-carminate-0a0893133/)
-- [Artur](https://www.linkedin.com/in/fabiano-andrade-13118475/)
-- [Pedro Claret](https://www.linkedin.com/in/pedroclaret/)
+- [Pedro Henrique da Silveira Silva]
+- [Luiz Guilherme de Rezende]
+- [Gabriel]

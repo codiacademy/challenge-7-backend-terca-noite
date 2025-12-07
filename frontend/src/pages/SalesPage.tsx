@@ -188,49 +188,36 @@ export function SalesPage() {
       let to: string | undefined;
 
       const tr = params?.timeRange;
-
       ({ from, to } = convertTimeRangeToParams(tr));
+
+      const queryParams: Record<string, string | number | undefined> = {
+        from,
+        to,
+        page: params?.page ?? 1,
+        limit: params?.limit ?? 10,
+      };
+
+      // Adiciona 'category', 'status' e 'search' APENAS se não estiverem vazios
+      if (params?.courseType) {
+        queryParams.courseType = params.courseType;
+      }
+      if (params?.search) {
+        queryParams.search = params.search;
+      }
 
       const response = await api.get("http://localhost:3000/sales/read_filtered_sales", {
         headers,
         withCredentials: true,
-        params: {
-          courseType: params?.courseType,
-          search: params?.search,
-          from,
-          to,
-          page: params?.page ?? 1,
-          limit: params?.limit ?? 10,
-        },
+        params: queryParams,
       });
 
       if (!response.data) throw new Error(`HTTP ${response.status}`);
-      const mappedSales: Sales[] = response.data.sales.map((sale: any) => ({
-        id: sale.id,
-        date: sale.created_at, // ou updated_at se preferir
-        customer: {
-          name: sale.client_name,
-          email: sale.client_email,
-          phone: sale.client_phone,
-          cpf: sale.cpf,
-        },
-        course: {
-          type: sale.course_type,
-          name: sale.course,
-          price: Number(sale.course_value),
-        },
-        discount: Number(sale.discount_value),
-        taxes: Number(sale.taxes_value),
-        commissions: Number(sale.commission_value),
-        cardFees: Number(sale.card_fee_value),
-        finalPrice: Number(sale.total_value),
-      }));
 
-      setFilteredSales(mappedSales);
-      setCurrentPage(response.data.page);
-      setItemsPerPage(response.data.limit);
-      setTotalPages(response.data.totalPages);
-      setTotalItems(response.data.total);
+      setFilteredSales(response.data.sales);
+      setCurrentPage(response.data.pagination.currentPage);
+      setItemsPerPage(response.data.pagination.limit);
+      setTotalPages(response.data.pagination.totalPages);
+      setTotalItems(response.data.pagination.totalItems);
       console.log("Vendas filtradas carregadas!");
     } catch (error: any) {
       console.error("Erro ao carregar vendas filtradas:", error);
@@ -240,6 +227,24 @@ export function SalesPage() {
   }
 
   useEffect(() => {
+    if (currentPage !== 1) {
+      setCurrentPage(1);
+    } else {
+      loadFilteredSales({
+        timeRange,
+        courseType,
+        search,
+        page: 1,
+        limit: itemsPerPage,
+      });
+    }
+
+    loadDateFilteredSales({ timeRange });
+    loadSalesCharts({ timeRange });
+    loadKPIs({ timeRange });
+  }, [timeRange, courseType, search]);
+
+  useEffect(() => {
     loadFilteredSales({
       timeRange,
       courseType,
@@ -247,12 +252,8 @@ export function SalesPage() {
       page: currentPage,
       limit: itemsPerPage,
     });
-    loadDateFilteredSales({ timeRange });
-    loadSalesCharts({ timeRange });
-    loadKPIs({ timeRange });
-  }, [timeRange, courseType, search, currentPage, itemsPerPage]);
+  }, [currentPage, itemsPerPage]);
 
-  // Função para excluir uma venda
   const handleDeleteSale = async (id: string) => {
     try {
       const token = localStorage.getItem("accessToken") || null;
