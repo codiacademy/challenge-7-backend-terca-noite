@@ -1,0 +1,125 @@
+generator client {
+  provider = "prisma-client-js"
+  binaryTargets   = ["native", "linux-musl-openssl-3.0.x", "windows"]
+  output   = "../node_modules/.prisma/client"
+  engineType = "binary"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id                         String          @id @default(uuid()) @db.Char(36)
+  name                       String          @db.VarChar(255)
+  email                      String          @unique @db.VarChar(255)
+  telephone                  String?
+  two_factor_enabled         Boolean         @default(false)
+  notification_email_enabled Boolean         @default(false)
+  notification_discord_enabled   Boolean         @default(false)
+  created_at                 DateTime        @default(now())
+  updated_at                 DateTime        @updatedAt
+  password_hash              String          @db.VarChar(255)
+  discordId                  String?         @unique @db.VarChar(255)
+  discordName                String? 
+  created_expenses           Expense[]       @relation("CreatedExpenses")
+  created_sales              Sale[]          @relation("CreatedSales")
+  refreshtokens              refreshtokens[]
+  two_factor_requests        TwoFactorRequest[]
+  auth_states                AuthState[] 
+
+  @@map("users")
+}
+
+model Sale {
+  id           String     @id @default(uuid()) @db.Char(36)
+  client_name  String     @db.VarChar(255)
+  cpf          String     @db.VarChar(14)
+  client_phone String     @db.VarChar(20)
+  client_email String     @db.VarChar(255)
+  course       String     @db.VarChar(255)
+  course_type CourseType
+  course_value Decimal    @db.Decimal(10, 2)
+  discount_value     Decimal    @db.Decimal(10, 2)
+  taxes_value      Decimal    @db.Decimal(10, 2)
+  commission_value Decimal    @db.Decimal(10, 2)
+  card_fee_value  Decimal    @db.Decimal(10, 2)
+  total_value  Decimal    @db.Decimal(10, 2)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  created_by  String     @db.Char(36)
+  createdBy  User     @relation("CreatedSales", fields: [created_by], references: [id])
+
+  @@index([created_by], map: "idx_sales_created_by") // MUDANÇA AQUI!
+  @@map("sales")
+}
+
+model Expense {
+  id          String        @id @default(uuid()) @db.Char(36)
+  due_date    DateTime      @db.Date
+  description String        @db.VarChar(255)
+  category       ExpenseCategory
+  value      Decimal       @db.Decimal(10, 2)
+  status      ExpenseStatus
+  created_by  String        @db.Char(36)
+  created_at  DateTime      @default(now())
+  updated_at  DateTime      @updatedAt
+  createdBy   User          @relation("CreatedExpenses", fields: [created_by], references: [id])
+
+  @@index([created_by], map: "idx_expenses_created_by")
+  @@map("expenses")
+}
+
+model refreshtokens {
+  id           String   @id @default(uuid()) @db.Char(36)
+  tokenHash    String   @db.VarChar(255)
+  userId       String   @db.Char(36)
+  expiresAt    String   @db.VarChar(255)
+  created_at   DateTime @default(now())
+  last_used_at DateTime @default(now())
+  is_revoked   Boolean  @default(false)
+users       User    @relation(fields: [userId], references: [id], map: "fk_refresh_token_user") 
+
+  @@index([userId], map: "idx_refresh_token_user") 
+}
+
+
+model AuthState {
+  state      String   @id @default(uuid()) @db.Char(36)
+  
+  userId     String   
+  
+  createdAt  DateTime @default(now())
+  
+  expiresAt  DateTime
+  
+  user       User     @relation(fields: [userId], references: [id])
+}
+enum ExpenseCategory {
+  fixa
+  variavel
+}
+
+enum ExpenseStatus {
+  pago
+  pendente
+}
+
+enum CourseType {
+  presencial
+  online
+}
+
+model TwoFactorRequest {
+  id        String   @id @default(uuid())
+  userId    String   @db.Char(36)
+  codeHash  String
+  expiresAt DateTime
+  consumed  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  ip        String?
+  users     User     @relation(fields: [userId], references: [id], map: "TwoFactorRequest_userId_fkey")
+
+  @@index([userId], map: "idx_two_factor_user") // MUDANÇA AQUI!
+  @@map("two_factor_requests")
+}

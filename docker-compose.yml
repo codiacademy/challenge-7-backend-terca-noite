@@ -1,0 +1,59 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: fastify_db_pg
+    environment:
+      # 2. Novas variáveis para configuração do Postgres
+      POSTGRES_USER: codi_user
+      POSTGRES_PASSWORD: codi_password
+      POSTGRES_DB: codi_db
+    ports:
+      - "5432:5432" # 3. Porta padrão do Postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U codi_user -d codi_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    volumes:
+      - pg_data:/var/lib/postgresql/data # Mude o nome do volume se necessário
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      args:
+        DATABASE_URL: postgresql://codi_user:codi_password@db:5432/codi_db
+    container_name: codi_backend
+    command: npm run dev
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=postgresql://codi_user:codi_password@db:5432/codi_db
+      - JWT_SECRET=${JWT_SECRET:-change-this-secret-in-production}
+      - NODE_ENV=development
+      - CHOKIDAR_USEPOLLING=true
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./backend:/usr/src/app
+      - backend_node_modules:/usr/src/app/node_modules
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: codi_frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+    volumes:
+      - ./frontend:/app
+      - frontend_node_modules:/app/node_modules
+
+volumes:
+  pg_data: #
+  backend_node_modules:
+  frontend_node_modules:

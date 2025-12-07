@@ -1,0 +1,30 @@
+import { prisma } from "../../lib/prisma";
+import { AppError } from "../../utils/app-error";
+import { hash } from "bcrypt";
+
+export async function updateUserPasswordFunction({
+  userId,
+  password,
+}: {
+  userId: string;
+  password: string;
+}) {
+  try {
+    const existingUser = prisma.user.findUnique({
+      where: { id: userId },
+    });
+    if (!existingUser) {
+      throw new AppError("Usuário não encontrado", 404);
+    }
+
+    const updatedHashPassword = await hash(password, 10);
+    const userToUpdate = await prisma.user.update({
+      where: { id: userId },
+      data: { password_hash: updatedHashPassword },
+    });
+
+    const { password_hash, ...updatedUser } = userToUpdate;
+
+    return updatedUser;
+  } catch (error) {}
+}
